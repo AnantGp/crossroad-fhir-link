@@ -162,8 +162,8 @@ const Index = () => {
               <Select value={reportId} onValueChange={onReportChange}>
                 <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {SAMPLE_REPORTS.map((r) => (
-                    <SelectItem key={r.id} value={r.id} className="text-sm">{r.title}</SelectItem>
+                  {CASE_LIST.map((r) => (
+                    <SelectItem key={r.id} value={r.id} className="text-sm">{r.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
