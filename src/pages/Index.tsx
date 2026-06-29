@@ -24,21 +24,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import {
-  CONCEPT_MAP,
-  CODE_SYSTEM_LOCAL,
+  CASES,
+  CASE_LIST,
   COUNTRIES,
   CountryCode,
   EVIDENCE,
   FED_SITES,
-  IPS_BUNDLE,
-  LOOKUP_RESULT,
   METRICS,
   PIPELINE_STEPS,
   READINESS,
-  SAMPLE_REPORTS,
-  TRACE_FACTS,
-  TRANSLATE_RESULT,
-  VALIDATE_CODE_RESULT,
+  TARGET_LABEL,
   VALUE_SET_DIABETES,
 } from "@/lib/demoData";
 
