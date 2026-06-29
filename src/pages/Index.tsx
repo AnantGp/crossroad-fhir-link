@@ -310,7 +310,7 @@ const Index = () => {
                 <div className="card-surface p-3">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-semibold">CodeSystem · local site terms</h3>
-                    <span className="pill pill-neutral">local-usa-diabetes-terms</span>
+                    <span className="pill pill-neutral">{(activeCase.codeSystem as { id?: string }).id}</span>
                   </div>
                   <CodeViewer value={activeCase.codeSystem} maxH={260} />
                 </div>
