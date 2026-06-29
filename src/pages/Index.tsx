@@ -266,7 +266,7 @@ const Index = () => {
                     <p className="text-xs text-muted-foreground">Rule-backed extractor (prototype). Pretrained clinical NER is future work.</p>
                   </div>
                   <div className="flex gap-2 flex-wrap">
-                    <span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />{TRACE_FACTS.length} facts</span>
+                    <span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />{activeCase.traceFacts.length} facts</span>
                     <span className="pill pill-info">SNOMED · LOINC · RxNorm · ICD-10</span>
                   </div>
                 </div>
@@ -282,7 +282,7 @@ const Index = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {TRACE_FACTS.map((f) => (
+                      {activeCase.traceFacts.map((f) => (
                         <tr key={f.phrase} className="hover:bg-surface-muted">
                           <td className="font-mono text-xs">{f.phrase}</td>
                           <td>{f.normalized}</td>
@@ -312,7 +312,7 @@ const Index = () => {
                     <h3 className="text-sm font-semibold">CodeSystem · local site terms</h3>
                     <span className="pill pill-neutral">local-usa-diabetes-terms</span>
                   </div>
-                  <CodeViewer value={CODE_SYSTEM_LOCAL} maxH={260} />
+                  <CodeViewer value={activeCase.codeSystem} maxH={260} />
                 </div>
                 <div className="card-surface p-3">
                   <div className="flex items-center justify-between mb-2">
@@ -326,28 +326,28 @@ const Index = () => {
                     <h3 className="text-sm font-semibold">ConceptMap · local phrase → SNOMED / LOINC</h3>
                     <span className="pill pill-info"><GitMerge className="h-3 w-3" />local → standard</span>
                   </div>
-                  <CodeViewer value={CONCEPT_MAP} maxH={320} />
+                  <CodeViewer value={activeCase.conceptMap} maxH={320} />
                 </div>
                 <div className="card-surface p-3">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-semibold">Simulated $translate</h3>
                     <span className="pill pill-success">equivalent</span>
                   </div>
-                  <CodeViewer value={TRANSLATE_RESULT} maxH={240} />
+                  <CodeViewer value={activeCase.translateResult} maxH={240} />
                 </div>
                 <div className="card-surface p-3">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-semibold">Simulated $lookup</h3>
                     <span className="pill pill-info">LOINC 4548-4</span>
                   </div>
-                  <CodeViewer value={LOOKUP_RESULT} maxH={240} />
+                  <CodeViewer value={activeCase.lookupResult} maxH={240} />
                 </div>
                 <div className="card-surface p-3 xl:col-span-2">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-semibold">Simulated $validate-code</h3>
                     <span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />valid</span>
                   </div>
-                  <CodeViewer value={VALIDATE_CODE_RESULT} maxH={200} />
+                  <CodeViewer value={activeCase.validateCodeResult} maxH={200} />
                 </div>
               </div>
 
@@ -470,7 +470,7 @@ const Index = () => {
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   <span className="pill pill-info">Bundle.type = document</span>
-                  <span className="pill pill-success">{IPS_BUNDLE.entry.length} entries</span>
+                  <span className="pill pill-success">{activeCase.ipsBundle.entry.length} entries</span>
                 </div>
               </div>
 
@@ -478,7 +478,7 @@ const Index = () => {
                 <div className="card-surface p-2">
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-2 py-1">Resources</div>
                   <ul className="space-y-0.5">
-                    {IPS_BUNDLE.entry.map((e, idx) => {
+                    {activeCase.ipsBundle.entry.map((e, idx) => {
                       const active = idx === bundleResource;
                       const r = e.resource as { resourceType: string; id?: string };
                       return (
@@ -497,10 +497,10 @@ const Index = () => {
                 </div>
                 <div className="card-surface p-3 min-w-0">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-semibold mono">{(IPS_BUNDLE.entry[bundleResource].resource as { resourceType: string }).resourceType}</h4>
+                    <h4 className="text-xs font-semibold mono">{(activeCase.ipsBundle.entry[bundleResource].resource as { resourceType: string }).resourceType}</h4>
                     <span className="pill pill-neutral"><Code2 className="h-3 w-3" />JSON</span>
                   </div>
-                  <CodeViewer value={IPS_BUNDLE.entry[bundleResource].resource} maxH={420} />
+                  <CodeViewer value={activeCase.ipsBundle.entry[bundleResource].resource} maxH={420} />
                 </div>
               </div>
 
