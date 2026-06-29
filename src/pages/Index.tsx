@@ -463,9 +463,9 @@ const Index = () => {
             <TabsContent value="bundle" className="space-y-3 mt-0">
               <div className="card-surface p-3 flex items-center justify-between gap-2 flex-wrap">
                 <div>
-                  <h3 className="text-sm font-semibold">IPS-style FHIR R4 document Bundle</h3>
+                  <h3 className="text-sm font-semibold">{activeCase.bundleTitle}</h3>
                   <p className="text-xs text-muted-foreground">
-                    Composition-first document Bundle. Official validator: <span className="text-success font-medium">0 errors</span> for representative USA→IND, USA→AUS, USA→EUR Bundles.
+                    Composition-first IPS-style FHIR R4 document Bundle · {sourceCountry} → {targetCountry} ({TARGET_LABEL[targetCountry]}). Representative cross-border Bundles pass the official validator with <span className="text-success font-medium">0 errors</span>.
                   </p>
                 </div>
                 <div className="flex gap-2 flex-wrap">
