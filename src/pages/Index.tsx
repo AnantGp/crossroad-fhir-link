@@ -24,21 +24,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import {
-  CONCEPT_MAP,
-  CODE_SYSTEM_LOCAL,
+  CASES,
+  CASE_LIST,
   COUNTRIES,
   CountryCode,
   EVIDENCE,
   FED_SITES,
-  IPS_BUNDLE,
-  LOOKUP_RESULT,
   METRICS,
   PIPELINE_STEPS,
   READINESS,
-  SAMPLE_REPORTS,
-  TRACE_FACTS,
-  TRANSLATE_RESULT,
-  VALIDATE_CODE_RESULT,
+  TARGET_LABEL,
   VALUE_SET_DIABETES,
 } from "@/lib/demoData";
 
@@ -111,21 +106,23 @@ function SourcePill({ source }: { source: "local-registry" | "federated-linker-c
 }
 
 const Index = () => {
-  const [reportId, setReportId] = useState(SAMPLE_REPORTS[0].id);
-  const report = SAMPLE_REPORTS.find((r) => r.id === reportId)!;
-  const [sourceCountry, setSourceCountry] = useState<CountryCode>(report.country);
-  const [targetCountry, setTargetCountry] = useState<CountryCode>("IND");
-  const [reportText, setReportText] = useState(report.text);
+  const [reportId, setReportId] = useState(CASE_LIST[0].id);
+  const activeCase = CASES[reportId];
+  const [sourceCountry, setSourceCountry] = useState<CountryCode>(activeCase.source);
+  const [targetCountry, setTargetCountry] = useState<CountryCode>(activeCase.defaultTarget);
+  const [reportText, setReportText] = useState(activeCase.reportText);
+  const [bundleResource, setBundleResource] = useState(0);
 
   const onReportChange = (id: string) => {
+    const c = CASES[id];
     setReportId(id);
-    const r = SAMPLE_REPORTS.find((x) => x.id === id)!;
-    setReportText(r.text);
-    setSourceCountry(r.country);
+    setReportText(c.reportText);
+    setSourceCountry(c.source);
+    setTargetCountry(c.defaultTarget);
+    setBundleResource(0);
   };
 
   const readinessRows = READINESS[targetCountry];
-  const [bundleResource, setBundleResource] = useState(0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -165,8 +162,8 @@ const Index = () => {
               <Select value={reportId} onValueChange={onReportChange}>
                 <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {SAMPLE_REPORTS.map((r) => (
-                    <SelectItem key={r.id} value={r.id} className="text-sm">{r.title}</SelectItem>
+                  {CASE_LIST.map((r) => (
+                    <SelectItem key={r.id} value={r.id} className="text-sm">{r.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -206,7 +203,7 @@ const Index = () => {
                 className="text-xs font-mono leading-relaxed resize-none"
               />
               <p className="text-[11px] text-muted-foreground">
-                Synthetic note. Editing is for demo exploration; pipeline output below uses the fixed representative trace.
+                Synthetic note. Changing the Source report swaps the trace, terminology, bundle, and readiness panels to the selected country's case.
               </p>
             </div>
 
@@ -269,7 +266,7 @@ const Index = () => {
                     <p className="text-xs text-muted-foreground">Rule-backed extractor (prototype). Pretrained clinical NER is future work.</p>
                   </div>
                   <div className="flex gap-2 flex-wrap">
-                    <span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />{TRACE_FACTS.length} facts</span>
+                    <span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />{activeCase.traceFacts.length} facts</span>
                     <span className="pill pill-info">SNOMED · LOINC · RxNorm · ICD-10</span>
                   </div>
                 </div>
@@ -285,7 +282,7 @@ const Index = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {TRACE_FACTS.map((f) => (
+                      {activeCase.traceFacts.map((f) => (
                         <tr key={f.phrase} className="hover:bg-surface-muted">
                           <td className="font-mono text-xs">{f.phrase}</td>
                           <td>{f.normalized}</td>
@@ -313,9 +310,9 @@ const Index = () => {
                 <div className="card-surface p-3">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-semibold">CodeSystem · local site terms</h3>
-                    <span className="pill pill-neutral">local-usa-diabetes-terms</span>
+                    <span className="pill pill-neutral">{(activeCase.codeSystem as { id?: string }).id}</span>
                   </div>
-                  <CodeViewer value={CODE_SYSTEM_LOCAL} maxH={260} />
+                  <CodeViewer value={activeCase.codeSystem} maxH={260} />
                 </div>
                 <div className="card-surface p-3">
                   <div className="flex items-center justify-between mb-2">
@@ -329,28 +326,28 @@ const Index = () => {
                     <h3 className="text-sm font-semibold">ConceptMap · local phrase → SNOMED / LOINC</h3>
                     <span className="pill pill-info"><GitMerge className="h-3 w-3" />local → standard</span>
                   </div>
-                  <CodeViewer value={CONCEPT_MAP} maxH={320} />
+                  <CodeViewer value={activeCase.conceptMap} maxH={320} />
                 </div>
                 <div className="card-surface p-3">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-semibold">Simulated $translate</h3>
                     <span className="pill pill-success">equivalent</span>
                   </div>
-                  <CodeViewer value={TRANSLATE_RESULT} maxH={240} />
+                  <CodeViewer value={activeCase.translateResult} maxH={240} />
                 </div>
                 <div className="card-surface p-3">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-semibold">Simulated $lookup</h3>
                     <span className="pill pill-info">LOINC 4548-4</span>
                   </div>
-                  <CodeViewer value={LOOKUP_RESULT} maxH={240} />
+                  <CodeViewer value={activeCase.lookupResult} maxH={240} />
                 </div>
                 <div className="card-surface p-3 xl:col-span-2">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-semibold">Simulated $validate-code</h3>
                     <span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />valid</span>
                   </div>
-                  <CodeViewer value={VALIDATE_CODE_RESULT} maxH={200} />
+                  <CodeViewer value={activeCase.validateCodeResult} maxH={200} />
                 </div>
               </div>
 
@@ -466,14 +463,14 @@ const Index = () => {
             <TabsContent value="bundle" className="space-y-3 mt-0">
               <div className="card-surface p-3 flex items-center justify-between gap-2 flex-wrap">
                 <div>
-                  <h3 className="text-sm font-semibold">IPS-style FHIR R4 document Bundle</h3>
+                  <h3 className="text-sm font-semibold">{activeCase.bundleTitle}</h3>
                   <p className="text-xs text-muted-foreground">
-                    Composition-first document Bundle. Official validator: <span className="text-success font-medium">0 errors</span> for representative USA→IND, USA→AUS, USA→EUR Bundles.
+                    Composition-first IPS-style FHIR R4 document Bundle · {sourceCountry} → {targetCountry} ({TARGET_LABEL[targetCountry]}). Representative cross-border Bundles pass the official validator with <span className="text-success font-medium">0 errors</span>.
                   </p>
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   <span className="pill pill-info">Bundle.type = document</span>
-                  <span className="pill pill-success">{IPS_BUNDLE.entry.length} entries</span>
+                  <span className="pill pill-success">{activeCase.ipsBundle.entry.length} entries</span>
                 </div>
               </div>
 
@@ -481,7 +478,7 @@ const Index = () => {
                 <div className="card-surface p-2">
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-2 py-1">Resources</div>
                   <ul className="space-y-0.5">
-                    {IPS_BUNDLE.entry.map((e, idx) => {
+                    {activeCase.ipsBundle.entry.map((e, idx) => {
                       const active = idx === bundleResource;
                       const r = e.resource as { resourceType: string; id?: string };
                       return (
@@ -500,10 +497,10 @@ const Index = () => {
                 </div>
                 <div className="card-surface p-3 min-w-0">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-semibold mono">{(IPS_BUNDLE.entry[bundleResource].resource as { resourceType: string }).resourceType}</h4>
+                    <h4 className="text-xs font-semibold mono">{(activeCase.ipsBundle.entry[bundleResource].resource as { resourceType: string }).resourceType}</h4>
                     <span className="pill pill-neutral"><Code2 className="h-3 w-3" />JSON</span>
                   </div>
-                  <CodeViewer value={IPS_BUNDLE.entry[bundleResource].resource} maxH={420} />
+                  <CodeViewer value={activeCase.ipsBundle.entry[bundleResource].resource} maxH={420} />
                 </div>
               </div>
 
