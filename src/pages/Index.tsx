@@ -106,21 +106,23 @@ function SourcePill({ source }: { source: "local-registry" | "federated-linker-c
 }
 
 const Index = () => {
-  const [reportId, setReportId] = useState(SAMPLE_REPORTS[0].id);
-  const report = SAMPLE_REPORTS.find((r) => r.id === reportId)!;
-  const [sourceCountry, setSourceCountry] = useState<CountryCode>(report.country);
-  const [targetCountry, setTargetCountry] = useState<CountryCode>("IND");
-  const [reportText, setReportText] = useState(report.text);
+  const [reportId, setReportId] = useState(CASE_LIST[0].id);
+  const activeCase = CASES[reportId];
+  const [sourceCountry, setSourceCountry] = useState<CountryCode>(activeCase.source);
+  const [targetCountry, setTargetCountry] = useState<CountryCode>(activeCase.defaultTarget);
+  const [reportText, setReportText] = useState(activeCase.reportText);
+  const [bundleResource, setBundleResource] = useState(0);
 
   const onReportChange = (id: string) => {
+    const c = CASES[id];
     setReportId(id);
-    const r = SAMPLE_REPORTS.find((x) => x.id === id)!;
-    setReportText(r.text);
-    setSourceCountry(r.country);
+    setReportText(c.reportText);
+    setSourceCountry(c.source);
+    setTargetCountry(c.defaultTarget);
+    setBundleResource(0);
   };
 
   const readinessRows = READINESS[targetCountry];
-  const [bundleResource, setBundleResource] = useState(0);
 
   return (
     <div className="min-h-screen bg-background">
