@@ -203,7 +203,7 @@ const Index = () => {
                 className="text-xs font-mono leading-relaxed resize-none"
               />
               <p className="text-[11px] text-muted-foreground">
-                Synthetic note. Editing is for demo exploration; pipeline output below uses the fixed representative trace.
+                Synthetic note. Changing the Source report swaps the trace, terminology, bundle, and readiness panels to the selected country's case.
               </p>
             </div>
 
