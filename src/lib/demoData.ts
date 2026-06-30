@@ -624,10 +624,10 @@ export const PIPELINE_STEPS = [
   { key: "report", label: "Report", icon: "FileText" },
   { key: "facts", label: "Facts", icon: "Sparkles" },
   { key: "terminology", label: "Terminology", icon: "BookMarked" },
-  { key: "federated", label: "Federated Linker", icon: "Network" },
-  { key: "conceptmap", label: "FHIR ConceptMap", icon: "GitMerge" },
-  { key: "bundle", label: "FHIR IPS Bundle", icon: "Package" },
-  { key: "readiness", label: "Readiness / Validation", icon: "ShieldCheck" },
+  { key: "federated", label: "FL Linker", icon: "Network" },
+  { key: "conceptmap", label: "ConceptMap", icon: "GitMerge" },
+  { key: "bundle", label: "IPS Bundle", icon: "Package" },
+  { key: "readiness", label: "Readiness", icon: "ShieldCheck" },
 ] as const;
 
 // ValueSet stays shared across sites and constrains target concepts by category.
