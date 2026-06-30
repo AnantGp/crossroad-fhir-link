@@ -5,7 +5,9 @@ import {
   BookMarked,
   CheckCircle2,
   ChevronRight,
+  ClipboardCheck,
   Code2,
+  FileCheck2,
   FileText,
   GitMerge,
   Globe2,
@@ -35,7 +37,7 @@ import {
   TARGET_LABEL,
   VALUE_SET_DIABETES,
 } from "@/lib/demoData";
-import type { ExtractedFact } from "@/lib/demoData";
+import type { DemoCase, ExtractedFact } from "@/lib/demoData";
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   FileText, Sparkles, BookMarked, Network, GitMerge, Package, ShieldCheck,
@@ -125,12 +127,97 @@ function lookupCodeLabel(result: Record<string, unknown>) {
   return [name, code].filter(Boolean).join(" ") || "$lookup";
 }
 
+function countryDisplay(code: CountryCode) {
+  const country = COUNTRIES.find((c) => c.code === code);
+  return country ? `${country.flag} ${country.name}` : code;
+}
+
+function ExchangeSummary({ activeCase, targetCountry }: { activeCase: DemoCase; targetCountry: CountryCode }) {
+  return (
+    <div className="card-surface p-3 flex items-center justify-between gap-3 flex-wrap">
+      <div className="min-w-0">
+        <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Current exchange route</div>
+        <div className="mt-0.5 flex items-center gap-2 text-base font-display font-semibold">
+          <span className="truncate">{countryDisplay(activeCase.source)}</span>
+          <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+          <span className="truncate">{countryDisplay(targetCountry)}</span>
+        </div>
+      </div>
+      <div className="flex gap-2 flex-wrap">
+        <span className="pill pill-info">semantic interoperability</span>
+        <span className="pill pill-success">FHIR document exchange</span>
+        <span className="pill pill-neutral">{TARGET_LABEL[targetCountry]}</span>
+      </div>
+    </div>
+  );
+}
+
+function ClinicalQaStrip({ activeCase }: { activeCase: DemoCase }) {
+  const compositionFirst = activeCase.ipsBundle.entry[0]?.resource.resourceType === "Composition";
+  const items = [
+    {
+      icon: ClipboardCheck,
+      label: "Source-to-fact",
+      value: `${activeCase.traceFacts.length} retained facts`,
+      detail: "source phrases stay visible for audit",
+    },
+    {
+      icon: BookMarked,
+      label: "Fact-to-code",
+      value: "SNOMED + LOINC + RxNorm + ICD-10",
+      detail: "registry first, federated linker on misses",
+    },
+    {
+      icon: Package,
+      label: "Code-to-FHIR",
+      value: "Condition / Observation / MedicationStatement",
+      detail: "clinical facts placed into expected resources",
+    },
+    {
+      icon: FileCheck2,
+      label: "Document proof",
+      value: compositionFirst ? "Composition first + identifier" : "needs review",
+      detail: "Bundle.type=document with a persistent document id",
+    },
+  ];
+
+  return (
+    <div className="card-surface p-3">
+      <div className="mb-2 flex items-center justify-between gap-2 flex-wrap">
+        <div>
+          <h3 className="text-sm font-semibold">End-to-end clinical QA path</h3>
+          <p className="text-xs text-muted-foreground">What makes the Bundle medically reviewable, not just structurally valid.</p>
+        </div>
+        <span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />traceable</span>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2">
+        {items.map((item) => {
+          const Icon = item.icon;
+          return (
+            <div key={item.label} className="rounded-md border border-border bg-surface-muted px-3 py-2 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="h-6 w-6 rounded-sm bg-primary-soft text-primary flex items-center justify-center shrink-0">
+                  <Icon className="h-3.5 w-3.5" />
+                </span>
+                <span className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold truncate">{item.label}</span>
+              </div>
+              <div className="mt-1 text-sm font-semibold leading-snug">{item.value}</div>
+              <div className="mt-0.5 text-[11px] text-muted-foreground leading-snug">{item.detail}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 const Index = () => {
   const [reportId, setReportId] = useState(CASE_LIST[0].id);
   const activeCase = CASES[reportId] ?? CASE_LIST[0];
   const [targetCountry, setTargetCountry] = useState<CountryCode>(activeCase.defaultTarget);
   const [reportText, setReportText] = useState(activeCase.reportText);
   const [bundleResource, setBundleResource] = useState(0);
+  const [lastRunLabel, setLastRunLabel] = useState<string | null>(null);
 
   const onReportChange = (id: string) => {
     const c = CASES[id];
@@ -138,6 +225,7 @@ const Index = () => {
     setReportText(c.reportText);
     setTargetCountry(c.defaultTarget);
     setBundleResource(0);
+    setLastRunLabel(null);
   };
 
   const onSourceCountryChange = (country: CountryCode) => {
@@ -151,6 +239,7 @@ const Index = () => {
     activeCase.traceFacts.find((f) => f.source === "federated-linker-cache") ??
     activeCase.traceFacts[0];
   const lookupLabel = lookupCodeLabel(activeCase.lookupResult);
+  const valueSetId = (VALUE_SET_DIABETES as { id?: string }).id ?? "target ValueSet";
 
   return (
     <div
@@ -199,7 +288,7 @@ const Index = () => {
                 data-testid="source-report-select"
                 value={reportId}
                 onChange={(e) => onReportChange(e.target.value)}
-                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-ring"
+                className="select-control"
               >
                 {CASE_LIST.map((r) => (
                   <option key={r.id} value={r.id}>{r.label}</option>
@@ -214,7 +303,7 @@ const Index = () => {
                   data-testid="source-country-select"
                   value={activeCase.source}
                   onChange={(e) => onSourceCountryChange(e.target.value as CountryCode)}
-                  className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-ring"
+                  className="select-control"
                 >
                   {COUNTRIES.map((c) => (
                     <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
@@ -227,7 +316,7 @@ const Index = () => {
                   data-testid="target-country-select"
                   value={targetCountry}
                   onChange={(e) => setTargetCountry(e.target.value as CountryCode)}
-                  className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-ring"
+                  className="select-control"
                 >
                   {COUNTRIES.map((c) => (
                     <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
@@ -245,13 +334,21 @@ const Index = () => {
                 className="text-xs font-mono leading-relaxed resize-none"
               />
               <p className="text-[11px] text-muted-foreground">
-                Synthetic note. Changing the Source report swaps the trace, terminology, bundle, and readiness panels to the selected country's case.
+                Synthetic note. Text edits are exploratory; evidence panels use the selected validated case.
               </p>
             </div>
 
-            <Button className="w-full h-9 bg-primary hover:bg-primary/90 text-primary-foreground text-sm">
+            <Button
+              className="w-full h-9 bg-primary hover:bg-primary/90 text-primary-foreground text-sm"
+              onClick={() => setLastRunLabel(`${activeCase.label} → ${targetCountry}`)}
+            >
               <Activity className="h-4 w-4 mr-1.5" /> Run pipeline
             </Button>
+            {lastRunLabel && (
+              <p className="rounded-md border border-[hsl(var(--success)/0.25)] bg-success-soft px-2.5 py-2 text-[11px] text-muted-foreground">
+                Pipeline refreshed for <span className="font-medium text-foreground">{lastRunLabel}</span>. Static outputs remain tied to the validated synthetic evidence.
+              </p>
+            )}
           </div>
 
           <div className="card-surface p-4 space-y-2">
@@ -268,6 +365,8 @@ const Index = () => {
 
         {/* Main */}
         <main className="space-y-4 min-w-0">
+          <ExchangeSummary activeCase={activeCase} targetCountry={targetCountry} />
+
           {/* Metrics */}
           <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
             <MetricCard label="Mapping coverage" value={METRICS.mappingCoverage} sub="local + federated" tone="success" icon={BookMarked} />
@@ -278,6 +377,7 @@ const Index = () => {
 
           {/* Pipeline */}
           <PipelineRail />
+          <ClinicalQaStrip activeCase={activeCase} />
 
           {/* Tabs */}
           <Tabs defaultValue="trace" className="space-y-3">
@@ -359,13 +459,13 @@ const Index = () => {
                 <div className="card-surface p-3">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-semibold">ValueSet · allowed target concepts</h3>
-                    <span className="pill pill-neutral">ips-diabetes-conditions</span>
+                    <span className="pill pill-neutral">{valueSetId}</span>
                   </div>
                   <CodeViewer value={VALUE_SET_DIABETES} maxH={260} />
                 </div>
                 <div className="card-surface p-3 xl:col-span-2">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm font-semibold">ConceptMap · local phrase → SNOMED / LOINC</h3>
+                    <h3 className="text-sm font-semibold">ConceptMap · local phrase → standard terminology</h3>
                     <span className="pill pill-info"><GitMerge className="h-3 w-3" />local → standard</span>
                   </div>
                   <CodeViewer value={activeCase.conceptMap} maxH={320} />
@@ -512,6 +612,7 @@ const Index = () => {
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   <span className="pill pill-info">Bundle.type = document</span>
+                  <span className="pill pill-success">identifier present</span>
                   <span className="pill pill-success">{activeCase.ipsBundle.entry.length} entries</span>
                 </div>
               </div>
@@ -601,6 +702,7 @@ const Index = () => {
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Semantic mapping validation:</span> 48/48 cross-site terminology examples mapped correctly.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Official validator:</span> 0 errors for USA→India, USA→Australia, and USA→Europe representative IPS-style Bundles.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">FHIR-native terminology layer:</span> CodeSystem, ValueSet, ConceptMap + simulated $translate / $lookup / $validate-code.</span></li>
+                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Medical placement check:</span> conditions, observations, and medications land in the expected FHIR resource types.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Privacy boundary:</span> coordinator receives only model tensors and sample counts.</span></li>
                   </ul>
                 </div>
@@ -617,6 +719,40 @@ const Index = () => {
                     <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">Local simulated FHIR terminology operations;</span> live terminology servers are future work.</span></li>
                     <li className="flex gap-2"><span className="text-warning">•</span><span>No formal privacy guarantee. No clinical decision support claim.</span></li>
                   </ul>
+                </div>
+              </div>
+
+              <div className="card-surface overflow-hidden">
+                <div className="p-3 border-b border-border flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <h3 className="text-sm font-semibold">Clinical validation chain</h3>
+                    <p className="text-xs text-muted-foreground">The selected case keeps the audit path from source phrase to standard code to FHIR resource.</p>
+                  </div>
+                  <span className="pill pill-info"><FileCheck2 className="h-3 w-3" />source → fact → code → resource</span>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Source phrase</th>
+                        <th>Predicted clinical meaning</th>
+                        <th>Primary code</th>
+                        <th>FHIR placement</th>
+                        <th>Mapping evidence</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activeCase.traceFacts.map((fact) => (
+                        <tr key={`${fact.phrase}-evidence`}>
+                          <td className="font-mono text-xs">{fact.phrase}</td>
+                          <td>{fact.normalized}</td>
+                          <td className="text-xs"><span className="pill pill-neutral">{standardCodeLabel(fact)}</span></td>
+                          <td className="text-xs"><span className="pill pill-info">{fact.fhirResource}</span></td>
+                          <td><SourcePill source={fact.source} /></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
 

@@ -45,4 +45,13 @@ describe("report selection pipeline state", () => {
     expect(activeState).toHaveAttribute("data-bundle-id", "ips-bundle-demo-aus-003");
     expect(activeState).toHaveAttribute("data-source-country", "AUS");
   });
+
+  it("makes the run action visibly refresh the selected evidence case", () => {
+    render(<Index />);
+
+    fireEvent.click(screen.getByRole("button", { name: /run pipeline/i }));
+
+    expect(screen.getByText(/Pipeline refreshed for/i)).toBeInTheDocument();
+    expect(screen.getByText("USA · T2DM follow-up (default) → IND")).toBeInTheDocument();
+  });
 });

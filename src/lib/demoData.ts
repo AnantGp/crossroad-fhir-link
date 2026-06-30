@@ -42,7 +42,14 @@ export interface DemoCase {
   lookupResult: Record<string, unknown>;
   validateCodeResult: Record<string, unknown>;
   bundleTitle: string;
-  ipsBundle: { resourceType: "Bundle"; id: string; type: "document"; timestamp: string; entry: Array<{ fullUrl: string; resource: Record<string, unknown> & { resourceType: string; id?: string } }> };
+  ipsBundle: {
+    resourceType: "Bundle";
+    id: string;
+    identifier: { system: string; value: string };
+    type: "document";
+    timestamp: string;
+    entry: Array<{ fullUrl: string; resource: Record<string, unknown> & { resourceType: string; id?: string } }>;
+  };
 }
 
 // ----- USA case -----
@@ -83,7 +90,6 @@ const USA_CASE: DemoCase = {
     url: "https://ips-agent.demo/ConceptMap/local-usa-to-ips-diabetes",
     status: "active",
     sourceUri: "https://ips-agent.demo/CodeSystem/local-usa-diabetes-terms",
-    targetUri: "http://snomed.info/sct",
     group: [
       {
         source: "https://ips-agent.demo/CodeSystem/local-usa-diabetes-terms",
@@ -98,6 +104,14 @@ const USA_CASE: DemoCase = {
         target: "http://loinc.org",
         element: [
           { code: "A1c", display: "Hemoglobin A1c (local)", target: [{ code: "4548-4", display: "Hemoglobin A1c/Hemoglobin.total in Blood", equivalence: "equivalent" }] },
+        ],
+      },
+      {
+        source: "https://ips-agent.demo/CodeSystem/local-usa-diabetes-terms",
+        target: "http://www.nlm.nih.gov/research/umls/rxnorm",
+        element: [
+          { code: "metformin", display: "metformin (local)", target: [{ code: "6809", display: "metformin", equivalence: "equivalent" }] },
+          { code: "lisinopril", display: "lisinopril (local)", target: [{ code: "29046", display: "lisinopril", equivalence: "equivalent" }] },
         ],
       },
     ],
@@ -126,13 +140,14 @@ const USA_CASE: DemoCase = {
     resourceType: "Parameters",
     parameter: [
       { name: "result", valueBoolean: true },
-      { name: "message", valueString: "Code 44054006 from SNOMED CT is in ValueSet ips-diabetes-conditions." },
+      { name: "message", valueString: "Code 44054006 from SNOMED CT is in ValueSet ips-diabetes-target-concepts." },
     ],
   },
   bundleTitle: "International Patient Summary — Synthetic USA T2DM",
   ipsBundle: {
     resourceType: "Bundle",
     id: "ips-bundle-demo-usa-001",
+    identifier: { system: "https://ips-agent.demo/BundleIdentifier", value: "ips-bundle-demo-usa-001" },
     type: "document",
     timestamp: "2026-06-29T14:22:11Z",
     entry: [
@@ -214,7 +229,6 @@ const IND_CASE: DemoCase = {
     url: "https://ips-agent.demo/ConceptMap/local-ind-to-ips-diabetes",
     status: "active",
     sourceUri: "https://ips-agent.demo/CodeSystem/local-ind-diabetes-terms",
-    targetUri: "http://snomed.info/sct",
     group: [
       {
         source: "https://ips-agent.demo/CodeSystem/local-ind-diabetes-terms",
@@ -230,6 +244,14 @@ const IND_CASE: DemoCase = {
         element: [
           { code: "HbA1c", display: "HbA1c (IN)", target: [{ code: "4548-4", display: "Hemoglobin A1c/Hemoglobin.total in Blood", equivalence: "equivalent" }] },
           { code: "FBS", display: "Fasting blood sugar (IN)", target: [{ code: "1558-6", display: "Fasting glucose [Mass/volume] in Serum or Plasma", equivalence: "equivalent" }] },
+        ],
+      },
+      {
+        source: "https://ips-agent.demo/CodeSystem/local-ind-diabetes-terms",
+        target: "http://www.nlm.nih.gov/research/umls/rxnorm",
+        element: [
+          { code: "tab-metformin", display: "tab metformin (IN)", target: [{ code: "6809", display: "metformin", equivalence: "equivalent" }] },
+          { code: "tab-amlodipine", display: "tab amlodipine (IN)", target: [{ code: "17767", display: "amlodipine", equivalence: "equivalent" }] },
         ],
       },
     ],
@@ -258,13 +280,14 @@ const IND_CASE: DemoCase = {
     resourceType: "Parameters",
     parameter: [
       { name: "result", valueBoolean: true },
-      { name: "message", valueString: "Code 44054006 from SNOMED CT is in ValueSet ips-diabetes-conditions." },
+      { name: "message", valueString: "Code 44054006 from SNOMED CT is in ValueSet ips-diabetes-target-concepts." },
     ],
   },
   bundleTitle: "International Patient Summary — Synthetic India T2DM",
   ipsBundle: {
     resourceType: "Bundle",
     id: "ips-bundle-demo-ind-002",
+    identifier: { system: "https://ips-agent.demo/BundleIdentifier", value: "ips-bundle-demo-ind-002" },
     type: "document",
     timestamp: "2026-06-29T14:22:11Z",
     entry: [
@@ -320,7 +343,7 @@ const AUS_CASE: DemoCase = {
     { phrase: "raised BP", category: "Condition", normalized: "Hypertension", snomed: "38341003", icd10: "I10", source: "federated-linker-cache", fhirResource: "Condition" },
     { phrase: "HbA1c 7.2%", category: "Observation", normalized: "Hemoglobin A1c/Hemoglobin.total in Blood", loinc: "4548-4", source: "local-registry", fhirResource: "Observation" },
     { phrase: "eGFR 78", category: "Observation", normalized: "Glomerular filtration rate/1.73 sq M.predicted [Vol Rate/Area] in Serum or Plasma by Creatinine-based formula (CKD-EPI 2021)", loinc: "98979-8", source: "federated-linker-cache", fhirResource: "Observation" },
-    { phrase: "Metformin XR 1 g mane", category: "MedicationStatement", normalized: "metformin (extended release)", rxnorm: "860975", source: "local-registry", fhirResource: "MedicationStatement" },
+    { phrase: "Metformin XR 1 g mane", category: "MedicationStatement", normalized: "metformin; extended release noted in source", rxnorm: "6809", source: "local-registry", fhirResource: "MedicationStatement" },
     { phrase: "perindopril 4 mg", category: "MedicationStatement", normalized: "perindopril", rxnorm: "54552", source: "federated-linker-new", fhirResource: "MedicationStatement" },
   ],
   codeSystem: {
@@ -346,7 +369,6 @@ const AUS_CASE: DemoCase = {
     url: "https://ips-agent.demo/ConceptMap/local-aus-to-ips-diabetes",
     status: "active",
     sourceUri: "https://ips-agent.demo/CodeSystem/local-aus-diabetes-terms",
-    targetUri: "http://snomed.info/sct",
     group: [
       { source: "https://ips-agent.demo/CodeSystem/local-aus-diabetes-terms", target: "http://snomed.info/sct",
         element: [
@@ -357,6 +379,11 @@ const AUS_CASE: DemoCase = {
         element: [
           { code: "HbA1c", display: "Glycated haemoglobin (AU)", target: [{ code: "4548-4", display: "Hemoglobin A1c/Hemoglobin.total in Blood", equivalence: "equivalent" }] },
           { code: "eGFR", display: "eGFR (AU)", target: [{ code: "98979-8", display: "Glomerular filtration rate predicted by CKD-EPI 2021", equivalence: "equivalent" }] },
+        ]},
+      { source: "https://ips-agent.demo/CodeSystem/local-aus-diabetes-terms", target: "http://www.nlm.nih.gov/research/umls/rxnorm",
+        element: [
+          { code: "metformin-XR", display: "metformin XR (AU)", target: [{ code: "6809", display: "metformin", equivalence: "equivalent" }] },
+          { code: "perindopril", display: "perindopril (AU)", target: [{ code: "54552", display: "perindopril", equivalence: "equivalent" }] },
         ]},
     ],
   },
@@ -384,13 +411,14 @@ const AUS_CASE: DemoCase = {
     resourceType: "Parameters",
     parameter: [
       { name: "result", valueBoolean: true },
-      { name: "message", valueString: "Code 44054006 from SNOMED CT is in ValueSet ips-diabetes-conditions." },
+      { name: "message", valueString: "Code 44054006 from SNOMED CT is in ValueSet ips-diabetes-target-concepts." },
     ],
   },
   bundleTitle: "International Patient Summary — Synthetic Australia T2DM",
   ipsBundle: {
     resourceType: "Bundle",
     id: "ips-bundle-demo-aus-003",
+    identifier: { system: "https://ips-agent.demo/BundleIdentifier", value: "ips-bundle-demo-aus-003" },
     type: "document",
     timestamp: "2026-06-29T14:22:11Z",
     entry: [
@@ -423,8 +451,8 @@ const AUS_CASE: DemoCase = {
         code: { coding: [{ system: "http://loinc.org", code: "98979-8", display: "Glomerular filtration rate predicted by CKD-EPI 2021" }] },
         valueQuantity: { value: 78, unit: "mL/min/{1.73_m2}", system: "http://unitsofmeasure.org", code: "mL/min/{1.73_m2}" }, subject: { reference: "urn:uuid:patient-1" } } },
       { fullUrl: "urn:uuid:med-metformin", resource: { resourceType: "MedicationStatement", id: "med-metformin", status: "active",
-        medicationCodeableConcept: { coding: [{ system: "http://www.nlm.nih.gov/research/umls/rxnorm", code: "860975", display: "metformin extended release" }] },
-        subject: { reference: "urn:uuid:patient-1" }, dosage: [{ text: "1 g mane (modified release)" }] } },
+        medicationCodeableConcept: { coding: [{ system: "http://www.nlm.nih.gov/research/umls/rxnorm", code: "6809", display: "metformin" }] },
+        subject: { reference: "urn:uuid:patient-1" }, dosage: [{ text: "1 g mane; modified release noted in source" }] } },
       { fullUrl: "urn:uuid:med-perindopril", resource: { resourceType: "MedicationStatement", id: "med-perindopril", status: "active",
         medicationCodeableConcept: { coding: [{ system: "http://www.nlm.nih.gov/research/umls/rxnorm", code: "54552", display: "perindopril" }] },
         subject: { reference: "urn:uuid:patient-1" }, dosage: [{ text: "4 mg" }] } },
@@ -473,7 +501,6 @@ const EUR_CASE: DemoCase = {
     url: "https://ips-agent.demo/ConceptMap/local-eur-to-ips-diabetes",
     status: "active",
     sourceUri: "https://ips-agent.demo/CodeSystem/local-eur-diabetes-terms",
-    targetUri: "http://snomed.info/sct",
     group: [
       { source: "https://ips-agent.demo/CodeSystem/local-eur-diabetes-terms", target: "http://snomed.info/sct",
         element: [
@@ -485,6 +512,11 @@ const EUR_CASE: DemoCase = {
         element: [
           { code: "glycated-haemoglobin", display: "Glycated haemoglobin (EN-GB)", target: [{ code: "4548-4", display: "Hemoglobin A1c/Hemoglobin.total in Blood", equivalence: "equivalent" }] },
           { code: "creatinine", display: "Creatinine (EU)", target: [{ code: "2160-0", display: "Creatinine [Mass/volume] in Serum or Plasma", equivalence: "equivalent" }] },
+        ]},
+      { source: "https://ips-agent.demo/CodeSystem/local-eur-diabetes-terms", target: "http://www.nlm.nih.gov/research/umls/rxnorm",
+        element: [
+          { code: "metformine", display: "metformine (FR)", target: [{ code: "6809", display: "metformin", equivalence: "equivalent" }] },
+          { code: "ramipril", display: "ramipril (EU)", target: [{ code: "35296", display: "ramipril", equivalence: "equivalent" }] },
         ]},
     ],
   },
@@ -512,13 +544,14 @@ const EUR_CASE: DemoCase = {
     resourceType: "Parameters",
     parameter: [
       { name: "result", valueBoolean: true },
-      { name: "message", valueString: "Code 44054006 from SNOMED CT is in ValueSet ips-diabetes-conditions." },
+      { name: "message", valueString: "Code 44054006 from SNOMED CT is in ValueSet ips-diabetes-target-concepts." },
     ],
   },
   bundleTitle: "International Patient Summary — Synthetic EU T2DM",
   ipsBundle: {
     resourceType: "Bundle",
     id: "ips-bundle-demo-eur-004",
+    identifier: { system: "https://ips-agent.demo/BundleIdentifier", value: "ips-bundle-demo-eur-004" },
     type: "document",
     timestamp: "2026-06-29T14:22:11Z",
     entry: [
@@ -572,7 +605,7 @@ export const CASE_LIST: DemoCase[] = [USA_CASE, IND_CASE, AUS_CASE, EUR_CASE];
 
 export const METRICS = {
   mappingCoverage: "100%",
-  fhirBundleType: "document (IPS-style)",
+  fhirBundleType: "document",
   validatorErrors: 0,
   transferAccuracy: "48 / 48",
 };
@@ -597,11 +630,11 @@ export const PIPELINE_STEPS = [
   { key: "readiness", label: "Readiness / Validation", icon: "ShieldCheck" },
 ] as const;
 
-// ValueSet stays shared (target IPS profile concepts)
+// ValueSet stays shared across sites and constrains target concepts by category.
 export const VALUE_SET_DIABETES = {
   resourceType: "ValueSet",
-  id: "ips-diabetes-conditions",
-  url: "https://ips-agent.demo/ValueSet/ips-diabetes-conditions",
+  id: "ips-diabetes-target-concepts",
+  url: "https://ips-agent.demo/ValueSet/ips-diabetes-target-concepts",
   status: "active",
   compose: {
     include: [
@@ -610,6 +643,25 @@ export const VALUE_SET_DIABETES = {
         concept: [
           { code: "44054006", display: "Diabetes mellitus type 2" },
           { code: "38341003", display: "Hypertensive disorder" },
+        ],
+      },
+      {
+        system: "http://loinc.org",
+        concept: [
+          { code: "4548-4", display: "Hemoglobin A1c/Hemoglobin.total in Blood" },
+          { code: "2160-0", display: "Creatinine [Mass/volume] in Serum or Plasma" },
+          { code: "1558-6", display: "Fasting glucose [Mass/volume] in Serum or Plasma" },
+          { code: "98979-8", display: "Glomerular filtration rate predicted by CKD-EPI 2021" },
+        ],
+      },
+      {
+        system: "http://www.nlm.nih.gov/research/umls/rxnorm",
+        concept: [
+          { code: "6809", display: "metformin" },
+          { code: "29046", display: "lisinopril" },
+          { code: "17767", display: "amlodipine" },
+          { code: "54552", display: "perindopril" },
+          { code: "35296", display: "ramipril" },
         ],
       },
     ],

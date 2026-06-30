@@ -87,6 +87,11 @@
     box-shadow: var(--shadow-card);
   }
 
+  .select-control {
+    @apply h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm outline-none transition-colors;
+    @apply hover:border-[hsl(var(--primary)/0.45)] focus:border-[hsl(var(--primary))] focus:ring-2 focus:ring-ring;
+  }
+
   .code-block {
     @apply rounded-md p-3 text-[12px] leading-relaxed font-mono overflow-auto;
     background: hsl(var(--code-bg));
@@ -103,6 +108,9 @@
   }
   .data-table td {
     @apply px-3 py-2 border-b border-border align-top;
+  }
+  .data-table tbody tr {
+    @apply transition-colors;
   }
   .data-table tr:last-child td { @apply border-b-0; }
 }
