@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import {
@@ -36,6 +35,7 @@ import {
   TARGET_LABEL,
   VALUE_SET_DIABETES,
 } from "@/lib/demoData";
+import type { ExtractedFact } from "@/lib/demoData";
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   FileText, Sparkles, BookMarked, Network, GitMerge, Package, ShieldCheck,
@@ -105,10 +105,29 @@ function SourcePill({ source }: { source: "local-registry" | "federated-linker-c
   return <span className="pill pill-warning"><Sparkles className="h-3 w-3" />federated · new</span>;
 }
 
+function standardCodeLabel(fact: ExtractedFact) {
+  if (fact.loinc) return `LOINC ${fact.loinc}`;
+  if (fact.rxnorm) return `RxNorm ${fact.rxnorm}`;
+  if (fact.snomed) return `SNOMED ${fact.snomed}`;
+  if (fact.icd10) return `ICD-10 ${fact.icd10}`;
+  return "standard code";
+}
+
+function lookupCodeLabel(result: Record<string, unknown>) {
+  const params = result.parameter;
+  if (!Array.isArray(params)) return "$lookup";
+
+  const codeParam = params.find((p) => typeof p === "object" && p && "name" in p && p.name === "code");
+  const nameParam = params.find((p) => typeof p === "object" && p && "name" in p && p.name === "name");
+  const code = codeParam && "valueString" in codeParam ? String(codeParam.valueString) : "";
+  const name = nameParam && "valueString" in nameParam ? String(nameParam.valueString) : "";
+
+  return [name, code].filter(Boolean).join(" ") || "$lookup";
+}
+
 const Index = () => {
   const [reportId, setReportId] = useState(CASE_LIST[0].id);
-  const activeCase = CASES[reportId];
-  const [sourceCountry, setSourceCountry] = useState<CountryCode>(activeCase.source);
+  const activeCase = CASES[reportId] ?? CASE_LIST[0];
   const [targetCountry, setTargetCountry] = useState<CountryCode>(activeCase.defaultTarget);
   const [reportText, setReportText] = useState(activeCase.reportText);
   const [bundleResource, setBundleResource] = useState(0);
@@ -117,15 +136,32 @@ const Index = () => {
     const c = CASES[id];
     setReportId(id);
     setReportText(c.reportText);
-    setSourceCountry(c.source);
     setTargetCountry(c.defaultTarget);
     setBundleResource(0);
   };
 
+  const onSourceCountryChange = (country: CountryCode) => {
+    const nextCase = CASE_LIST.find((c) => c.source === country);
+    if (nextCase) onReportChange(nextCase.id);
+  };
+
   const readinessRows = READINESS[targetCountry];
+  const cacheFact =
+    activeCase.traceFacts.find((f) => f.source === "federated-linker-new") ??
+    activeCase.traceFacts.find((f) => f.source === "federated-linker-cache") ??
+    activeCase.traceFacts[0];
+  const lookupLabel = lookupCodeLabel(activeCase.lookupResult);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="min-h-screen bg-background"
+      data-testid="active-case-state"
+      data-case-id={activeCase.id}
+      data-code-system-id={(activeCase.codeSystem as { id?: string }).id}
+      data-bundle-id={activeCase.ipsBundle.id}
+      data-source-country={activeCase.source}
+      data-target-country={targetCountry}
+    >
       {/* Top bar */}
       <header className="border-b border-border bg-surface">
         <div className="px-4 md:px-6 py-3 flex items-center justify-between gap-4 flex-wrap">
@@ -159,38 +195,44 @@ const Index = () => {
 
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Source report</Label>
-              <Select value={reportId} onValueChange={onReportChange}>
-                <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {CASE_LIST.map((r) => (
-                    <SelectItem key={r.id} value={r.id} className="text-sm">{r.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select
+                data-testid="source-report-select"
+                value={reportId}
+                onChange={(e) => onReportChange(e.target.value)}
+                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-ring"
+              >
+                {CASE_LIST.map((r) => (
+                  <option key={r.id} value={r.id}>{r.label}</option>
+                ))}
+              </select>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Source</Label>
-                <Select value={sourceCountry} onValueChange={(v) => setSourceCountry(v as CountryCode)}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {COUNTRIES.map((c) => (
-                      <SelectItem key={c.code} value={c.code} className="text-sm">{c.flag} {c.code}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <select
+                  data-testid="source-country-select"
+                  value={activeCase.source}
+                  onChange={(e) => onSourceCountryChange(e.target.value as CountryCode)}
+                  className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-ring"
+                >
+                  {COUNTRIES.map((c) => (
+                    <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Target</Label>
-                <Select value={targetCountry} onValueChange={(v) => setTargetCountry(v as CountryCode)}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {COUNTRIES.map((c) => (
-                      <SelectItem key={c.code} value={c.code} className="text-sm">{c.flag} {c.code}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <select
+                  data-testid="target-country-select"
+                  value={targetCountry}
+                  onChange={(e) => setTargetCountry(e.target.value as CountryCode)}
+                  className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-ring"
+                >
+                  {COUNTRIES.map((c) => (
+                    <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -338,7 +380,7 @@ const Index = () => {
                 <div className="card-surface p-3">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-semibold">Simulated $lookup</h3>
-                    <span className="pill pill-info">LOINC 4548-4</span>
+                    <span className="pill pill-info">{lookupLabel}</span>
                   </div>
                   <CodeViewer value={activeCase.lookupResult} maxH={240} />
                 </div>
@@ -359,15 +401,15 @@ const Index = () => {
                   <div className="rounded-md border border-border p-3 bg-surface-muted">
                     <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">First lookup — unknown phrase</div>
                     <div className="mt-1 text-sm">
-                      <code className="font-mono">"Serum creatinine"</code> not found in local registry →
-                      federated linker resolves to <span className="pill pill-info">LOINC 2160-0</span> →
+                      <code className="font-mono">"{cacheFact.phrase}"</code> not found in local registry →
+                      federated linker resolves to <span className="pill pill-info">{standardCodeLabel(cacheFact)}</span> →
                       new <code className="font-mono">ConceptMap</code> entry written to local cache.
                     </div>
                   </div>
                   <div className="rounded-md border border-border p-3 bg-success-soft">
                     <div className="text-[11px] uppercase tracking-wide text-success font-semibold">Second lookup — same phrase</div>
                     <div className="mt-1 text-sm">
-                      <code className="font-mono">"Serum creatinine"</code> resolved from
+                      <code className="font-mono">"{cacheFact.phrase}"</code> resolved from
                       <span className="pill pill-success ml-1"><CheckCircle2 className="h-3 w-3" />local learned cache</span>
                       — no federated round-trip.
                     </div>
@@ -465,7 +507,7 @@ const Index = () => {
                 <div>
                   <h3 className="text-sm font-semibold">{activeCase.bundleTitle}</h3>
                   <p className="text-xs text-muted-foreground">
-                    Composition-first IPS-style FHIR R4 document Bundle · {sourceCountry} → {targetCountry} ({TARGET_LABEL[targetCountry]}). Representative cross-border Bundles pass the official validator with <span className="text-success font-medium">0 errors</span>.
+                    Composition-first IPS-style FHIR R4 document Bundle · {activeCase.source} → {targetCountry} ({TARGET_LABEL[targetCountry]}). Representative cross-border Bundles pass the official validator with <span className="text-success font-medium">0 errors</span>.
                   </p>
                 </div>
                 <div className="flex gap-2 flex-wrap">
