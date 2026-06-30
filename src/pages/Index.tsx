@@ -211,6 +211,169 @@ function ClinicalQaStrip({ activeCase }: { activeCase: DemoCase }) {
   );
 }
 
+type FhirCoding = { system?: string; code?: string; display?: string };
+type CodeableLike = { coding?: FhirCoding[] };
+type DemoFhirResource = Record<string, unknown> & {
+  resourceType: string;
+  id?: string;
+  code?: CodeableLike;
+  medicationCodeableConcept?: CodeableLike;
+  valueQuantity?: { value?: string | number; unit?: string; code?: string };
+  dosage?: Array<{ text?: string }>;
+  gender?: string;
+  birthDate?: string;
+};
+
+const RECEIVER_REPORT_TITLE: Record<CountryCode, string> = {
+  USA: "Final US receiver report",
+  IND: "Final Indian receiver report",
+  AUS: "Final Australian receiver report",
+  EUR: "Final European receiver report",
+};
+
+const RECEIVER_REPORT_NOTES: Record<CountryCode, string[]> = {
+  USA: [
+    "US Core readiness view; race and ethnicity are flagged because they are not present in the synthetic source note.",
+    "FHIR IPS remains the exchange artifact; this is a readable clinical handover view.",
+  ],
+  IND: [
+    "ABDM readiness view; ABHA identifier is flagged because no real national identifier exists for synthetic data.",
+    "The receiving Indian system can store accepted ConceptMap mappings in its local learned cache for reuse.",
+  ],
+  AUS: [
+    "AU Base readiness view; IHI is flagged because the synthetic patient has no real Australian identifier.",
+    "Medication and lab concepts remain coded through standard terminologies for downstream EHR import.",
+  ],
+  EUR: [
+    "European IPS readiness view; member-state-specific extensions are intentionally out of scope for the demo.",
+    "The report is a readable rendering of the IPS Bundle, not a claim of national certification.",
+  ],
+};
+
+function systemLabel(system?: string) {
+  if (!system) return "Code";
+  if (system.includes("snomed")) return "SNOMED CT";
+  if (system.includes("loinc")) return "LOINC";
+  if (system.includes("rxnorm")) return "RxNorm";
+  if (system.includes("icd-10")) return "ICD-10";
+  return system;
+}
+
+function getCodings(resource: DemoFhirResource) {
+  const codeable = resource.resourceType === "MedicationStatement" ? resource.medicationCodeableConcept : resource.code;
+  return codeable?.coding ?? [];
+}
+
+function clinicalDisplay(resource: DemoFhirResource) {
+  return getCodings(resource)[0]?.display ?? resource.id ?? resource.resourceType;
+}
+
+function clinicalCodeLabels(resource: DemoFhirResource) {
+  return getCodings(resource)
+    .filter((coding) => coding.code)
+    .map((coding) => `${systemLabel(coding.system)} ${coding.code}`);
+}
+
+function resourceDetail(resource: DemoFhirResource) {
+  if (resource.resourceType === "Observation" && resource.valueQuantity?.value !== undefined) {
+    const unit = resource.valueQuantity.unit ?? resource.valueQuantity.code ?? "";
+    return `${resource.valueQuantity.value}${unit ? ` ${unit}` : ""}`;
+  }
+
+  if (resource.resourceType === "MedicationStatement") {
+    return resource.dosage?.map((dose) => dose.text).filter(Boolean).join("; ") || "active";
+  }
+
+  return "active problem";
+}
+
+function ReceiverReport({ activeCase, targetCountry }: { activeCase: DemoCase; targetCountry: CountryCode }) {
+  const resources = activeCase.ipsBundle.entry.map((entry) => entry.resource as DemoFhirResource);
+  const patient = resources.find((resource) => resource.resourceType === "Patient");
+  const conditions = resources.filter((resource) => resource.resourceType === "Condition");
+  const observations = resources.filter((resource) => resource.resourceType === "Observation");
+  const medications = resources.filter((resource) => resource.resourceType === "MedicationStatement");
+  const sourceCountry = COUNTRIES.find((country) => country.code === activeCase.source);
+  const target = COUNTRIES.find((country) => country.code === targetCountry);
+
+  const sections = [
+    { title: "Problems", resources: conditions },
+    { title: "Results", resources: observations },
+    { title: "Medications", resources: medications },
+  ];
+
+  return (
+    <div className="card-surface overflow-hidden" data-testid="receiver-report">
+      <div className="p-3 border-b border-border flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <h3 className="text-sm font-semibold flex items-center gap-2">
+            <FileCheck2 className="h-4 w-4 text-primary" /> {RECEIVER_REPORT_TITLE[targetCountry]}
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Human-readable receiver view generated from the FHIR IPS Bundle. The Bundle remains the source of truth for system exchange.
+          </p>
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          <span className="pill pill-info">{sourceCountry?.flag} {activeCase.source} source</span>
+          <span className="pill pill-success">{target?.flag} {targetCountry} receiver</span>
+        </div>
+      </div>
+
+      <div className="p-3 space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <div className="rounded-md border border-border bg-surface-muted px-3 py-2">
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Patient</div>
+            <div className="mt-1 text-sm font-medium">Synthetic patient</div>
+            <div className="text-xs text-muted-foreground">{patient?.gender ?? "unknown"} · DOB {patient?.birthDate ?? "not available"}</div>
+          </div>
+          <div className="rounded-md border border-border bg-surface-muted px-3 py-2">
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Receiver format</div>
+            <div className="mt-1 text-sm font-medium">{TARGET_LABEL[targetCountry]}</div>
+            <div className="text-xs text-muted-foreground">readiness-only rendering, not certification</div>
+          </div>
+          <div className="rounded-md border border-border bg-surface-muted px-3 py-2">
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Source document</div>
+            <div className="mt-1 text-sm font-medium">{activeCase.ipsBundle.identifier.value}</div>
+            <div className="text-xs text-muted-foreground">FHIR Bundle.type=document</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-3">
+          {sections.map((section) => (
+            <div key={section.title} className="rounded-md border border-border overflow-hidden">
+              <div className="bg-surface-muted px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">
+                {section.title}
+              </div>
+              <div className="divide-y divide-border">
+                {section.resources.map((resource) => (
+                  <div key={resource.id} className="px-3 py-2">
+                    <div className="text-sm font-medium">{clinicalDisplay(resource)}</div>
+                    <div className="text-xs text-muted-foreground">{resourceDetail(resource)}</div>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {clinicalCodeLabels(resource).map((label) => (
+                        <span key={label} className="pill pill-neutral">{label}</span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-md border border-[hsl(var(--warning)/0.35)] bg-warning-soft px-3 py-2">
+          <div className="text-[11px] uppercase tracking-wide text-warning-foreground font-semibold">Receiver handover notes</div>
+          <ul className="mt-1 space-y-1 text-xs text-muted-foreground list-disc pl-4">
+            {RECEIVER_REPORT_NOTES[targetCountry].map((note) => (
+              <li key={note}>{note}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const Index = () => {
   const [reportId, setReportId] = useState(CASE_LIST[0].id);
   const activeCase = CASES[reportId] ?? CASE_LIST[0];
@@ -616,6 +779,8 @@ const Index = () => {
                   <span className="pill pill-success">{activeCase.ipsBundle.entry.length} entries</span>
                 </div>
               </div>
+
+              <ReceiverReport activeCase={activeCase} targetCountry={targetCountry} />
 
               <div className="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-3">
                 <div className="card-surface p-2">

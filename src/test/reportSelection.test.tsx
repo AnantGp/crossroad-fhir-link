@@ -6,6 +6,13 @@ function chooseSelectOption(triggerTestId: string, value: string) {
   fireEvent.change(screen.getByTestId(triggerTestId), { target: { value } });
 }
 
+function openBundleTab() {
+  const tab = screen.getByRole("tab", { name: /FHIR IPS Bundle/i });
+  fireEvent.pointerDown(tab, { button: 0, buttons: 1, pointerId: 1 });
+  fireEvent.mouseDown(tab, { button: 0, buttons: 1 });
+  fireEvent.click(tab);
+}
+
 describe("report selection pipeline state", () => {
   it("swaps trace rows and terminology artifacts when the source report changes", async () => {
     render(<Index />);
@@ -53,5 +60,33 @@ describe("report selection pipeline state", () => {
 
     expect(screen.getByText(/Pipeline refreshed for/i)).toBeInTheDocument();
     expect(screen.getByText("USA · T2DM follow-up (default) → IND")).toBeInTheDocument();
+  });
+
+  it("renders a target-specific final receiver report for every destination", async () => {
+    render(<Index />);
+
+    openBundleTab();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("receiver-report")).toHaveTextContent("Final Indian receiver report");
+    });
+
+    chooseSelectOption("target-country-select", "USA");
+    await waitFor(() => {
+      expect(screen.getByTestId("receiver-report")).toHaveTextContent("Final US receiver report");
+      expect(screen.getByTestId("receiver-report")).toHaveTextContent("US Core / IPS-style receiver");
+    });
+
+    chooseSelectOption("target-country-select", "AUS");
+    await waitFor(() => {
+      expect(screen.getByTestId("receiver-report")).toHaveTextContent("Final Australian receiver report");
+      expect(screen.getByTestId("receiver-report")).toHaveTextContent("AU Base / IPS-style receiver");
+    });
+
+    chooseSelectOption("target-country-select", "EUR");
+    await waitFor(() => {
+      expect(screen.getByTestId("receiver-report")).toHaveTextContent("Final European receiver report");
+      expect(screen.getByTestId("receiver-report")).toHaveTextContent("EU IPS UV receiver");
+    });
   });
 });
