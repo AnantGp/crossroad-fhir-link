@@ -69,24 +69,28 @@ describe("report selection pipeline state", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("receiver-report")).toHaveTextContent("Final Indian receiver report");
+      expect(screen.getByRole("button", { name: /Download IND PDF/i })).toBeInTheDocument();
     });
 
     chooseSelectOption("target-country-select", "USA");
     await waitFor(() => {
       expect(screen.getByTestId("receiver-report")).toHaveTextContent("Final US receiver report");
       expect(screen.getByTestId("receiver-report")).toHaveTextContent("US Core / IPS-style receiver");
+      expect(screen.getByRole("button", { name: /Download USA PDF/i })).toBeInTheDocument();
     });
 
     chooseSelectOption("target-country-select", "AUS");
     await waitFor(() => {
       expect(screen.getByTestId("receiver-report")).toHaveTextContent("Final Australian receiver report");
       expect(screen.getByTestId("receiver-report")).toHaveTextContent("AU Base / IPS-style receiver");
+      expect(screen.getByRole("button", { name: /Download AUS PDF/i })).toBeInTheDocument();
     });
 
     chooseSelectOption("target-country-select", "EUR");
     await waitFor(() => {
       expect(screen.getByTestId("receiver-report")).toHaveTextContent("Final European receiver report");
       expect(screen.getByTestId("receiver-report")).toHaveTextContent("EU IPS UV receiver");
+      expect(screen.getByRole("button", { name: /Download EUR PDF/i })).toBeInTheDocument();
     });
   });
 });

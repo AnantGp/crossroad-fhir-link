@@ -7,6 +7,7 @@ import {
   ChevronRight,
   ClipboardCheck,
   Code2,
+  Download,
   FileCheck2,
   FileText,
   GitMerge,
@@ -287,6 +288,145 @@ function resourceDetail(resource: DemoFhirResource) {
   return "active problem";
 }
 
+function sanitizePdfText(value: string) {
+  return value
+    .normalize("NFKD")
+    .replace(/[^\x20-\x7E]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function escapePdfText(value: string) {
+  return sanitizePdfText(value).replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+}
+
+function wrapPdfLine(value: string, maxLength = 92) {
+  const words = sanitizePdfText(value).split(" ");
+  const lines: string[] = [];
+  let current = "";
+
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+    if (next.length > maxLength && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = next;
+    }
+  }
+
+  if (current) lines.push(current);
+  return lines.length ? lines : [""];
+}
+
+function buildReceiverReportLines(activeCase: DemoCase, targetCountry: CountryCode) {
+  const resources = activeCase.ipsBundle.entry.map((entry) => entry.resource as DemoFhirResource);
+  const patient = resources.find((resource) => resource.resourceType === "Patient");
+  const sourceCountry = COUNTRIES.find((country) => country.code === activeCase.source);
+  const target = COUNTRIES.find((country) => country.code === targetCountry);
+  const byType = (resourceType: string) => resources.filter((resource) => resource.resourceType === resourceType);
+
+  const lines: string[] = [
+    RECEIVER_REPORT_TITLE[targetCountry],
+    "Cross-Border IPS AI Agent",
+    `Route: ${sourceCountry?.name ?? activeCase.source} to ${target?.name ?? targetCountry}`,
+    `Receiver format: ${TARGET_LABEL[targetCountry]}`,
+    `Source FHIR document: ${activeCase.ipsBundle.identifier.value}`,
+    "FHIR Bundle.type: document",
+    "",
+    "Patient",
+    `Synthetic patient | ${patient?.gender ?? "unknown"} | DOB ${patient?.birthDate ?? "not available"}`,
+    "",
+    "Problems",
+    ...byType("Condition").map((resource) => `${clinicalDisplay(resource)} | ${clinicalCodeLabels(resource).join(", ")} | ${resourceDetail(resource)}`),
+    "",
+    "Results",
+    ...byType("Observation").map((resource) => `${clinicalDisplay(resource)} | ${resourceDetail(resource)} | ${clinicalCodeLabels(resource).join(", ")}`),
+    "",
+    "Medications",
+    ...byType("MedicationStatement").map((resource) => `${clinicalDisplay(resource)} | ${resourceDetail(resource)} | ${clinicalCodeLabels(resource).join(", ")}`),
+    "",
+    "Receiver handover notes",
+    ...RECEIVER_REPORT_NOTES[targetCountry].map((note) => `- ${note}`),
+    "",
+    "Scope",
+    "Readable receiver report generated from the FHIR IPS-style Bundle. Readiness-only rendering; no national certification claimed.",
+  ];
+
+  return lines.flatMap((line) => wrapPdfLine(line));
+}
+
+function buildPdfBlob(lines: string[]) {
+  const pageHeight = 842;
+  const pageWidth = 595;
+  const marginX = 50;
+  const startY = 790;
+  const lineHeight = 15;
+  const linesPerPage = 48;
+  const pages: string[][] = [];
+
+  for (let i = 0; i < lines.length; i += linesPerPage) {
+    pages.push(lines.slice(i, i + linesPerPage));
+  }
+
+  const objects: string[] = [];
+  objects.push("<< /Type /Catalog /Pages 2 0 R >>");
+
+  const pageObjectIds = pages.map((_, index) => 5 + index * 2);
+  objects.push(`<< /Type /Pages /Kids [${pageObjectIds.map((id) => `${id} 0 R`).join(" ")}] /Count ${pages.length} >>`);
+  objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+  objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
+
+  pages.forEach((pageLines, index) => {
+    const pageId = pageObjectIds[index];
+    const contentId = pageId + 1;
+    const contentLines = [
+      "BT",
+      `/F2 14 Tf ${lineHeight} TL ${marginX} ${startY} Td`,
+      `(${escapePdfText(pageLines[0] ?? "Receiver Report")}) Tj`,
+      `/F1 10 Tf`,
+      ...pageLines.slice(1).map((line) => `T* (${escapePdfText(line)}) Tj`),
+      "ET",
+    ];
+    const stream = contentLines.join("\n");
+
+    objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${contentId} 0 R >>`);
+    objects.push(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
+  });
+
+  const pdfParts = ["%PDF-1.4\n"];
+  const offsets: number[] = [0];
+
+  objects.forEach((object, index) => {
+    offsets.push(pdfParts.join("").length);
+    pdfParts.push(`${index + 1} 0 obj\n${object}\nendobj\n`);
+  });
+
+  const xrefStart = pdfParts.join("").length;
+  pdfParts.push(`xref\n0 ${objects.length + 1}\n`);
+  pdfParts.push("0000000000 65535 f \n");
+  offsets.slice(1).forEach((offset) => {
+    pdfParts.push(`${String(offset).padStart(10, "0")} 00000 n \n`);
+  });
+  pdfParts.push(`trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`);
+
+  return new Blob(pdfParts, { type: "application/pdf" });
+}
+
+function downloadReceiverReportPdf(activeCase: DemoCase, targetCountry: CountryCode) {
+  const lines = buildReceiverReportLines(activeCase, targetCountry);
+  const blob = buildPdfBlob(lines);
+  const url = URL.createObjectURL(blob);
+  const fileName = `${activeCase.source.toLowerCase()}-to-${targetCountry.toLowerCase()}-receiver-report.pdf`;
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 function ReceiverReport({ activeCase, targetCountry }: { activeCase: DemoCase; targetCountry: CountryCode }) {
   const resources = activeCase.ipsBundle.entry.map((entry) => entry.resource as DemoFhirResource);
   const patient = resources.find((resource) => resource.resourceType === "Patient");
@@ -313,9 +453,18 @@ function ReceiverReport({ activeCase, targetCountry }: { activeCase: DemoCase; t
             Human-readable receiver view generated from the FHIR IPS Bundle. The Bundle remains the source of truth for system exchange.
           </p>
         </div>
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="pill pill-info">{sourceCountry?.flag} {activeCase.source} source</span>
           <span className="pill pill-success">{target?.flag} {targetCountry} receiver</span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-8 text-xs"
+            onClick={() => downloadReceiverReportPdf(activeCase, targetCountry)}
+          >
+            <Download className="h-3.5 w-3.5 mr-1.5" /> Download {targetCountry} PDF
+          </Button>
         </div>
       </div>
 
