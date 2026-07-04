@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Activity,
   AlertTriangle,
@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   Sparkles,
   Stethoscope,
+  Upload,
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -232,6 +233,20 @@ const RECEIVER_REPORT_TITLE: Record<CountryCode, string> = {
   EUR: "Final European receiver report",
 };
 
+const SOURCE_FORMAT_LABEL: Record<CountryCode, string> = {
+  USA: "US Patient Care Summary / C-CDA-style source PDF",
+  IND: "ABDM OPConsultation / HealthDocumentRecord source PDF",
+  AUS: "AU Patient Summary / Clinical Note source PDF",
+  EUR: "European IPS-style patient summary source PDF",
+};
+
+const SOURCE_REPORT_TITLE: Record<CountryCode, string> = {
+  USA: "Original US doctor report",
+  IND: "Original Indian doctor report",
+  AUS: "Original Australian doctor report",
+  EUR: "Original European doctor report",
+};
+
 const RECEIVER_REPORT_NOTES: Record<CountryCode, string[]> = {
   USA: [
     "US Core readiness view; race and ethnicity are flagged because they are not present in the synthetic source note.",
@@ -250,6 +265,75 @@ const RECEIVER_REPORT_NOTES: Record<CountryCode, string[]> = {
     "The report is a readable rendering of the IPS Bundle, not a claim of national certification.",
   ],
 };
+
+function Hl7InteroperabilitySpine({ activeCase, targetCountry }: { activeCase: DemoCase; targetCountry: CountryCode }) {
+  const source = COUNTRIES.find((country) => country.code === activeCase.source);
+  const target = COUNTRIES.find((country) => country.code === targetCountry);
+
+  const stages = [
+    {
+      label: "Source country PDF",
+      title: SOURCE_FORMAT_LABEL[activeCase.source],
+      detail: `${source?.flag ?? ""} ${activeCase.source} human-readable clinical input`,
+      icon: FileText,
+    },
+    {
+      label: "HL7 interoperability layer",
+      title: "HL7 FHIR IPS document Bundle",
+      detail: "canonical machine-readable source of truth for exchange",
+      icon: Package,
+      featured: true,
+    },
+    {
+      label: "Target country PDF",
+      title: RECEIVER_REPORT_TITLE[targetCountry],
+      detail: `${target?.flag ?? ""} ${TARGET_LABEL[targetCountry]} readable receiver rendering`,
+      icon: FileCheck2,
+    },
+  ];
+
+  return (
+    <div className="card-surface p-3" data-testid="hl7-spine">
+      <div className="mb-3 flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <div className="text-[11px] uppercase tracking-wide text-primary font-semibold">Why HL7 matters here</div>
+          <h3 className="mt-0.5 text-sm font-semibold">Country PDFs are readable documents; HL7 FHIR IPS is the interoperable source of truth.</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            The demo converts local clinical wording into standard codes, packages them in FHIR IPS, then renders a receiver-friendly country report from that Bundle.
+          </p>
+        </div>
+        <span className="pill pill-success"><Package className="h-3 w-3" />HL7-centered exchange</span>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1.15fr_auto_1fr] gap-2 items-stretch">
+        {stages.map((stage, index) => {
+          const Icon = stage.icon;
+          return (
+            <div key={stage.label} className="contents">
+              <div className={`rounded-md border px-3 py-2 min-w-0 ${stage.featured ? "border-primary/40 bg-primary-soft" : "border-border bg-surface-muted"}`}>
+                <div className="flex items-center gap-2">
+                  <span className={`h-7 w-7 rounded-sm flex items-center justify-center shrink-0 ${stage.featured ? "bg-primary text-primary-foreground" : "bg-primary-soft text-primary"}`}>
+                    <Icon className="h-3.5 w-3.5" />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold truncate">{stage.label}</div>
+                    <div className="text-sm font-semibold leading-snug truncate">{stage.title}</div>
+                  </div>
+                </div>
+                <div className="mt-1.5 text-[11px] text-muted-foreground leading-snug">{stage.detail}</div>
+              </div>
+              {index < stages.length - 1 && (
+                <div className="hidden md:flex items-center justify-center">
+                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function systemLabel(system?: string) {
   if (!system) return "Code";
@@ -317,6 +401,31 @@ function wrapPdfLine(value: string, maxLength = 92) {
 
   if (current) lines.push(current);
   return lines.length ? lines : [""];
+}
+
+function buildSourceReportLines(activeCase: DemoCase) {
+  const sourceCountry = COUNTRIES.find((country) => country.code === activeCase.source);
+  const lines: string[] = [
+    SOURCE_REPORT_TITLE[activeCase.source],
+    "Cross-Border IPS AI Agent",
+    `Source country: ${sourceCountry?.name ?? activeCase.source}`,
+    `Source format: ${SOURCE_FORMAT_LABEL[activeCase.source]}`,
+    "",
+    "Original doctor note",
+    activeCase.reportText,
+    "",
+    "Clinical facts prepared for HL7 conversion",
+    ...activeCase.traceFacts.map((fact) => `${fact.phrase} -> ${fact.normalized} -> ${standardCodeLabel(fact)} -> ${fact.fhirResource}`),
+    "",
+    "HL7 interoperability step",
+    "This source PDF is a human-readable input document. The interoperable artifact is the HL7 FHIR IPS-style document Bundle created from the coded facts.",
+    "Target-country PDFs are generated from that IPS Bundle as readable receiver views; they are not the exchange standard.",
+    "",
+    "Scope",
+    "Synthetic data only. No real patient data, no national certification, and no clinical decision-support claim.",
+  ];
+
+  return lines.flatMap((line) => wrapPdfLine(line));
 }
 
 function buildReceiverReportLines(activeCase: DemoCase, targetCountry: CountryCode) {
@@ -411,6 +520,20 @@ function buildPdfBlob(lines: string[]) {
   pdfParts.push(`trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`);
 
   return new Blob(pdfParts, { type: "application/pdf" });
+}
+
+function downloadSourceReportPdf(activeCase: DemoCase) {
+  const lines = buildSourceReportLines(activeCase);
+  const blob = buildPdfBlob(lines);
+  const url = URL.createObjectURL(blob);
+  const fileName = `${activeCase.source.toLowerCase()}-source-report.pdf`;
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 }
 
 function downloadReceiverReportPdf(activeCase: DemoCase, targetCountry: CountryCode) {
@@ -524,12 +647,14 @@ function ReceiverReport({ activeCase, targetCountry }: { activeCase: DemoCase; t
 }
 
 const Index = () => {
+  const sourcePdfInputRef = useRef<HTMLInputElement | null>(null);
   const [reportId, setReportId] = useState(CASE_LIST[0].id);
   const activeCase = CASES[reportId] ?? CASE_LIST[0];
   const [targetCountry, setTargetCountry] = useState<CountryCode>(activeCase.defaultTarget);
   const [reportText, setReportText] = useState(activeCase.reportText);
   const [bundleResource, setBundleResource] = useState(0);
   const [lastRunLabel, setLastRunLabel] = useState<string | null>(null);
+  const [sourcePdfName, setSourcePdfName] = useState<string | null>(null);
 
   const onReportChange = (id: string) => {
     const c = CASES[id];
@@ -538,6 +663,7 @@ const Index = () => {
     setTargetCountry(c.defaultTarget);
     setBundleResource(0);
     setLastRunLabel(null);
+    setSourcePdfName(null);
   };
 
   const onSourceCountryChange = (country: CountryCode) => {
@@ -637,6 +763,52 @@ const Index = () => {
               </div>
             </div>
 
+            <div className="rounded-md border border-border bg-surface-muted p-3 space-y-2" data-testid="source-pdf-card">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Source PDF input</div>
+                  <div className="mt-0.5 text-sm font-medium leading-snug">{SOURCE_FORMAT_LABEL[activeCase.source]}</div>
+                </div>
+                <span className="pill pill-info shrink-0"><FileText className="h-3 w-3" />human</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-snug">
+                PDF is the country-facing document. HL7 FHIR IPS below is the system-facing interoperability layer.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs"
+                  onClick={() => downloadSourceReportPdf(activeCase)}
+                >
+                  <Download className="h-3.5 w-3.5 mr-1.5" /> Download {activeCase.source} source PDF
+                </Button>
+                <input
+                  ref={sourcePdfInputRef}
+                  data-testid="source-pdf-upload"
+                  type="file"
+                  accept="application/pdf"
+                  className="hidden"
+                  onChange={(event) => setSourcePdfName(event.target.files?.[0]?.name ?? null)}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs"
+                  onClick={() => sourcePdfInputRef.current?.click()}
+                >
+                  <Upload className="h-3.5 w-3.5 mr-1.5" /> Upload PDF
+                </Button>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                {sourcePdfName
+                  ? `Selected PDF: ${sourcePdfName}`
+                  : "Upload is a prototype placeholder; validated evidence uses the selected synthetic report."}
+              </p>
+            </div>
+
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Report text (editable)</Label>
               <Textarea
@@ -678,6 +850,7 @@ const Index = () => {
         {/* Main */}
         <main className="space-y-4 min-w-0">
           <ExchangeSummary activeCase={activeCase} targetCountry={targetCountry} />
+          <Hl7InteroperabilitySpine activeCase={activeCase} targetCountry={targetCountry} />
 
           {/* Metrics */}
           <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">

@@ -38,11 +38,16 @@ describe("report selection pipeline state", () => {
   it("uses the source-country control to change the whole active case", async () => {
     render(<Index />);
 
+    expect(screen.getByTestId("source-pdf-card")).toHaveTextContent("US Patient Care Summary");
+    expect(screen.getByRole("button", { name: /Download USA source PDF/i })).toBeInTheDocument();
+
     chooseSelectOption("source-country-select", "AUS");
 
     await waitFor(() => {
       expect(screen.getByText("T2 diabetes")).toBeInTheDocument();
       expect(screen.getByText("perindopril 4 mg")).toBeInTheDocument();
+      expect(screen.getByTestId("source-pdf-card")).toHaveTextContent("AU Patient Summary");
+      expect(screen.getByRole("button", { name: /Download AUS source PDF/i })).toBeInTheDocument();
     });
     expect(screen.queryByText("lisinopril 10 mg")).not.toBeInTheDocument();
 
@@ -51,6 +56,16 @@ describe("report selection pipeline state", () => {
     expect(activeState).toHaveAttribute("data-code-system-id", "local-aus-diabetes-terms");
     expect(activeState).toHaveAttribute("data-bundle-id", "ips-bundle-demo-aus-003");
     expect(activeState).toHaveAttribute("data-source-country", "AUS");
+  });
+
+  it("shows HL7 FHIR IPS as the interoperability layer between country PDFs", () => {
+    render(<Index />);
+
+    const spine = screen.getByTestId("hl7-spine");
+    expect(spine).toHaveTextContent("Source country PDF");
+    expect(spine).toHaveTextContent("HL7 FHIR IPS document Bundle");
+    expect(spine).toHaveTextContent("source of truth");
+    expect(spine).toHaveTextContent("Target country PDF");
   });
 
   it("makes the run action visibly refresh the selected evidence case", () => {
