@@ -1,0 +1,250 @@
+{
+  "resourceType": "Bundle",
+  "id": "ips-bundle-demo-ind-002",
+  "identifier": {
+    "system": "https://ips-agent.demo/BundleIdentifier",
+    "value": "ips-bundle-demo-ind-002"
+  },
+  "type": "document",
+  "timestamp": "2026-06-29T14:22:11Z",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:composition-1",
+      "resource": {
+        "resourceType": "Composition",
+        "id": "composition-1",
+        "status": "final",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "60591-5",
+              "display": "Patient summary Document"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        },
+        "date": "2026-06-29",
+        "author": [
+          {
+            "reference": "urn:uuid:org-1"
+          }
+        ],
+        "title": "International Patient Summary — Synthetic India T2DM",
+        "section": [
+          {
+            "title": "Active Problems",
+            "entry": [
+              {
+                "reference": "urn:uuid:cond-t2dm"
+              },
+              {
+                "reference": "urn:uuid:cond-htn"
+              }
+            ]
+          },
+          {
+            "title": "Results",
+            "entry": [
+              {
+                "reference": "urn:uuid:obs-a1c"
+              },
+              {
+                "reference": "urn:uuid:obs-fbs"
+              }
+            ]
+          },
+          {
+            "title": "Medications",
+            "entry": [
+              {
+                "reference": "urn:uuid:med-metformin"
+              },
+              {
+                "reference": "urn:uuid:med-amlodipine"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:patient-1",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "patient-1",
+        "gender": "female",
+        "birthDate": "1971-09-03",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://ips-agent.demo/tags",
+              "code": "SYNTHETIC",
+              "display": "Synthetic patient"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:cond-t2dm",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-t2dm",
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "44054006",
+              "display": "Diabetes mellitus type 2"
+            },
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10",
+              "code": "E11",
+              "display": "Type 2 diabetes mellitus"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:cond-htn",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-htn",
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "38341003",
+              "display": "Hypertensive disorder"
+            },
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10",
+              "code": "I10",
+              "display": "Essential hypertension"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:obs-a1c",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-a1c",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "4548-4",
+              "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+            }
+          ]
+        },
+        "valueQuantity": {
+          "value": 8.4,
+          "unit": "%",
+          "system": "http://unitsofmeasure.org",
+          "code": "%"
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:obs-fbs",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-fbs",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "1558-6",
+              "display": "Fasting glucose [Mass/volume] in Serum or Plasma"
+            }
+          ]
+        },
+        "valueQuantity": {
+          "value": 162,
+          "unit": "mg/dL",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg/dL"
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:med-metformin",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "med-metformin",
+        "status": "active",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "6809",
+              "display": "metformin"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        },
+        "dosage": [
+          {
+            "text": "500 mg BD"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:med-amlodipine",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "med-amlodipine",
+        "status": "active",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "17767",
+              "display": "amlodipine"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        },
+        "dosage": [
+          {
+            "text": "5 mg OD"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:org-1",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "org-1",
+        "name": "Synthetic Clinic (India)"
+      }
+    }
+  ]
+}

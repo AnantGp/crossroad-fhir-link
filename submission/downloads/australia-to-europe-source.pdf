@@ -1,0 +1,124 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 6303 >>
+stream
+0.040 0.420 0.360 rg 0.0 762.0 595.0 80.0 re f
+1.000 1.000 1.000 rg BT /F2 17 Tf 42.0 812.0 Td (Original Australian doctor report) Tj ET
+0.860 0.960 0.940 rg BT /F1 9 Tf 42.0 792.0 Td (Country-facing source report prepared for HL7 FHIR IPS conversion) Tj ET
+0.030 0.260 0.240 rg 418.0 794.0 132.0 28.0 re f
+0.180 0.580 0.520 RG 418.0 794.0 132.0 28.0 re S
+1.000 1.000 1.000 rg BT /F2 9 Tf 439.0 804.0 Td (SYNTHETIC DEMO) Tj ET
+0.380 0.450 0.540 rg BT /F1 8.5 Tf 42.0 746.0 Td (Australia | AU Patient Summary / Clinical Note source PDF) Tj ET
+0.780 0.830 0.880 rg 42.0 737.0 511.0 0.7 re f
+0.970 0.980 0.990 rg 42.0 672.0 247.0 46.0 re f
+0.780 0.830 0.880 RG 42.0 672.0 247.0 46.0 re S
+0.380 0.450 0.540 rg BT /F2 7.5 Tf 52.0 703.0 Td (DOCUMENT ROLE) Tj ET
+0.120 0.160 0.220 rg BT /F2 10.5 Tf 52.0 686.0 Td (Input PDF / local doctor note) Tj ET
+0.970 0.980 0.990 rg 306.0 672.0 247.0 46.0 re f
+0.780 0.830 0.880 RG 306.0 672.0 247.0 46.0 re S
+0.380 0.450 0.540 rg BT /F2 7.5 Tf 316.0 703.0 Td (SOURCE COUNTRY) Tj ET
+0.120 0.160 0.220 rg BT /F2 10.5 Tf 316.0 686.0 Td (Australia) Tj ET
+0.970 0.980 0.990 rg 42.0 618.0 247.0 46.0 re f
+0.780 0.830 0.880 RG 42.0 618.0 247.0 46.0 re S
+0.380 0.450 0.540 rg BT /F2 7.5 Tf 52.0 649.0 Td (PATIENT) Tj ET
+0.120 0.160 0.220 rg BT /F2 10.5 Tf 52.0 632.0 Td (Synthetic patient | male | DOB 1964-02-19) Tj ET
+0.970 0.980 0.990 rg 306.0 618.0 247.0 46.0 re f
+0.780 0.830 0.880 RG 306.0 618.0 247.0 46.0 re S
+0.380 0.450 0.540 rg BT /F2 7.5 Tf 316.0 649.0 Td (HL7 ROUTE) Tj ET
+0.120 0.160 0.220 rg BT /F2 10.5 Tf 316.0 632.0 Td (AUS local report -> FHIR IPS Bundle) Tj ET
+0.970 0.980 0.990 rg 42.0 545.0 511.0 59.0 re f
+0.780 0.830 0.880 RG 42.0 545.0 511.0 59.0 re S
+0.120 0.160 0.220 rg BT /F2 10 Tf 54.0 588.0 Td (Original doctor note) Tj ET
+0.120 0.160 0.220 rg BT /F1 9 Tf 54.0 570.0 Td (Synthetic Australia GP note. 61 yo M, T2 diabetes and raised BP \(essential hypertension\). HbA1c 7.2%.) Tj ET
+0.120 0.160 0.220 rg BT /F1 9 Tf 54.0 558.0 Td (eGFR 78 mL/min/1.73m2. Metformin XR 1 g mane, perindopril 4 mg.) Tj ET
+0.900 0.970 0.950 rg 42.0 509.0 511.0 24.0 re f
+0.780 0.830 0.880 RG 42.0 509.0 511.0 24.0 re S
+0.030 0.260 0.240 rg BT /F2 9 Tf 52.0 517.0 Td (CLINICAL FACTS PREPARED FOR HL7 CONVERSION) Tj ET
+0.910 0.960 1.000 rg 42.0 473.0 511.0 22.0 re f
+0.780 0.830 0.880 RG 42.0 473.0 511.0 22.0 re S
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 48.0 481.0 Td (SOURCE PHRASE) Tj ET
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 178.0 481.0 Td (CLINICAL MEANING) Tj ET
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 383.0 481.0 Td (CODE) Tj ET
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 469.0 481.0 Td (FHIR) Tj ET
+1.000 1.000 1.000 rg 42.0 442.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 442.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 454.0 Td (T2 diabetes) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 178.0 454.0 Td (Type 2 diabetes mellitus) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 454.0 Td (SNOMED 44054006) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 469.0 454.0 Td (Condition) Tj ET
+1.000 1.000 1.000 rg 42.0 411.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 411.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 423.0 Td (raised BP) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 178.0 423.0 Td (Hypertension) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 423.0 Td (SNOMED 38341003) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 469.0 423.0 Td (Condition) Tj ET
+1.000 1.000 1.000 rg 42.0 380.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 380.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 392.0 Td (HbA1c 7.2%) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 178.0 392.0 Td (Hemoglobin A1c/Hemoglobin.total in...) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 392.0 Td (LOINC 4548-4) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 469.0 392.0 Td (Observation) Tj ET
+1.000 1.000 1.000 rg 42.0 349.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 349.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 361.0 Td (eGFR 78) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 178.0 361.0 Td (Glomerular filtration rate/1.73 sq...) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 361.0 Td (LOINC 98979-8) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 469.0 361.0 Td (Observation) Tj ET
+1.000 1.000 1.000 rg 42.0 318.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 318.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 330.0 Td (Metformin XR 1 g mane) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 178.0 330.0 Td (metformin; extended release noted ...) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 330.0 Td (RxNorm 6809) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 469.0 330.0 Td (MedicationSta...) Tj ET
+1.000 1.000 1.000 rg 42.0 287.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 287.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 299.0 Td (perindopril 4 mg) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 178.0 299.0 Td (perindopril) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 299.0 Td (RxNorm 54552) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 469.0 299.0 Td (MedicationSta...) Tj ET
+0.900 0.970 0.950 rg 42.0 192.0 511.0 79.0 re f
+0.780 0.830 0.880 RG 42.0 192.0 511.0 79.0 re S
+0.120 0.160 0.220 rg BT /F2 10 Tf 54.0 255.0 Td (HL7 interoperability boundary) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 237.0 Td (This PDF is a readable source document. The exchange artifact is the HL7 FHIR IPS-style document) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 225.0 Td (Bundle generated from the coded facts.) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 213.0 Td (The target-country PDF is rendered from that Bundle for human review; it is not the) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 201.0 Td (machine-to-machine standard.) Tj ET
+1.000 0.960 0.880 rg 42.0 123.0 511.0 55.0 re f
+0.780 0.830 0.880 RG 42.0 123.0 511.0 55.0 re S
+0.120 0.160 0.220 rg BT /F2 10 Tf 54.0 162.0 Td (Scope and safety) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 144.0 Td (Synthetic data only. No real patient data, no national certification, and no clinical) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 132.0 Td (decision-support claim.) Tj ET
+0.780 0.830 0.880 rg 42 40 511 0.7 re f
+0.380 0.450 0.540 rg BT /F1 7.5 Tf 42.0 25.0 Td (Cross-Border IPS AI Agent | readable PDF generated from HL7 FHIR IPS evidence | synthetic data only) Tj ET
+0.380 0.450 0.540 rg BT /F1 7.5 Tf 510.0 25.0 Td (Page 1 of 1) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000185 00000 n 
+0000000260 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+6751
+%%EOF

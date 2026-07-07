@@ -1,0 +1,176 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 5904 >>
+stream
+0.040 0.420 0.360 rg 0.0 762.0 595.0 80.0 re f
+1.000 1.000 1.000 rg BT /F2 17 Tf 42.0 812.0 Td (Final European receiver report) Tj ET
+0.860 0.960 0.940 rg BT /F1 9 Tf 42.0 792.0 Td (Readable target-country handover generated from the HL7 FHIR IPS Bundle) Tj ET
+0.030 0.260 0.240 rg 418.0 794.0 132.0 28.0 re f
+0.180 0.580 0.520 RG 418.0 794.0 132.0 28.0 re S
+1.000 1.000 1.000 rg BT /F2 9 Tf 439.0 804.0 Td (SYNTHETIC DEMO) Tj ET
+0.380 0.450 0.540 rg BT /F1 8.5 Tf 42.0 746.0 Td (Australia -> Europe \(EU\) | EU IPS UV receiver) Tj ET
+0.780 0.830 0.880 rg 42.0 737.0 511.0 0.7 re f
+0.970 0.980 0.990 rg 42.0 672.0 247.0 46.0 re f
+0.780 0.830 0.880 RG 42.0 672.0 247.0 46.0 re S
+0.380 0.450 0.540 rg BT /F2 7.5 Tf 52.0 703.0 Td (ROUTE) Tj ET
+0.120 0.160 0.220 rg BT /F2 10.5 Tf 52.0 686.0 Td (AUS -> EUR) Tj ET
+0.970 0.980 0.990 rg 306.0 672.0 247.0 46.0 re f
+0.780 0.830 0.880 RG 306.0 672.0 247.0 46.0 re S
+0.380 0.450 0.540 rg BT /F2 7.5 Tf 316.0 703.0 Td (RECEIVER VIEW) Tj ET
+0.120 0.160 0.220 rg BT /F2 10.5 Tf 316.0 686.0 Td (EU IPS UV receiver) Tj ET
+0.970 0.980 0.990 rg 42.0 618.0 247.0 46.0 re f
+0.780 0.830 0.880 RG 42.0 618.0 247.0 46.0 re S
+0.380 0.450 0.540 rg BT /F2 7.5 Tf 52.0 649.0 Td (SOURCE FHIR DOCUMENT) Tj ET
+0.120 0.160 0.220 rg BT /F2 10.5 Tf 52.0 632.0 Td (ips-bundle-demo-aus-003) Tj ET
+0.970 0.980 0.990 rg 306.0 618.0 247.0 46.0 re f
+0.780 0.830 0.880 RG 306.0 618.0 247.0 46.0 re S
+0.380 0.450 0.540 rg BT /F2 7.5 Tf 316.0 649.0 Td (VALIDATOR EVIDENCE) Tj ET
+0.120 0.160 0.220 rg BT /F2 10.5 Tf 316.0 632.0 Td (0 errors in representative Bundle valid...) Tj ET
+0.970 0.980 0.990 rg 42.0 564.0 247.0 46.0 re f
+0.780 0.830 0.880 RG 42.0 564.0 247.0 46.0 re S
+0.380 0.450 0.540 rg BT /F2 7.5 Tf 52.0 595.0 Td (PATIENT) Tj ET
+0.120 0.160 0.220 rg BT /F2 10.5 Tf 52.0 578.0 Td (Synthetic patient | male | DOB 1964-02-19) Tj ET
+0.970 0.980 0.990 rg 306.0 564.0 247.0 46.0 re f
+0.780 0.830 0.880 RG 306.0 564.0 247.0 46.0 re S
+0.380 0.450 0.540 rg BT /F2 7.5 Tf 316.0 595.0 Td (DOCUMENT STATUS) Tj ET
+0.120 0.160 0.220 rg BT /F2 10.5 Tf 316.0 578.0 Td (FHIR Bundle.type=document | Composition...) Tj ET
+0.900 0.970 0.950 rg 42.0 528.0 511.0 24.0 re f
+0.780 0.830 0.880 RG 42.0 528.0 511.0 24.0 re S
+0.030 0.260 0.240 rg BT /F2 9 Tf 52.0 536.0 Td (PROBLEMS) Tj ET
+0.910 0.960 1.000 rg 42.0 492.0 511.0 22.0 re f
+0.780 0.830 0.880 RG 42.0 492.0 511.0 22.0 re S
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 48.0 500.0 Td (PROBLEM) Tj ET
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 283.0 500.0 Td (STANDARD CODE\(S\)) Tj ET
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 499.0 500.0 Td (STATUS) Tj ET
+1.000 1.000 1.000 rg 42.0 461.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 461.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 473.0 Td (Diabetes mellitus type 2) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 283.0 473.0 Td (SNOMED CT 44054006, ICD-10 E11) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 499.0 473.0 Td (active p...) Tj ET
+1.000 1.000 1.000 rg 42.0 430.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 430.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 442.0 Td (Hypertensive disorder) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 283.0 442.0 Td (SNOMED CT 38341003, ICD-10 I10) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 499.0 442.0 Td (active p...) Tj ET
+0.900 0.970 0.950 rg 42.0 392.0 511.0 24.0 re f
+0.780 0.830 0.880 RG 42.0 392.0 511.0 24.0 re S
+0.030 0.260 0.240 rg BT /F2 9 Tf 52.0 400.0 Td (RESULTS) Tj ET
+0.910 0.960 1.000 rg 42.0 356.0 511.0 22.0 re f
+0.780 0.830 0.880 RG 42.0 356.0 511.0 22.0 re S
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 48.0 364.0 Td (RESULT) Tj ET
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 278.0 364.0 Td (VALUE) Tj ET
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 360.0 364.0 Td (STANDARD CODE\(S\)) Tj ET
+1.000 1.000 1.000 rg 42.0 325.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 325.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 337.0 Td (Hemoglobin A1c/Hemoglobin.total in Blood) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 278.0 337.0 Td (7.2 %) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 360.0 337.0 Td (LOINC 4548-4) Tj ET
+1.000 1.000 1.000 rg 42.0 294.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 294.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 306.0 Td (Glomerular filtration rate predicted by...) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 278.0 306.0 Td (78 mL/min/{1...) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 360.0 306.0 Td (LOINC 98979-8) Tj ET
+0.900 0.970 0.950 rg 42.0 256.0 511.0 24.0 re f
+0.780 0.830 0.880 RG 42.0 256.0 511.0 24.0 re S
+0.030 0.260 0.240 rg BT /F2 9 Tf 52.0 264.0 Td (MEDICATIONS) Tj ET
+0.910 0.960 1.000 rg 42.0 220.0 511.0 22.0 re f
+0.780 0.830 0.880 RG 42.0 220.0 511.0 22.0 re S
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 48.0 228.0 Td (MEDICATION) Tj ET
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 278.0 228.0 Td (DOSE) Tj ET
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 374.0 228.0 Td (STANDARD CODE\(S\)) Tj ET
+1.000 1.000 1.000 rg 42.0 189.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 189.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 201.0 Td (metformin) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 278.0 201.0 Td (1 g mane; modi...) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 374.0 201.0 Td (RxNorm 6809) Tj ET
+1.000 1.000 1.000 rg 42.0 158.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 158.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 170.0 Td (perindopril) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 278.0 170.0 Td (4 mg) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 374.0 170.0 Td (RxNorm 54552) Tj ET
+0.900 0.970 0.950 rg 42.0 120.0 511.0 24.0 re f
+0.780 0.830 0.880 RG 42.0 120.0 511.0 24.0 re S
+0.030 0.260 0.240 rg BT /F2 9 Tf 52.0 128.0 Td (TARGET READINESS CHECK) Tj ET
+0.780 0.830 0.880 rg 42 40 511 0.7 re f
+0.380 0.450 0.540 rg BT /F1 7.5 Tf 42.0 25.0 Td (Cross-Border IPS AI Agent | readable PDF generated from HL7 FHIR IPS evidence | synthetic data only) Tj ET
+0.380 0.450 0.540 rg BT /F1 7.5 Tf 510.0 25.0 Td (Page 1 of 2) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 3054 >>
+stream
+0.040 0.420 0.360 rg 0.0 762.0 595.0 80.0 re f
+1.000 1.000 1.000 rg BT /F2 17 Tf 42.0 812.0 Td (Final European receiver report) Tj ET
+0.860 0.960 0.940 rg BT /F1 9 Tf 42.0 792.0 Td (Readable target-country handover generated from the HL7 FHIR IPS Bundle) Tj ET
+0.030 0.260 0.240 rg 418.0 794.0 132.0 28.0 re f
+0.180 0.580 0.520 RG 418.0 794.0 132.0 28.0 re S
+1.000 1.000 1.000 rg BT /F2 9 Tf 439.0 804.0 Td (SYNTHETIC DEMO) Tj ET
+0.380 0.450 0.540 rg BT /F1 8.5 Tf 42.0 746.0 Td (Australia -> Europe \(EU\) | EU IPS UV receiver) Tj ET
+0.780 0.830 0.880 rg 42.0 737.0 511.0 0.7 re f
+0.910 0.960 1.000 rg 42.0 696.0 511.0 22.0 re f
+0.780 0.830 0.880 RG 42.0 696.0 511.0 22.0 re S
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 48.0 704.0 Td (ITEM) Tj ET
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 308.0 704.0 Td (STATUS) Tj ET
+0.380 0.450 0.540 rg BT /F2 7.2 Tf 384.0 704.0 Td (NOTE) Tj ET
+1.000 1.000 1.000 rg 42.0 665.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 665.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 677.0 Td (IPS UV profile alignment \(resource shape\)) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 308.0 677.0 Td (ready) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 384.0 677.0 Td (Ready for demo evidence) Tj ET
+1.000 1.000 1.000 rg 42.0 634.0 511.0 31.0 re f
+0.780 0.830 0.880 RG 42.0 634.0 511.0 31.0 re S
+0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 646.0 Td (National extensions \(per Member State\)) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 308.0 646.0 Td (gap) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 384.0 646.0 Td (Member-state extensions out o...) Tj ET
+1.000 0.960 0.880 rg 42.0 551.0 511.0 67.0 re f
+0.780 0.830 0.880 RG 42.0 551.0 511.0 67.0 re S
+0.120 0.160 0.220 rg BT /F2 10 Tf 54.0 602.0 Td (Receiver handover notes) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 584.0 Td (European IPS readiness view; member-state-specific extensions are intentionally out of scope for) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 572.0 Td (the demo.) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 560.0 Td (The report is a readable rendering of the IPS Bundle, not a claim of national certification.) Tj ET
+0.900 0.970 0.950 rg 42.0 458.0 511.0 79.0 re f
+0.780 0.830 0.880 RG 42.0 458.0 511.0 79.0 re S
+0.120 0.160 0.220 rg BT /F2 10 Tf 54.0 521.0 Td (Interoperability note) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 503.0 Td (This PDF is a human-readable rendering. The interoperable source of truth is the HL7 FHIR) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 491.0 Td (IPS-style Bundle and its coded Condition, Observation, and MedicationStatement resources.) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 479.0 Td (Readiness checks are shown for judge review only; no formal national profile certification is) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.5 Tf 54.0 467.0 Td (claimed.) Tj ET
+0.780 0.830 0.880 rg 42 40 511 0.7 re f
+0.380 0.450 0.540 rg BT /F1 7.5 Tf 42.0 25.0 Td (Cross-Border IPS AI Agent | readable PDF generated from HL7 FHIR IPS evidence | synthetic data only) Tj ET
+0.380 0.450 0.540 rg BT /F1 7.5 Tf 510.0 25.0 Td (Page 2 of 2) Tj ET
+endstream
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000000266 00000 n 
+0000000402 00000 n 
+0000006358 00000 n 
+0000006494 00000 n 
+trailer
+<< /Size 9 /Root 1 0 R >>
+startxref
+9600
+%%EOF

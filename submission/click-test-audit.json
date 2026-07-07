@@ -1,0 +1,160 @@
+{
+  "generatedAt": "2026-07-07T14:53:55.920Z",
+  "url": "https://crossroad-fhir-link-three.vercel.app",
+  "routesTested": 4,
+  "routes": [
+    {
+      "route": "USA->IND",
+      "caseId": "usa-001",
+      "bundleId": "ips-bundle-demo-usa-001",
+      "receiverReport": "Final Indian receiver report",
+      "screenshots": [
+        "submission/screenshots/usa-to-india-dashboard.png",
+        "submission/screenshots/usa-to-india-fhir-bundle.png",
+        "submission/screenshots/usa-to-india-evidence.png"
+      ],
+      "downloads": {
+        "sourcePdf": {
+          "path": "submission/downloads/usa-to-india-source.pdf",
+          "bytes": 6958,
+          "head": "%PDF-"
+        },
+        "finalPdf": {
+          "path": "submission/downloads/usa-to-india-final-IND.pdf",
+          "bytes": 9903,
+          "head": "%PDF-"
+        },
+        "bundleJson": {
+          "path": "submission/downloads/usa-to-india-fhir-bundle.json",
+          "bytes": 6077,
+          "head": "{\n  \""
+        },
+        "evidenceJson": {
+          "path": "submission/downloads/usa-to-india-evidence-pack.json",
+          "bytes": 17198,
+          "head": "{\n  \""
+        }
+      }
+    },
+    {
+      "route": "IND->USA",
+      "caseId": "ind-002",
+      "bundleId": "ips-bundle-demo-ind-002",
+      "receiverReport": "Final US receiver report",
+      "screenshots": [
+        "submission/screenshots/india-to-usa-dashboard.png",
+        "submission/screenshots/india-to-usa-fhir-bundle.png",
+        "submission/screenshots/india-to-usa-evidence.png"
+      ],
+      "downloads": {
+        "sourcePdf": {
+          "path": "submission/downloads/india-to-usa-source.pdf",
+          "bytes": 6970,
+          "head": "%PDF-"
+        },
+        "finalPdf": {
+          "path": "submission/downloads/india-to-usa-final-USA.pdf",
+          "bytes": 9810,
+          "head": "%PDF-"
+        },
+        "bundleJson": {
+          "path": "submission/downloads/india-to-usa-fhir-bundle.json",
+          "bytes": 6086,
+          "head": "{\n  \""
+        },
+        "evidenceJson": {
+          "path": "submission/downloads/india-to-usa-evidence-pack.json",
+          "bytes": 17746,
+          "head": "{\n  \""
+        }
+      }
+    },
+    {
+      "route": "AUS->EUR",
+      "caseId": "aus-003",
+      "bundleId": "ips-bundle-demo-aus-003",
+      "receiverReport": "Final European receiver report",
+      "screenshots": [
+        "submission/screenshots/australia-to-europe-dashboard.png",
+        "submission/screenshots/australia-to-europe-fhir-bundle.png",
+        "submission/screenshots/australia-to-europe-evidence.png"
+      ],
+      "downloads": {
+        "sourcePdf": {
+          "path": "submission/downloads/australia-to-europe-source.pdf",
+          "bytes": 6954,
+          "head": "%PDF-"
+        },
+        "finalPdf": {
+          "path": "submission/downloads/australia-to-europe-final-EUR.pdf",
+          "bytes": 9843,
+          "head": "%PDF-"
+        },
+        "bundleJson": {
+          "path": "submission/downloads/australia-to-europe-fhir-bundle.json",
+          "bytes": 6155,
+          "head": "{\n  \""
+        },
+        "evidenceJson": {
+          "path": "submission/downloads/australia-to-europe-evidence-pack.json",
+          "bytes": 17909,
+          "head": "{\n  \""
+        }
+      }
+    },
+    {
+      "route": "EUR->USA",
+      "caseId": "eur-004",
+      "bundleId": "ips-bundle-demo-eur-004",
+      "receiverReport": "Final US receiver report",
+      "screenshots": [
+        "submission/screenshots/europe-to-usa-dashboard.png",
+        "submission/screenshots/europe-to-usa-fhir-bundle.png",
+        "submission/screenshots/europe-to-usa-evidence.png"
+      ],
+      "downloads": {
+        "sourcePdf": {
+          "path": "submission/downloads/europe-to-usa-source.pdf",
+          "bytes": 7102,
+          "head": "%PDF-"
+        },
+        "finalPdf": {
+          "path": "submission/downloads/europe-to-usa-final-USA.pdf",
+          "bytes": 9816,
+          "head": "%PDF-"
+        },
+        "bundleJson": {
+          "path": "submission/downloads/europe-to-usa-fhir-bundle.json",
+          "bytes": 6064,
+          "head": "{\n  \""
+        },
+        "evidenceJson": {
+          "path": "submission/downloads/europe-to-usa-evidence-pack.json",
+          "bytes": 18237,
+          "head": "{\n  \""
+        }
+      }
+    }
+  ],
+  "checks": {
+    "activeStateMatchesSelectedRoute": true,
+    "tabsRender": [
+      "Clinical Trace",
+      "FHIR Terminology",
+      "Federated Learning",
+      "FHIR IPS Bundle",
+      "Evidence & Limitations"
+    ],
+    "downloadsVerified": [
+      "source PDF",
+      "final country PDF",
+      "FHIR Bundle JSON",
+      "evidence pack JSON"
+    ],
+    "bundleShapeVerified": "Bundle.type=document and first entry Composition",
+    "limitationsVisible": true,
+    "metricsMatchedEvidence": true,
+    "mobileScreenshotCaptured": "submission/screenshots/mobile-dashboard-smoke.png",
+    "consoleErrors": []
+  }
+}

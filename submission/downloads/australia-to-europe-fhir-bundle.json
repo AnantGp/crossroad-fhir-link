@@ -1,0 +1,250 @@
+{
+  "resourceType": "Bundle",
+  "id": "ips-bundle-demo-aus-003",
+  "identifier": {
+    "system": "https://ips-agent.demo/BundleIdentifier",
+    "value": "ips-bundle-demo-aus-003"
+  },
+  "type": "document",
+  "timestamp": "2026-06-29T14:22:11Z",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:composition-1",
+      "resource": {
+        "resourceType": "Composition",
+        "id": "composition-1",
+        "status": "final",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "60591-5",
+              "display": "Patient summary Document"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        },
+        "date": "2026-06-29",
+        "author": [
+          {
+            "reference": "urn:uuid:org-1"
+          }
+        ],
+        "title": "International Patient Summary — Synthetic Australia T2DM",
+        "section": [
+          {
+            "title": "Active Problems",
+            "entry": [
+              {
+                "reference": "urn:uuid:cond-t2dm"
+              },
+              {
+                "reference": "urn:uuid:cond-htn"
+              }
+            ]
+          },
+          {
+            "title": "Results",
+            "entry": [
+              {
+                "reference": "urn:uuid:obs-a1c"
+              },
+              {
+                "reference": "urn:uuid:obs-egfr"
+              }
+            ]
+          },
+          {
+            "title": "Medications",
+            "entry": [
+              {
+                "reference": "urn:uuid:med-metformin"
+              },
+              {
+                "reference": "urn:uuid:med-perindopril"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:patient-1",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "patient-1",
+        "gender": "male",
+        "birthDate": "1964-02-19",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://ips-agent.demo/tags",
+              "code": "SYNTHETIC",
+              "display": "Synthetic patient"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:cond-t2dm",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-t2dm",
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "44054006",
+              "display": "Diabetes mellitus type 2"
+            },
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10",
+              "code": "E11",
+              "display": "Type 2 diabetes mellitus"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:cond-htn",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-htn",
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "38341003",
+              "display": "Hypertensive disorder"
+            },
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10",
+              "code": "I10",
+              "display": "Essential hypertension"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:obs-a1c",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-a1c",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "4548-4",
+              "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+            }
+          ]
+        },
+        "valueQuantity": {
+          "value": 7.2,
+          "unit": "%",
+          "system": "http://unitsofmeasure.org",
+          "code": "%"
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:obs-egfr",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-egfr",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "98979-8",
+              "display": "Glomerular filtration rate predicted by CKD-EPI 2021"
+            }
+          ]
+        },
+        "valueQuantity": {
+          "value": 78,
+          "unit": "mL/min/{1.73_m2}",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL/min/{1.73_m2}"
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:med-metformin",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "med-metformin",
+        "status": "active",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "6809",
+              "display": "metformin"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        },
+        "dosage": [
+          {
+            "text": "1 g mane; modified release noted in source"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:med-perindopril",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "med-perindopril",
+        "status": "active",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "54552",
+              "display": "perindopril"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "urn:uuid:patient-1"
+        },
+        "dosage": [
+          {
+            "text": "4 mg"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:org-1",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "org-1",
+        "name": "Synthetic Clinic (Australia)"
+      }
+    }
+  ]
+}

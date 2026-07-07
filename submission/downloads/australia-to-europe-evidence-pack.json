@@ -1,0 +1,644 @@
+{
+  "project": "Cross-Border IPS AI Agent",
+  "route": {
+    "source_country": "AUS",
+    "target_country": "EUR",
+    "receiver_profile_readiness": "EU IPS UV receiver"
+  },
+  "summary": {
+    "synthetic_reports": 20,
+    "sites": 4,
+    "terminology_training_examples": 768,
+    "cross_site_transfer_examples": 48,
+    "globally_unseen_examples": 192,
+    "semantic_transfer_validation": "48/48 correct",
+    "validator_errors": 0,
+    "fhir_bundle_type": "document"
+  },
+  "semantic_trace": [
+    {
+      "source_phrase": "T2 diabetes",
+      "normalized_concept": "Type 2 diabetes mellitus",
+      "category": "Condition",
+      "fhir_resource": "Condition",
+      "codes": {
+        "snomed_ct": "44054006",
+        "icd_10": "E11",
+        "loinc": null,
+        "rxnorm": null
+      },
+      "evidence_source": "local-registry"
+    },
+    {
+      "source_phrase": "raised BP",
+      "normalized_concept": "Hypertension",
+      "category": "Condition",
+      "fhir_resource": "Condition",
+      "codes": {
+        "snomed_ct": "38341003",
+        "icd_10": "I10",
+        "loinc": null,
+        "rxnorm": null
+      },
+      "evidence_source": "federated-linker-cache"
+    },
+    {
+      "source_phrase": "HbA1c 7.2%",
+      "normalized_concept": "Hemoglobin A1c/Hemoglobin.total in Blood",
+      "category": "Observation",
+      "fhir_resource": "Observation",
+      "codes": {
+        "snomed_ct": null,
+        "icd_10": null,
+        "loinc": "4548-4",
+        "rxnorm": null
+      },
+      "evidence_source": "local-registry"
+    },
+    {
+      "source_phrase": "eGFR 78",
+      "normalized_concept": "Glomerular filtration rate/1.73 sq M.predicted [Vol Rate/Area] in Serum or Plasma by Creatinine-based formula (CKD-EPI 2021)",
+      "category": "Observation",
+      "fhir_resource": "Observation",
+      "codes": {
+        "snomed_ct": null,
+        "icd_10": null,
+        "loinc": "98979-8",
+        "rxnorm": null
+      },
+      "evidence_source": "federated-linker-cache"
+    },
+    {
+      "source_phrase": "Metformin XR 1 g mane",
+      "normalized_concept": "metformin; extended release noted in source",
+      "category": "MedicationStatement",
+      "fhir_resource": "MedicationStatement",
+      "codes": {
+        "snomed_ct": null,
+        "icd_10": null,
+        "loinc": null,
+        "rxnorm": "6809"
+      },
+      "evidence_source": "local-registry"
+    },
+    {
+      "source_phrase": "perindopril 4 mg",
+      "normalized_concept": "perindopril",
+      "category": "MedicationStatement",
+      "fhir_resource": "MedicationStatement",
+      "codes": {
+        "snomed_ct": null,
+        "icd_10": null,
+        "loinc": null,
+        "rxnorm": "54552"
+      },
+      "evidence_source": "federated-linker-new"
+    }
+  ],
+  "fhir_terminology": {
+    "code_system": {
+      "resourceType": "CodeSystem",
+      "id": "local-aus-diabetes-terms",
+      "url": "https://ips-agent.demo/CodeSystem/local-aus-diabetes-terms",
+      "version": "0.1.0",
+      "name": "LocalAUSDiabetesTerms",
+      "status": "active",
+      "content": "complete",
+      "concept": [
+        {
+          "code": "T2-diabetes",
+          "display": "T2 diabetes (local abbrev., AU)"
+        },
+        {
+          "code": "raised-BP",
+          "display": "raised BP (local phrase, AU)"
+        },
+        {
+          "code": "HbA1c",
+          "display": "Glycated haemoglobin / HbA1c (AU spelling)"
+        },
+        {
+          "code": "eGFR",
+          "display": "estimated GFR (local abbrev.)"
+        },
+        {
+          "code": "metformin-XR",
+          "display": "metformin XR (modified release)"
+        },
+        {
+          "code": "perindopril",
+          "display": "perindopril (PBS generic)"
+        }
+      ]
+    },
+    "value_set": {
+      "resourceType": "ValueSet",
+      "id": "ips-diabetes-target-concepts",
+      "url": "https://ips-agent.demo/ValueSet/ips-diabetes-target-concepts",
+      "status": "active",
+      "compose": {
+        "include": [
+          {
+            "system": "http://snomed.info/sct",
+            "concept": [
+              {
+                "code": "44054006",
+                "display": "Diabetes mellitus type 2"
+              },
+              {
+                "code": "38341003",
+                "display": "Hypertensive disorder"
+              }
+            ]
+          },
+          {
+            "system": "http://loinc.org",
+            "concept": [
+              {
+                "code": "4548-4",
+                "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+              },
+              {
+                "code": "2160-0",
+                "display": "Creatinine [Mass/volume] in Serum or Plasma"
+              },
+              {
+                "code": "1558-6",
+                "display": "Fasting glucose [Mass/volume] in Serum or Plasma"
+              },
+              {
+                "code": "98979-8",
+                "display": "Glomerular filtration rate predicted by CKD-EPI 2021"
+              }
+            ]
+          },
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "concept": [
+              {
+                "code": "6809",
+                "display": "metformin"
+              },
+              {
+                "code": "29046",
+                "display": "lisinopril"
+              },
+              {
+                "code": "17767",
+                "display": "amlodipine"
+              },
+              {
+                "code": "54552",
+                "display": "perindopril"
+              },
+              {
+                "code": "35296",
+                "display": "ramipril"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "concept_map": {
+      "resourceType": "ConceptMap",
+      "id": "local-aus-to-ips-diabetes",
+      "url": "https://ips-agent.demo/ConceptMap/local-aus-to-ips-diabetes",
+      "status": "active",
+      "sourceUri": "https://ips-agent.demo/CodeSystem/local-aus-diabetes-terms",
+      "group": [
+        {
+          "source": "https://ips-agent.demo/CodeSystem/local-aus-diabetes-terms",
+          "target": "http://snomed.info/sct",
+          "element": [
+            {
+              "code": "T2-diabetes",
+              "display": "T2 diabetes (AU)",
+              "target": [
+                {
+                  "code": "44054006",
+                  "display": "Diabetes mellitus type 2",
+                  "equivalence": "equivalent"
+                }
+              ]
+            },
+            {
+              "code": "raised-BP",
+              "display": "raised BP (AU)",
+              "target": [
+                {
+                  "code": "38341003",
+                  "display": "Hypertensive disorder",
+                  "equivalence": "equivalent"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source": "https://ips-agent.demo/CodeSystem/local-aus-diabetes-terms",
+          "target": "http://loinc.org",
+          "element": [
+            {
+              "code": "HbA1c",
+              "display": "Glycated haemoglobin (AU)",
+              "target": [
+                {
+                  "code": "4548-4",
+                  "display": "Hemoglobin A1c/Hemoglobin.total in Blood",
+                  "equivalence": "equivalent"
+                }
+              ]
+            },
+            {
+              "code": "eGFR",
+              "display": "eGFR (AU)",
+              "target": [
+                {
+                  "code": "98979-8",
+                  "display": "Glomerular filtration rate predicted by CKD-EPI 2021",
+                  "equivalence": "equivalent"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source": "https://ips-agent.demo/CodeSystem/local-aus-diabetes-terms",
+          "target": "http://www.nlm.nih.gov/research/umls/rxnorm",
+          "element": [
+            {
+              "code": "metformin-XR",
+              "display": "metformin XR (AU)",
+              "target": [
+                {
+                  "code": "6809",
+                  "display": "metformin",
+                  "equivalence": "equivalent"
+                }
+              ]
+            },
+            {
+              "code": "perindopril",
+              "display": "perindopril (AU)",
+              "target": [
+                {
+                  "code": "54552",
+                  "display": "perindopril",
+                  "equivalence": "equivalent"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "translate_result": {
+      "resourceType": "Parameters",
+      "parameter": [
+        {
+          "name": "result",
+          "valueBoolean": true
+        },
+        {
+          "name": "match",
+          "part": [
+            {
+              "name": "equivalence",
+              "valueCode": "equivalent"
+            },
+            {
+              "name": "concept",
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "98979-8",
+                "display": "Glomerular filtration rate predicted by CKD-EPI 2021"
+              }
+            },
+            {
+              "name": "source",
+              "valueUri": "https://ips-agent.demo/ConceptMap/local-aus-to-ips-diabetes"
+            }
+          ]
+        }
+      ]
+    },
+    "lookup_result": {
+      "resourceType": "Parameters",
+      "parameter": [
+        {
+          "name": "name",
+          "valueString": "LOINC"
+        },
+        {
+          "name": "display",
+          "valueString": "Hemoglobin A1c/Hemoglobin.total in Blood"
+        },
+        {
+          "name": "code",
+          "valueString": "4548-4"
+        },
+        {
+          "name": "designation",
+          "part": [
+            {
+              "name": "language",
+              "valueCode": "en-AU"
+            },
+            {
+              "name": "value",
+              "valueString": "Glycated haemoglobin"
+            }
+          ]
+        }
+      ]
+    },
+    "validate_code_result": {
+      "resourceType": "Parameters",
+      "parameter": [
+        {
+          "name": "result",
+          "valueBoolean": true
+        },
+        {
+          "name": "message",
+          "valueString": "Code 44054006 from SNOMED CT is in ValueSet ips-diabetes-target-concepts."
+        }
+      ]
+    }
+  },
+  "readiness": [
+    {
+      "item": "IPS UV profile alignment (resource shape)",
+      "status": "ready"
+    },
+    {
+      "item": "National extensions (per Member State)",
+      "status": "gap",
+      "note": "Member-state extensions out of scope for demo"
+    }
+  ],
+  "privacy_boundary": [
+    "Raw reports stay at the local site.",
+    "Phrases, labels, aliases, and patient identifiers stay local.",
+    "Patient-level FHIR Bundles stay local.",
+    "Coordinator receives model tensors and sample counts only.",
+    "FedAvg gives data locality only; no DP-SGD or secure aggregation guarantee is claimed."
+  ],
+  "limitations": [
+    "Synthetic data only.",
+    "Rule-backed extraction in prototype; pretrained clinical NER is future work.",
+    "Readiness checks only; no national profile certification.",
+    "Local simulated FHIR terminology operations; live terminology servers are future work."
+  ],
+  "fhir_bundle": {
+    "resourceType": "Bundle",
+    "id": "ips-bundle-demo-aus-003",
+    "identifier": {
+      "system": "https://ips-agent.demo/BundleIdentifier",
+      "value": "ips-bundle-demo-aus-003"
+    },
+    "type": "document",
+    "timestamp": "2026-06-29T14:22:11Z",
+    "entry": [
+      {
+        "fullUrl": "urn:uuid:composition-1",
+        "resource": {
+          "resourceType": "Composition",
+          "id": "composition-1",
+          "status": "final",
+          "type": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "60591-5",
+                "display": "Patient summary Document"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "urn:uuid:patient-1"
+          },
+          "date": "2026-06-29",
+          "author": [
+            {
+              "reference": "urn:uuid:org-1"
+            }
+          ],
+          "title": "International Patient Summary — Synthetic Australia T2DM",
+          "section": [
+            {
+              "title": "Active Problems",
+              "entry": [
+                {
+                  "reference": "urn:uuid:cond-t2dm"
+                },
+                {
+                  "reference": "urn:uuid:cond-htn"
+                }
+              ]
+            },
+            {
+              "title": "Results",
+              "entry": [
+                {
+                  "reference": "urn:uuid:obs-a1c"
+                },
+                {
+                  "reference": "urn:uuid:obs-egfr"
+                }
+              ]
+            },
+            {
+              "title": "Medications",
+              "entry": [
+                {
+                  "reference": "urn:uuid:med-metformin"
+                },
+                {
+                  "reference": "urn:uuid:med-perindopril"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:patient-1",
+        "resource": {
+          "resourceType": "Patient",
+          "id": "patient-1",
+          "gender": "male",
+          "birthDate": "1964-02-19",
+          "meta": {
+            "tag": [
+              {
+                "system": "https://ips-agent.demo/tags",
+                "code": "SYNTHETIC",
+                "display": "Synthetic patient"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:cond-t2dm",
+        "resource": {
+          "resourceType": "Condition",
+          "id": "cond-t2dm",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "44054006",
+                "display": "Diabetes mellitus type 2"
+              },
+              {
+                "system": "http://hl7.org/fhir/sid/icd-10",
+                "code": "E11",
+                "display": "Type 2 diabetes mellitus"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "urn:uuid:patient-1"
+          }
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:cond-htn",
+        "resource": {
+          "resourceType": "Condition",
+          "id": "cond-htn",
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "38341003",
+                "display": "Hypertensive disorder"
+              },
+              {
+                "system": "http://hl7.org/fhir/sid/icd-10",
+                "code": "I10",
+                "display": "Essential hypertension"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "urn:uuid:patient-1"
+          }
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:obs-a1c",
+        "resource": {
+          "resourceType": "Observation",
+          "id": "obs-a1c",
+          "status": "final",
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "4548-4",
+                "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+              }
+            ]
+          },
+          "valueQuantity": {
+            "value": 7.2,
+            "unit": "%",
+            "system": "http://unitsofmeasure.org",
+            "code": "%"
+          },
+          "subject": {
+            "reference": "urn:uuid:patient-1"
+          }
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:obs-egfr",
+        "resource": {
+          "resourceType": "Observation",
+          "id": "obs-egfr",
+          "status": "final",
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "98979-8",
+                "display": "Glomerular filtration rate predicted by CKD-EPI 2021"
+              }
+            ]
+          },
+          "valueQuantity": {
+            "value": 78,
+            "unit": "mL/min/{1.73_m2}",
+            "system": "http://unitsofmeasure.org",
+            "code": "mL/min/{1.73_m2}"
+          },
+          "subject": {
+            "reference": "urn:uuid:patient-1"
+          }
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:med-metformin",
+        "resource": {
+          "resourceType": "MedicationStatement",
+          "id": "med-metformin",
+          "status": "active",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "6809",
+                "display": "metformin"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "urn:uuid:patient-1"
+          },
+          "dosage": [
+            {
+              "text": "1 g mane; modified release noted in source"
+            }
+          ]
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:med-perindopril",
+        "resource": {
+          "resourceType": "MedicationStatement",
+          "id": "med-perindopril",
+          "status": "active",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "54552",
+                "display": "perindopril"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "urn:uuid:patient-1"
+          },
+          "dosage": [
+            {
+              "text": "4 mg"
+            }
+          ]
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:org-1",
+        "resource": {
+          "resourceType": "Organization",
+          "id": "org-1",
+          "name": "Synthetic Clinic (Australia)"
+        }
+      }
+    ]
+  }
+}
