@@ -550,6 +550,145 @@ function downloadReceiverReportPdf(activeCase: DemoCase, targetCountry: CountryC
   URL.revokeObjectURL(url);
 }
 
+function downloadJsonFile(value: unknown, fileName: string) {
+  const blob = new Blob([JSON.stringify(value, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function buildEvidencePack(activeCase: DemoCase, targetCountry: CountryCode) {
+  return {
+    project: "Cross-Border IPS AI Agent",
+    route: {
+      source_country: activeCase.source,
+      target_country: targetCountry,
+      receiver_profile_readiness: TARGET_LABEL[targetCountry],
+    },
+    summary: {
+      synthetic_reports: EVIDENCE.syntheticReports,
+      sites: EVIDENCE.sites,
+      terminology_training_examples: EVIDENCE.trainingExamples,
+      cross_site_transfer_examples: EVIDENCE.crossSiteTransfer,
+      globally_unseen_examples: EVIDENCE.globallyUnseen,
+      semantic_transfer_validation: EVIDENCE.semanticTransfer,
+      validator_errors: METRICS.validatorErrors,
+      fhir_bundle_type: activeCase.ipsBundle.type,
+    },
+    semantic_trace: activeCase.traceFacts.map((fact) => ({
+      source_phrase: fact.phrase,
+      normalized_concept: fact.normalized,
+      category: fact.category,
+      fhir_resource: fact.fhirResource,
+      codes: {
+        snomed_ct: fact.snomed ?? null,
+        icd_10: fact.icd10 ?? null,
+        loinc: fact.loinc ?? null,
+        rxnorm: fact.rxnorm ?? null,
+      },
+      evidence_source: fact.source,
+    })),
+    fhir_terminology: {
+      code_system: activeCase.codeSystem,
+      value_set: VALUE_SET_DIABETES,
+      concept_map: activeCase.conceptMap,
+      translate_result: activeCase.translateResult,
+      lookup_result: activeCase.lookupResult,
+      validate_code_result: activeCase.validateCodeResult,
+    },
+    readiness: READINESS[targetCountry],
+    privacy_boundary: [
+      "Raw reports stay at the local site.",
+      "Phrases, labels, aliases, and patient identifiers stay local.",
+      "Patient-level FHIR Bundles stay local.",
+      "Coordinator receives model tensors and sample counts only.",
+      "FedAvg gives data locality only; no DP-SGD or secure aggregation guarantee is claimed.",
+    ],
+    limitations: [
+      "Synthetic data only.",
+      "Rule-backed extraction in prototype; pretrained clinical NER is future work.",
+      "Readiness checks only; no national profile certification.",
+      "Local simulated FHIR terminology operations; live terminology servers are future work.",
+    ],
+    fhir_bundle: activeCase.ipsBundle,
+  };
+}
+
+function downloadFhirBundleJson(activeCase: DemoCase, targetCountry: CountryCode) {
+  downloadJsonFile(
+    activeCase.ipsBundle,
+    `${activeCase.source.toLowerCase()}-to-${targetCountry.toLowerCase()}-fhir-ips-bundle.json`,
+  );
+}
+
+function downloadEvidencePack(activeCase: DemoCase, targetCountry: CountryCode) {
+  downloadJsonFile(
+    buildEvidencePack(activeCase, targetCountry),
+    `${activeCase.source.toLowerCase()}-to-${targetCountry.toLowerCase()}-hl7-ai-evidence-pack.json`,
+  );
+}
+
+function OutputDownloadPanel({ activeCase, targetCountry }: { activeCase: DemoCase; targetCountry: CountryCode }) {
+  const target = COUNTRIES.find((country) => country.code === targetCountry);
+
+  return (
+    <div className="card-surface p-4 space-y-3" data-testid="output-download-panel">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <h3 className="text-sm font-semibold flex items-center gap-2">
+            <FileCheck2 className="h-4 w-4 text-primary" /> Final output
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Receiver PDF is generated from the HL7 FHIR IPS Bundle, which remains the interoperable machine-readable artifact.
+          </p>
+        </div>
+        <span className="pill pill-success shrink-0">{target?.flag} {targetCountry}</span>
+      </div>
+
+      <div className="rounded-md border border-border bg-surface-muted px-3 py-2">
+        <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Visible receiver report</div>
+        <div className="mt-0.5 text-sm font-medium">{RECEIVER_REPORT_TITLE[targetCountry]}</div>
+        <div className="text-xs text-muted-foreground">{TARGET_LABEL[targetCountry]}</div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="h-8 justify-start text-xs"
+          onClick={() => downloadReceiverReportPdf(activeCase, targetCountry)}
+        >
+          <Download className="h-3.5 w-3.5 mr-1.5" /> Download final {targetCountry} PDF
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="h-8 justify-start text-xs"
+          onClick={() => downloadFhirBundleJson(activeCase, targetCountry)}
+        >
+          <Code2 className="h-3.5 w-3.5 mr-1.5" /> Download FHIR Bundle JSON
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="h-8 justify-start text-xs"
+          onClick={() => downloadEvidencePack(activeCase, targetCountry)}
+        >
+          <ShieldCheck className="h-3.5 w-3.5 mr-1.5" /> Download evidence pack
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function ReceiverReport({ activeCase, targetCountry }: { activeCase: DemoCase; targetCountry: CountryCode }) {
   const resources = activeCase.ipsBundle.entry.map((entry) => entry.resource as DemoFhirResource);
   const patient = resources.find((resource) => resource.resourceType === "Patient");
@@ -586,7 +725,16 @@ function ReceiverReport({ activeCase, targetCountry }: { activeCase: DemoCase; t
             className="h-8 text-xs"
             onClick={() => downloadReceiverReportPdf(activeCase, targetCountry)}
           >
-            <Download className="h-3.5 w-3.5 mr-1.5" /> Download {targetCountry} PDF
+            <Download className="h-3.5 w-3.5 mr-1.5" /> Download final {targetCountry} PDF
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-8 text-xs"
+            onClick={() => downloadFhirBundleJson(activeCase, targetCountry)}
+          >
+            <Code2 className="h-3.5 w-3.5 mr-1.5" /> Bundle JSON
           </Button>
         </div>
       </div>
@@ -845,6 +993,8 @@ const Index = () => {
               <li>Coordinator receives <span className="text-foreground font-medium">model tensors + sample counts only</span>.</li>
             </ul>
           </div>
+
+          <OutputDownloadPanel activeCase={activeCase} targetCountry={targetCountry} />
         </aside>
 
         {/* Main */}
