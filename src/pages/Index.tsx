@@ -403,80 +403,174 @@ function wrapPdfLine(value: string, maxLength = 92) {
   return lines.length ? lines : [""];
 }
 
-function buildSourceReportLines(activeCase: DemoCase) {
-  const sourceCountry = COUNTRIES.find((country) => country.code === activeCase.source);
-  const lines: string[] = [
-    SOURCE_REPORT_TITLE[activeCase.source],
-    "Cross-Border IPS AI Agent",
-    `Source country: ${sourceCountry?.name ?? activeCase.source}`,
-    `Source format: ${SOURCE_FORMAT_LABEL[activeCase.source]}`,
-    "",
-    "Original doctor note",
-    activeCase.reportText,
-    "",
-    "Clinical facts prepared for HL7 conversion",
-    ...activeCase.traceFacts.map((fact) => `${fact.phrase} -> ${fact.normalized} -> ${standardCodeLabel(fact)} -> ${fact.fhirResource}`),
-    "",
-    "HL7 interoperability step",
-    "This source PDF is a human-readable input document. The interoperable artifact is the HL7 FHIR IPS-style document Bundle created from the coded facts.",
-    "Target-country PDFs are generated from that IPS Bundle as readable receiver views; they are not the exchange standard.",
-    "",
-    "Scope",
-    "Synthetic data only. No real patient data, no national certification, and no clinical decision-support claim.",
-  ];
+type PdfRgb = [number, number, number];
+type PdfFont = "F1" | "F2";
+type PdfColumn = { label: string; width: number };
 
-  return lines.flatMap((line) => wrapPdfLine(line));
+const PDF_COLOR = {
+  text: [0.12, 0.16, 0.22] as PdfRgb,
+  muted: [0.38, 0.45, 0.54] as PdfRgb,
+  border: [0.78, 0.83, 0.88] as PdfRgb,
+  surface: [0.97, 0.98, 0.99] as PdfRgb,
+  white: [1, 1, 1] as PdfRgb,
+  teal: [0.04, 0.42, 0.36] as PdfRgb,
+  tealDark: [0.03, 0.26, 0.24] as PdfRgb,
+  tealSoft: [0.90, 0.97, 0.95] as PdfRgb,
+  blueSoft: [0.91, 0.96, 1] as PdfRgb,
+  warningSoft: [1, 0.96, 0.88] as PdfRgb,
+};
+
+function rgb(color: PdfRgb, mode: "rg" | "RG") {
+  return `${color.map((value) => value.toFixed(3)).join(" ")} ${mode}`;
 }
 
-function buildReceiverReportLines(activeCase: DemoCase, targetCountry: CountryCode) {
-  const resources = activeCase.ipsBundle.entry.map((entry) => entry.resource as DemoFhirResource);
-  const patient = resources.find((resource) => resource.resourceType === "Patient");
-  const sourceCountry = COUNTRIES.find((country) => country.code === activeCase.source);
-  const target = COUNTRIES.find((country) => country.code === targetCountry);
-  const byType = (resourceType: string) => resources.filter((resource) => resource.resourceType === resourceType);
-
-  const lines: string[] = [
-    RECEIVER_REPORT_TITLE[targetCountry],
-    "Cross-Border IPS AI Agent",
-    `Route: ${sourceCountry?.name ?? activeCase.source} to ${target?.name ?? targetCountry}`,
-    `Receiver format: ${TARGET_LABEL[targetCountry]}`,
-    `Source FHIR document: ${activeCase.ipsBundle.identifier.value}`,
-    "FHIR Bundle.type: document",
-    "",
-    "Patient",
-    `Synthetic patient | ${patient?.gender ?? "unknown"} | DOB ${patient?.birthDate ?? "not available"}`,
-    "",
-    "Problems",
-    ...byType("Condition").map((resource) => `${clinicalDisplay(resource)} | ${clinicalCodeLabels(resource).join(", ")} | ${resourceDetail(resource)}`),
-    "",
-    "Results",
-    ...byType("Observation").map((resource) => `${clinicalDisplay(resource)} | ${resourceDetail(resource)} | ${clinicalCodeLabels(resource).join(", ")}`),
-    "",
-    "Medications",
-    ...byType("MedicationStatement").map((resource) => `${clinicalDisplay(resource)} | ${resourceDetail(resource)} | ${clinicalCodeLabels(resource).join(", ")}`),
-    "",
-    "Receiver handover notes",
-    ...RECEIVER_REPORT_NOTES[targetCountry].map((note) => `- ${note}`),
-    "",
-    "Scope",
-    "Readable receiver report generated from the FHIR IPS-style Bundle. Readiness-only rendering; no national certification claimed.",
-  ];
-
-  return lines.flatMap((line) => wrapPdfLine(line));
+function pdfTextCommand(text: string, x: number, y: number, size: number, font: PdfFont, color: PdfRgb) {
+  return `${rgb(color, "rg")} BT /${font} ${size} Tf ${x.toFixed(1)} ${y.toFixed(1)} Td (${escapePdfText(text)}) Tj ET`;
 }
 
-function buildPdfBlob(lines: string[]) {
+function clipPdfText(value: string, maxLength: number) {
+  const cleaned = sanitizePdfText(value);
+  return cleaned.length > maxLength ? `${cleaned.slice(0, Math.max(0, maxLength - 3))}...` : cleaned;
+}
+
+class ClinicalPdfBuilder {
+  private readonly pageWidth = 595;
+  private readonly pageHeight = 842;
+  private readonly margin = 42;
+  private readonly contentWidth = 511;
+  private pages: string[][] = [];
+  private y = 0;
+
+  constructor(
+    private readonly title: string,
+    private readonly subtitle: string,
+    private readonly metaLine: string,
+  ) {
+    this.newPage();
+  }
+
+  private current() {
+    return this.pages[this.pages.length - 1];
+  }
+
+  private rect(x: number, y: number, width: number, height: number, fill?: PdfRgb, stroke?: PdfRgb) {
+    if (fill) this.current().push(`${rgb(fill, "rg")} ${x.toFixed(1)} ${y.toFixed(1)} ${width.toFixed(1)} ${height.toFixed(1)} re f`);
+    if (stroke) this.current().push(`${rgb(stroke, "RG")} ${x.toFixed(1)} ${y.toFixed(1)} ${width.toFixed(1)} ${height.toFixed(1)} re S`);
+  }
+
+  private text(text: string, x: number, y: number, size: number, font: PdfFont = "F1", color: PdfRgb = PDF_COLOR.text) {
+    this.current().push(pdfTextCommand(text, x, y, size, font, color));
+  }
+
+  private newPage() {
+    this.pages.push([]);
+    this.rect(0, 762, this.pageWidth, 80, PDF_COLOR.teal);
+    this.text(this.title, this.margin, 812, 17, "F2", PDF_COLOR.white);
+    this.text(this.subtitle, this.margin, 792, 9, "F1", [0.86, 0.96, 0.94]);
+    this.rect(418, 794, 132, 28, PDF_COLOR.tealDark, [0.18, 0.58, 0.52]);
+    this.text("SYNTHETIC DEMO", 439, 804, 9, "F2", PDF_COLOR.white);
+    this.text(this.metaLine, this.margin, 746, 8.5, "F1", PDF_COLOR.muted);
+    this.rect(this.margin, 737, this.contentWidth, 0.7, PDF_COLOR.border);
+    this.y = 718;
+  }
+
+  private ensureSpace(height: number) {
+    if (this.y - height < 58) this.newPage();
+  }
+
+  addKeyValueGrid(items: Array<{ label: string; value: string }>) {
+    const boxWidth = 247;
+    const gap = 17;
+    const boxHeight = 46;
+    const rows = Math.ceil(items.length / 2);
+    this.ensureSpace(rows * (boxHeight + 8) + 6);
+
+    items.forEach((item, index) => {
+      const col = index % 2;
+      const row = Math.floor(index / 2);
+      const x = this.margin + col * (boxWidth + gap);
+      const top = this.y - row * (boxHeight + 8);
+
+      this.rect(x, top - boxHeight, boxWidth, boxHeight, PDF_COLOR.surface, PDF_COLOR.border);
+      this.text(item.label.toUpperCase(), x + 10, top - 15, 7.5, "F2", PDF_COLOR.muted);
+      this.text(clipPdfText(item.value, 42), x + 10, top - 32, 10.5, "F2", PDF_COLOR.text);
+    });
+
+    this.y -= rows * (boxHeight + 8) + 6;
+  }
+
+  addSection(title: string) {
+    this.ensureSpace(34);
+    this.rect(this.margin, this.y - 22, this.contentWidth, 24, PDF_COLOR.tealSoft, PDF_COLOR.border);
+    this.text(title.toUpperCase(), this.margin + 10, this.y - 14, 9, "F2", PDF_COLOR.tealDark);
+    this.y -= 36;
+  }
+
+  addParagraphBox(title: string, body: string) {
+    const maxChars = 104;
+    const lines = wrapPdfLine(body, maxChars);
+    const height = 35 + lines.length * 12;
+    this.ensureSpace(height + 12);
+    this.rect(this.margin, this.y - height, this.contentWidth, height, PDF_COLOR.surface, PDF_COLOR.border);
+    this.text(title, this.margin + 12, this.y - 16, 10, "F2", PDF_COLOR.text);
+    lines.forEach((line, index) => {
+      this.text(line, this.margin + 12, this.y - 34 - index * 12, 9, "F1", PDF_COLOR.text);
+    });
+    this.y -= height + 14;
+  }
+
+  addTable(title: string, columns: PdfColumn[], rows: string[][]) {
+    this.addSection(title);
+    const headerHeight = 22;
+    const rowHeight = 31;
+    const tableHeight = headerHeight + rows.length * rowHeight;
+    this.ensureSpace(tableHeight + 12);
+
+    let cursorX = this.margin;
+    this.rect(this.margin, this.y - headerHeight, this.contentWidth, headerHeight, PDF_COLOR.blueSoft, PDF_COLOR.border);
+    columns.forEach((column) => {
+      this.text(column.label.toUpperCase(), cursorX + 6, this.y - 14, 7.2, "F2", PDF_COLOR.muted);
+      cursorX += column.width;
+    });
+
+    let rowTop = this.y - headerHeight;
+    rows.forEach((row) => {
+      this.rect(this.margin, rowTop - rowHeight, this.contentWidth, rowHeight, PDF_COLOR.white, PDF_COLOR.border);
+      cursorX = this.margin;
+      row.forEach((cell, index) => {
+        const column = columns[index];
+        const maxChars = Math.max(10, Math.floor(column.width / 5.4));
+        this.text(clipPdfText(cell, maxChars), cursorX + 6, rowTop - 19, 8.3, index === 0 ? "F2" : "F1", PDF_COLOR.text);
+        cursorX += column.width;
+      });
+      rowTop -= rowHeight;
+    });
+
+    this.y -= tableHeight + 16;
+  }
+
+  addCallout(title: string, lines: string[], tone: "info" | "warning" = "info") {
+    const wrapped = lines.flatMap((line) => wrapPdfLine(line, 98));
+    const height = 31 + wrapped.length * 12;
+    this.ensureSpace(height + 12);
+    const fill = tone === "warning" ? PDF_COLOR.warningSoft : PDF_COLOR.tealSoft;
+
+    this.rect(this.margin, this.y - height, this.contentWidth, height, fill, PDF_COLOR.border);
+    this.text(title, this.margin + 12, this.y - 16, 10, "F2", PDF_COLOR.text);
+    wrapped.forEach((line, index) => {
+      this.text(line, this.margin + 12, this.y - 34 - index * 12, 8.5, "F1", PDF_COLOR.text);
+    });
+    this.y -= height + 14;
+  }
+
+  toBlob() {
+    return buildPdfBlobFromPages(this.pages);
+  }
+}
+
+function buildPdfBlobFromPages(pages: string[][]) {
   const pageHeight = 842;
   const pageWidth = 595;
-  const marginX = 50;
-  const startY = 790;
-  const lineHeight = 15;
-  const linesPerPage = 48;
-  const pages: string[][] = [];
-
-  for (let i = 0; i < lines.length; i += linesPerPage) {
-    pages.push(lines.slice(i, i + linesPerPage));
-  }
 
   const objects: string[] = [];
   objects.push("<< /Type /Catalog /Pages 2 0 R >>");
@@ -486,17 +580,15 @@ function buildPdfBlob(lines: string[]) {
   objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
   objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
 
-  pages.forEach((pageLines, index) => {
+  pages.forEach((pageCommands, index) => {
     const pageId = pageObjectIds[index];
     const contentId = pageId + 1;
-    const contentLines = [
-      "BT",
-      `/F2 14 Tf ${lineHeight} TL ${marginX} ${startY} Td`,
-      `(${escapePdfText(pageLines[0] ?? "Receiver Report")}) Tj`,
-      `/F1 10 Tf`,
-      ...pageLines.slice(1).map((line) => `T* (${escapePdfText(line)}) Tj`),
-      "ET",
+    const footer = [
+      `${rgb(PDF_COLOR.border, "rg")} 42 40 511 0.7 re f`,
+      pdfTextCommand("Cross-Border IPS AI Agent | readable PDF generated from HL7 FHIR IPS evidence | synthetic data only", 42, 25, 7.5, "F1", PDF_COLOR.muted),
+      pdfTextCommand(`Page ${index + 1} of ${pages.length}`, 510, 25, 7.5, "F1", PDF_COLOR.muted),
     ];
+    const contentLines = [...pageCommands, ...footer];
     const stream = contentLines.join("\n");
 
     objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${contentId} 0 R >>`);
@@ -522,9 +614,137 @@ function buildPdfBlob(lines: string[]) {
   return new Blob(pdfParts, { type: "application/pdf" });
 }
 
+function getPatient(activeCase: DemoCase) {
+  return activeCase.ipsBundle.entry
+    .map((entry) => entry.resource as DemoFhirResource)
+    .find((resource) => resource.resourceType === "Patient");
+}
+
+function buildSourceReportPdfBlob(activeCase: DemoCase) {
+  const sourceCountry = COUNTRIES.find((country) => country.code === activeCase.source);
+  const patient = getPatient(activeCase);
+  const pdf = new ClinicalPdfBuilder(
+    SOURCE_REPORT_TITLE[activeCase.source],
+    "Country-facing source report prepared for HL7 FHIR IPS conversion",
+    `${sourceCountry?.flag ?? ""} ${sourceCountry?.name ?? activeCase.source} | ${SOURCE_FORMAT_LABEL[activeCase.source]}`,
+  );
+
+  pdf.addKeyValueGrid([
+    { label: "Document role", value: "Input PDF / local doctor note" },
+    { label: "Source country", value: sourceCountry?.name ?? activeCase.source },
+    { label: "Patient", value: `Synthetic patient | ${patient?.gender ?? "unknown"} | DOB ${patient?.birthDate ?? "not available"}` },
+    { label: "HL7 route", value: `${activeCase.source} local report -> FHIR IPS Bundle` },
+  ]);
+  pdf.addParagraphBox("Original doctor note", activeCase.reportText);
+  pdf.addTable(
+    "Clinical facts prepared for HL7 conversion",
+    [
+      { label: "Source phrase", width: 130 },
+      { label: "Clinical meaning", width: 205 },
+      { label: "Code", width: 86 },
+      { label: "FHIR", width: 90 },
+    ],
+    activeCase.traceFacts.map((fact) => [
+      fact.phrase,
+      fact.normalized,
+      standardCodeLabel(fact),
+      fact.fhirResource,
+    ]),
+  );
+  pdf.addCallout("HL7 interoperability boundary", [
+    "This PDF is a readable source document. The exchange artifact is the HL7 FHIR IPS-style document Bundle generated from the coded facts.",
+    "The target-country PDF is rendered from that Bundle for human review; it is not the machine-to-machine standard.",
+  ]);
+  pdf.addCallout("Scope and safety", [
+    "Synthetic data only. No real patient data, no national certification, and no clinical decision-support claim.",
+  ], "warning");
+
+  return pdf.toBlob();
+}
+
+function buildReceiverReportPdfBlob(activeCase: DemoCase, targetCountry: CountryCode) {
+  const resources = activeCase.ipsBundle.entry.map((entry) => entry.resource as DemoFhirResource);
+  const patient = resources.find((resource) => resource.resourceType === "Patient");
+  const sourceCountry = COUNTRIES.find((country) => country.code === activeCase.source);
+  const target = COUNTRIES.find((country) => country.code === targetCountry);
+  const byType = (resourceType: string) => resources.filter((resource) => resource.resourceType === resourceType);
+  const pdf = new ClinicalPdfBuilder(
+    RECEIVER_REPORT_TITLE[targetCountry],
+    "Readable target-country handover generated from the HL7 FHIR IPS Bundle",
+    `${sourceCountry?.flag ?? ""} ${sourceCountry?.name ?? activeCase.source} -> ${target?.flag ?? ""} ${target?.name ?? targetCountry} | ${TARGET_LABEL[targetCountry]}`,
+  );
+
+  pdf.addKeyValueGrid([
+    { label: "Route", value: `${activeCase.source} -> ${targetCountry}` },
+    { label: "Receiver view", value: TARGET_LABEL[targetCountry] },
+    { label: "Source FHIR document", value: activeCase.ipsBundle.identifier.value },
+    { label: "Validator evidence", value: "0 errors in representative Bundle validation" },
+    { label: "Patient", value: `Synthetic patient | ${patient?.gender ?? "unknown"} | DOB ${patient?.birthDate ?? "not available"}` },
+    { label: "Document status", value: "FHIR Bundle.type=document | Composition first" },
+  ]);
+  pdf.addTable(
+    "Problems",
+    [
+      { label: "Problem", width: 235 },
+      { label: "Standard code(s)", width: 216 },
+      { label: "Status", width: 60 },
+    ],
+    byType("Condition").map((resource) => [
+      clinicalDisplay(resource),
+      clinicalCodeLabels(resource).join(", "),
+      resourceDetail(resource),
+    ]),
+  );
+  pdf.addTable(
+    "Results",
+    [
+      { label: "Result", width: 230 },
+      { label: "Value", width: 82 },
+      { label: "Standard code(s)", width: 199 },
+    ],
+    byType("Observation").map((resource) => [
+      clinicalDisplay(resource),
+      resourceDetail(resource),
+      clinicalCodeLabels(resource).join(", "),
+    ]),
+  );
+  pdf.addTable(
+    "Medications",
+    [
+      { label: "Medication", width: 230 },
+      { label: "Dose", width: 96 },
+      { label: "Standard code(s)", width: 185 },
+    ],
+    byType("MedicationStatement").map((resource) => [
+      clinicalDisplay(resource),
+      resourceDetail(resource),
+      clinicalCodeLabels(resource).join(", "),
+    ]),
+  );
+  pdf.addTable(
+    "Target readiness check",
+    [
+      { label: "Item", width: 260 },
+      { label: "Status", width: 76 },
+      { label: "Note", width: 175 },
+    ],
+    READINESS[targetCountry].map((row) => [
+      row.item,
+      row.status,
+      "note" in row ? row.note : "Ready for demo evidence",
+    ]),
+  );
+  pdf.addCallout("Receiver handover notes", RECEIVER_REPORT_NOTES[targetCountry], "warning");
+  pdf.addCallout("Interoperability note", [
+    "This PDF is a human-readable rendering. The interoperable source of truth is the HL7 FHIR IPS-style Bundle and its coded Condition, Observation, and MedicationStatement resources.",
+    "Readiness checks are shown for judge review only; no formal national profile certification is claimed.",
+  ]);
+
+  return pdf.toBlob();
+}
+
 function downloadSourceReportPdf(activeCase: DemoCase) {
-  const lines = buildSourceReportLines(activeCase);
-  const blob = buildPdfBlob(lines);
+  const blob = buildSourceReportPdfBlob(activeCase);
   const url = URL.createObjectURL(blob);
   const fileName = `${activeCase.source.toLowerCase()}-source-report.pdf`;
   const link = document.createElement("a");
@@ -537,8 +757,7 @@ function downloadSourceReportPdf(activeCase: DemoCase) {
 }
 
 function downloadReceiverReportPdf(activeCase: DemoCase, targetCountry: CountryCode) {
-  const lines = buildReceiverReportLines(activeCase, targetCountry);
-  const blob = buildPdfBlob(lines);
+  const blob = buildReceiverReportPdfBlob(activeCase, targetCountry);
   const url = URL.createObjectURL(blob);
   const fileName = `${activeCase.source.toLowerCase()}-to-${targetCountry.toLowerCase()}-receiver-report.pdf`;
   const link = document.createElement("a");
