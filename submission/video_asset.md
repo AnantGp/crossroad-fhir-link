@@ -1,14 +1,31 @@
 # Demo Video Asset
 
-Generated 4-minute judge-facing demo draft:
+## Submission-Ready Local MP4
 
-https://ai.invideo.io/workspace/fd85a8c0-c60c-4809-8ab8-7d8ff24be70e/v40-copilot/61125520-3679-473a-854e-7514d3c86eb7
+Generated local MP4:
 
-Use the InVideo **Export** button to render/download the MP4.
+`submission/cross-border-ips-ai-agent-demo.mp4`
+
+Public web copy for Vercel hosting:
+
+`public/cross-border-ips-ai-agent-demo.mp4`
+
+After deployment, use:
+
+`https://crossroad-fhir-link-three.vercel.app/cross-border-ips-ai-agent-demo.mp4`
+
+The video is a 1080p, approximately 3 minute 19 second, judge-facing walkthrough with local voiceover and burned-in captions. It was generated locally because InVideo workspace export was unreliable.
+
+## Rebuild
+
+```bash
+python3 scripts/build_demo_video.py
+cp submission/cross-border-ips-ai-agent-demo.mp4 public/cross-border-ips-ai-agent-demo.mp4
+```
 
 ## Required Final Review Before Submission
 
-Before exporting, quickly review the generated video for claim discipline.
+Before submitting, quickly review the generated video for claim discipline.
 
 The video should say:
 
@@ -22,4 +39,4 @@ The video should not say:
 - "fully private federated learning"
 - "production clinical decision support"
 
-If InVideo invents any unsupported claim, edit that sentence before export.
+If any wording is changed later, preserve these claim boundaries.

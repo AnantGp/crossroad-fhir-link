@@ -19,7 +19,7 @@ Final pitch:
 - Architecture one-pager: [architecture_one_page.md](architecture_one_page.md)
 - Final pitch deck source: [final_pitch_deck.md](final_pitch_deck.md)
 - Final technical audit: [final_technical_audit.md](final_technical_audit.md)
-- Demo video draft/export link: [video_asset.md](video_asset.md)
+- Demo video asset: [video_asset.md](video_asset.md)
 - Screenshots: [screenshots/](screenshots/)
 - Downloaded route evidence: [downloads/](downloads/)
 
@@ -32,7 +32,8 @@ Generated PDFs:
 
 Video:
 
-- InVideo draft/export link: https://ai.invideo.io/workspace/fd85a8c0-c60c-4809-8ab8-7d8ff24be70e/v40-copilot/61125520-3679-473a-854e-7514d3c86eb7
+- Local MP4: `cross-border-ips-ai-agent-demo.mp4`
+- Public deploy path: `https://crossroad-fhir-link-three.vercel.app/cross-border-ips-ai-agent-demo.mp4`
 
 ## Click-Tested Routes
 
