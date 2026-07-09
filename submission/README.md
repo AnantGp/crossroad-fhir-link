@@ -34,6 +34,7 @@ Video:
 
 - Local MP4: `cross-border-ips-ai-agent-demo.mp4`
 - Public deploy path: `https://crossroad-fhir-link-three.vercel.app/cross-border-ips-ai-agent-demo.mp4`
+- Voiceover source: `elevenlabs_voiceover.mp3`
 
 ## Click-Tested Routes
 

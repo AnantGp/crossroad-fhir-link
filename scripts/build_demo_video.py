@@ -599,6 +599,44 @@ def make_clip(frame: Path, audio: Path, index: int) -> Path:
     return clip_path
 
 
+def slide_voiceover_durations(total_duration: float) -> list[float]:
+    """Allocate one continuous voiceover across slides using narration length."""
+    weights = [max(1, len(slide.narration.split())) for slide in SLIDES]
+    target_duration = total_duration + 0.6
+    total_weight = sum(weights)
+    return [target_duration * weight / total_weight for weight in weights]
+
+
+def make_silent_clip(frame: Path, duration: float, index: int) -> Path:
+    clip_path = CLIPS / f"clip_{index + 1:02d}.mp4"
+    run(
+        [
+            "ffmpeg",
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-loop",
+            "1",
+            "-i",
+            str(frame),
+            "-t",
+            f"{duration:.3f}",
+            "-r",
+            "30",
+            "-vf",
+            "format=yuv420p",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "veryfast",
+            "-an",
+            str(clip_path),
+        ]
+    )
+    return clip_path
+
+
 def concat(clips: list[Path], out: Path) -> None:
     concat_file = BUILD_DIR / "clips.txt"
     concat_file.write_text("".join(f"file '{clip.resolve()}'\n" for clip in clips), encoding="utf-8")
@@ -634,15 +672,78 @@ def concat(clips: list[Path], out: Path) -> None:
     )
 
 
+def concat_video_only(clips: list[Path], out: Path) -> None:
+    concat_file = BUILD_DIR / "clips.txt"
+    concat_file.write_text("".join(f"file '{clip.resolve()}'\n" for clip in clips), encoding="utf-8")
+    run(
+        [
+            "ffmpeg",
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            str(concat_file),
+            "-c:v",
+            "libx264",
+            "-preset",
+            "veryfast",
+            "-crf",
+            "20",
+            "-pix_fmt",
+            "yuv420p",
+            str(out),
+        ]
+    )
+
+
+def mux_voiceover(video: Path, voiceover: Path, out: Path) -> None:
+    run(
+        [
+            "ffmpeg",
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-i",
+            str(video),
+            "-i",
+            str(voiceover),
+            "-map",
+            "0:v:0",
+            "-map",
+            "1:a:0",
+            "-c:v",
+            "copy",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "192k",
+            "-shortest",
+            "-movflags",
+            "+faststart",
+            str(out),
+        ]
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--rate", type=int, default=170, help="macOS say speech rate")
     parser.add_argument("--output", type=Path, default=OUT)
+    parser.add_argument("--voiceover", type=Path, help="External narration MP3/WAV to use instead of macOS say")
     args = parser.parse_args()
 
     require_binary("ffmpeg")
     require_binary("ffprobe")
-    require_binary("say")
+    if not args.voiceover:
+        require_binary("say")
+    elif not args.voiceover.exists():
+        raise SystemExit(f"Voiceover file not found: {args.voiceover}")
 
     for directory in [FRAMES, AUDIO, CLIPS]:
         directory.mkdir(parents=True, exist_ok=True)
@@ -650,9 +751,17 @@ def main() -> None:
             child.unlink()
 
     frames = [render_slide(slide, i) for i, slide in enumerate(SLIDES)]
-    audios = [say_audio(slide, i, args.rate) for i, slide in enumerate(SLIDES)]
-    clips = [make_clip(frame, audio, i) for i, (frame, audio) in enumerate(zip(frames, audios))]
-    concat(clips, args.output)
+    if args.voiceover:
+        voiceover_duration = ffprobe_duration(args.voiceover)
+        durations = slide_voiceover_durations(voiceover_duration)
+        clips = [make_silent_clip(frame, duration, i) for i, (frame, duration) in enumerate(zip(frames, durations))]
+        temp_video = BUILD_DIR / "voiceover_video_only.mp4"
+        concat_video_only(clips, temp_video)
+        mux_voiceover(temp_video, args.voiceover, args.output)
+    else:
+        audios = [say_audio(slide, i, args.rate) for i, slide in enumerate(SLIDES)]
+        clips = [make_clip(frame, audio, i) for i, (frame, audio) in enumerate(zip(frames, audios))]
+        concat(clips, args.output)
     duration = ffprobe_duration(args.output)
     print(f"Created {args.output}")
     print(f"Duration: {duration:.1f} seconds")

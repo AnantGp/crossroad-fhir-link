@@ -1,0 +1,21 @@
+Hello, this is Cross-Border IPS AI Agent, a Type 2 diabetes interoperability case study for the HL7 AI Challenge. The core principle is simple: FHIR IPS is the interoperable artifact, while PDFs are human-readable renderings.
+
+The problem is that a doctor report written in one country may not be immediately understandable in another EHR ecosystem. Local phrases, abbreviations, and report formats differ. HL7 and FHIR give the exchange language, and AI helps align the local terminology.
+
+The source can be an EHR-like note, a PDF-like clinical note, or free text. If the input is already structured, extraction can be skipped. In this prototype, extraction is rule-backed; in production it can be replaced with pretrained clinical NER.
+
+The Clinical Trace tab is the audit path. It shows source phrase, normalized clinical meaning, standard code, and the FHIR resource. For example, T2DM maps to Type 2 diabetes mellitus, SNOMED CT 44054006, ICD-10 E11, and then a FHIR Condition.
+
+Terminology lookup checks the local registry first. If the registry misses a phrase, the federated terminology linker predicts the canonical concept. Accepted mappings are then represented through FHIR CodeSystem, ValueSet, and ConceptMap artifacts, with simulated translate, lookup, and validate-code operations.
+
+Federated learning helps each site benefit from terminology variation without centralizing raw clinical text. USA, India, Australia, and Europe train locally. The coordinator receives model tensors and sample counts only. FedAvg gives data locality, but it is not cryptography and not a formal privacy guarantee.
+
+The FHIR IPS Bundle is the actual interoperable artifact. The Bundle type is document, the first entry is Composition, and the clinical facts are packaged into patient, condition, observation, medication statement, organization, and related resources.
+
+When the target country changes, the receiver view and readiness checks change. The demo labels these as readiness checks, not national certification. The same FHIR IPS artifact can also be rendered into a target-country PDF for human review.
+
+The evidence tab shows the validation story: 20 synthetic reports, four country sites, 768 terminology training examples, 192 globally unseen examples, 48 out of 48 cross-site transfer mappings correct, and official validator evidence with zero errors for representative Bundles.
+
+The scope is honest. This is synthetic data only. Extraction is rule-backed. Terminology operations are simulated for the prototype. And federated learning alone does not provide a formal privacy guarantee; production deployment needs secure aggregation, differential privacy, sample thresholds, and privacy auditing.
+
+In summary, this project combines semantic interoperability and data interoperability. Federated learning aligns local terminology without centralizing raw reports. FHIR terminology resources make those mappings auditable. FHIR IPS packages the result into a standards-based patient summary for cross-border exchange.
