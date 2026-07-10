@@ -127,15 +127,18 @@ def build_architecture_pdf() -> None:
 
 
 SLIDES = [
-    ("Cross-Border IPS AI Agent", "Federated FHIR terminology alignment for diabetes reports."),
-    ("The Problem", "Local clinical phrases are ambiguous across countries: T2DM, sugar disease, raised BP, Typ-2-Diabetes. The problem is semantic meaning, not only file format."),
-    ("Why HL7", "FHIR IPS gives the patient-summary exchange artifact. FHIR terminology resources make mappings auditable through CodeSystem, ValueSet, ConceptMap, translate, lookup, and validate-code."),
-    ("Solution Flow", "Local report -> clinical facts -> registry lookup -> federated linker on misses -> FHIR terminology validation -> FHIR IPS Bundle -> target-country readiness and PDF rendering."),
-    ("Federated Learning Role", "Each site trains locally. The coordinator receives model tensors and sample counts only, not raw reports, aliases, labels, identifiers, or patient-level FHIR Bundles."),
-    ("Evidence", "20 synthetic reports, 4 sites, 768 training examples, 48 cross-site transfer examples, 192 globally unseen examples, 48/48 transfer correct, 0 validator errors."),
-    ("Live Demo", "Judge can test USA->India, India->USA, Australia->Europe, and Europe->USA. Each route exports source PDF, final PDF, FHIR Bundle JSON, and evidence pack JSON."),
-    ("Honest Limits", "Synthetic data only. Rule-backed extraction. Simulated terminology operations. Readiness checks only. FedAvg gives data locality only, not formal privacy."),
-    ("Final Claim", "Federated learning resolves local terminology without centralizing raw reports. FHIR terminology artifacts make mappings auditable. FHIR IPS packages the result for exchange."),
+    ("Cross-Border IPS AI Agent", "Federated FHIR terminology alignment for cross-border Type 2 diabetes summaries."),
+    ("Aim", "Make a local diabetes report usable across borders by converting it into a machine-readable, universally coded, HL7 FHIR IPS-style patient summary. FHIR IPS is the interoperable artifact; PDFs are human-readable renderings."),
+    ("Problem Statement", "Local clinical language blocks interoperability. T2DM, sugar disease, madhumeha type 2, type 2 DM, and DM2 may refer to the same concept, but receiver systems need standard codes and predictable FHIR resources."),
+    ("Solution Flow", "Doctor report -> clinical fact extraction -> local registry lookup -> federated terminology linker -> FHIR ConceptMap validation -> FHIR IPS document Bundle -> target-country report and readiness gaps."),
+    ("Machine-Readable Proof", "The final exchange artifact is an IPS-style FHIR R4 document Bundle with Bundle.type=document, Composition first, coded resources, and representative validator evidence showing 0 errors."),
+    ("Universal Coding Proof", "Local clinical terms are normalized into accepted healthcare codes: SNOMED CT and ICD-10 for conditions, LOINC for labs, RxNorm for medications, and FHIR resources for exchange structure."),
+    ("Federated Learning Role", "Each country/site trains a terminology linker locally. The coordinator receives model tensors and sample counts only; it does not receive raw reports, identifiers, labels, aliases, or patient-level FHIR Bundles."),
+    ("FHIR-Native Global Linker", "The model predicts candidate mappings, but HL7 makes them auditable through local CodeSystem, target ValueSet, ConceptMap, simulated translate, lookup, and validate-code."),
+    ("Cross-Border Sharing", "The same FHIR IPS can support USA, India, Australia, and Europe routes. Judges can download source PDF, target PDF, FHIR Bundle JSON, and evidence pack JSON. Readiness checks are not certification."),
+    ("Evidence", "20 synthetic reports, 4 country sites, 768 terminology training mentions, 192 globally unseen examples, 48/48 cross-site transfer examples correct, and 0 validator errors for representative IPS-style Bundles."),
+    ("Honest Limits", "Synthetic data only. Rule-backed extraction. Simulated terminology operations. Readiness checks only. FedAvg gives data locality only and is not cryptography or formal de-identification."),
+    ("Final Claim", "Cross-Border IPS AI Agent combines semantic interoperability and data interoperability. Federated learning aligns local terminology, FHIR terminology artifacts make mappings auditable, and FHIR IPS packages the result for cross-border exchange."),
 ]
 
 

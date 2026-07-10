@@ -1,5 +1,17 @@
 # One-Page Architecture
 
+## Aim
+
+Make a local diabetes report usable across borders by converting it into a machine-readable, universally coded, HL7 FHIR IPS-style patient summary.
+
+## Objectives Proven By The Demo
+
+- Machine-readable: IPS-style FHIR R4 document Bundle.
+- Sensitive-data posture: raw reports and identifiers stay local during FedAvg terminology learning.
+- Universal coding: local phrases map to SNOMED CT, ICD-10, LOINC, and RxNorm.
+- Cross-border sharing: the same FHIR IPS supports USA, India, Australia, and Europe readiness views.
+- Human readability: source and target PDFs are generated as renderings from the interoperable artifact.
+
 ## Chronological Flow
 
 ```text

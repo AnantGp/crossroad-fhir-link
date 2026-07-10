@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import subprocess
 import textwrap
@@ -26,6 +27,7 @@ FRAMES = BUILD_DIR / "frames"
 AUDIO = BUILD_DIR / "audio"
 CLIPS = BUILD_DIR / "clips"
 OUT = SUBMISSION / "cross-border-ips-ai-agent-demo.mp4"
+DEFAULT_SUBTITLE_SCRIPT = SUBMISSION / "elevenlabs_v3_tagged_script.txt"
 
 WIDTH = 1920
 HEIGHT = 1080
@@ -57,189 +59,215 @@ class Slide:
 
 SLIDES = [
     Slide(
-        eyebrow="HL7 AI Challenge Demo",
-        title="Cross-Border IPS AI Agent",
+        eyebrow="Aim",
+        title="Global Journey Of Patient Information",
         visual="screenshot",
         screenshot="usa-to-india-dashboard.png",
         route="USA -> India",
         bullets=[
-            "FHIR IPS is the interoperable artifact.",
-            "PDFs are human-readable renderings.",
-            "Case study: Type 2 diabetes across USA, India, Australia, and Europe.",
+            "Objective: convert a local diabetes report into a cross-border patient summary.",
+            "PDF is the human-readable view.",
+            "FHIR IPS Bundle is the machine-readable interoperability artifact.",
+            "Four-country case study: USA, India, Australia, Europe.",
         ],
         narration=(
-            "Hello, this is Cross-Border IPS AI Agent, a Type 2 diabetes interoperability "
-            "case study for the HL7 AI Challenge. The core principle is simple: FHIR IPS "
-            "is the interoperable artifact, while PDFs are human-readable renderings."
+            "This demo is about the global journey of patient information. The objective is "
+            "to turn a local diabetes report into a machine-readable, universally coded, "
+            "cross-border patient summary. The PDF is only the human-readable view; the FHIR "
+            "IPS Bundle is the interoperable artifact."
         ),
     ),
     Slide(
         eyebrow="Problem",
-        title="Local clinical language blocks cross-border reuse",
+        title="Local Clinical Language Does Not Travel Cleanly",
+        visual="mentions",
+        bullets=[
+            "A report may be readable to a human but unusable to another EHR.",
+            "T2DM, sugar disease, madhumeha type 2, and DM2 can mean the same condition.",
+            "Receiver systems need standard codes.",
+            "Receiver systems also need predictable HL7 FHIR structure.",
+        ],
+        narration=(
+            "The problem is semantic and technical at the same time. A doctor may write T2DM, "
+            "sugar disease, madhumeha type 2, or DM2. Humans can guess the meaning, but a "
+            "receiver EHR needs standard codes and a predictable HL7 FHIR structure."
+        ),
+    ),
+    Slide(
+        eyebrow="Objective",
+        title="One Local Report To One Cross-Border Summary",
+        visual="screenshot",
+        screenshot="usa-to-india-dashboard.png",
+        route="USA -> India",
+        bullets=[
+            "Input: local doctor report or EHR-like note.",
+            "Output: universally coded patient summary.",
+            "PDF remains a readable rendering.",
+            "FHIR IPS remains the system-to-system artifact.",
+        ],
+        narration=(
+            "Our objective is to convert a local diabetes report into a machine-readable, "
+            "universally coded, cross-border patient summary. The PDF is only the human-readable "
+            "view. The real interoperable artifact is the FHIR IPS-style document Bundle."
+        ),
+    ),
+    Slide(
+        eyebrow="Solution",
+        title="Report To FHIR IPS In One Pipeline",
         visual="pipeline",
         bullets=[
-            "Doctor notes use local phrases, abbreviations, and report habits.",
-            "A receiver EHR needs standard codes and predictable resources.",
-            "HL7/FHIR gives the exchange language; AI helps align local terminology.",
+            "Structured EHR input can be used directly.",
+            "Free text uses prototype clinical fact extraction.",
+            "Known phrases resolve through the local registry.",
+            "Unknown local phrases go to the federated terminology linker.",
         ],
         narration=(
-            "The problem is that a doctor report written in one country may not be immediately "
-            "understandable in another EHR ecosystem. Local phrases, abbreviations, and report "
-            "formats differ. HL7 and FHIR give the exchange language, and AI helps align the "
-            "local terminology."
+            "Our solution follows a clear pipeline. We take a doctor report or EHR-like note. "
+            "If the input is already structured, we can use it directly. If it is free text, "
+            "the prototype extracts clinical facts first. Then we map local clinical phrases "
+            "to standard medical concepts. Known phrases are resolved through a local "
+            "terminology registry. Unknown local phrases go to a federated terminology linker."
         ),
     ),
     Slide(
-        eyebrow="Step 1",
-        title="Report to clinical facts",
-        visual="screenshot",
-        screenshot="india-to-usa-dashboard.png",
-        route="India -> USA",
-        bullets=[
-            "Structured EHR input can skip extraction.",
-            "Free text or PDF-like notes use rule-backed extraction in this prototype.",
-            "Production can replace this layer with pretrained clinical NER.",
-        ],
-        narration=(
-            "The source can be an EHR-like note, a PDF-like clinical note, or free text. If the "
-            "input is already structured, extraction can be skipped. In this prototype, extraction "
-            "is rule-backed; in production it can be replaced with pretrained clinical NER."
-        ),
-    ),
-    Slide(
-        eyebrow="Step 2",
-        title="Clinical trace proves source to code to resource",
-        visual="trace",
-        screenshot="usa-to-india-dashboard.png",
-        bullets=[
-            "T2DM -> Type 2 diabetes mellitus -> SNOMED CT 44054006 / ICD-10 E11.",
-            "A1c -> HbA1c -> LOINC 4548-4 -> Observation.",
-            "metformin -> RxNorm 6809 -> MedicationStatement.",
-        ],
-        narration=(
-            "The Clinical Trace tab is the audit path. It shows source phrase, normalized clinical "
-            "meaning, standard code, and the FHIR resource. For example, T2DM maps to Type 2 "
-            "diabetes mellitus, SNOMED CT 44054006, ICD-10 E11, and then a FHIR Condition."
-        ),
-    ),
-    Slide(
-        eyebrow="Step 3",
-        title="FHIR-native terminology layer",
-        visual="terminology",
-        bullets=[
-            "Local registry handles trusted known phrases first.",
-            "Registry misses go to the federated terminology linker.",
-            "Accepted mappings are expressed as CodeSystem, ValueSet, and ConceptMap.",
-            "Simulated $translate, $lookup, and $validate-code keep the flow HL7-aligned.",
-        ],
-        narration=(
-            "Terminology lookup checks the local registry first. If the registry misses a phrase, "
-            "the federated terminology linker predicts the canonical concept. Accepted mappings "
-            "are then represented through FHIR CodeSystem, ValueSet, and ConceptMap artifacts, "
-            "with simulated translate, lookup, and validate-code operations."
-        ),
-    ),
-    Slide(
-        eyebrow="Step 4",
-        title="Federated terminology learning",
+        eyebrow="Proof 1: Data-Local Learning",
+        title="FedAvg Learns Local Terms Without Centralizing Reports",
         visual="federated",
         bullets=[
-            "Four local sites train on country-specific terminology examples.",
+            "Each country trains locally on its own terminology examples.",
             "Coordinator receives model tensors and sample counts only.",
-            "Raw reports, labels, aliases, identifiers, and patient Bundles stay local.",
-            "FedAvg is data locality, not cryptography or formal privacy.",
+            "Raw reports, identifiers, labels, aliases, and patient Bundles stay local.",
+            "FedAvg is not cryptography and not formal de-identification.",
         ],
         narration=(
-            "Federated learning helps each site benefit from terminology variation without "
-            "centralizing raw clinical text. USA, India, Australia, and Europe train locally. "
-            "The coordinator receives model tensors and sample counts only. FedAvg gives data "
-            "locality, but it is not cryptography and not a formal privacy guarantee."
+            "Federated learning is used for data locality and scale. Each country can train on "
+            "its local phrase examples without sending raw reports, identifiers, labels, aliases, "
+            "or patient Bundles to a central server. The coordinator receives model tensors and "
+            "sample counts only. This is not cryptography and not formal de-identification."
         ),
     ),
     Slide(
-        eyebrow="Step 5",
-        title="FHIR IPS document Bundle",
+        eyebrow="Proof 2: FHIR-Native Linker",
+        title="FHIR Terminology Makes AI Mappings Auditable",
+        visual="terminology",
+        bullets=[
+            "Local term is represented in a local CodeSystem.",
+            "Allowed targets are constrained through a ValueSet.",
+            "Accepted mapping is published as a FHIR ConceptMap.",
+            "$translate, $lookup, and $validate-code make the decision auditable.",
+        ],
+        narration=(
+            "The global linker is FHIR native. A local phrase is represented in a local CodeSystem, "
+            "allowed targets are constrained by a ValueSet, and the mapping is published as a "
+            "FHIR ConceptMap. Translate, lookup, and validate-code operations make the mapping "
+            "auditable instead of being a hidden AI guess."
+        ),
+    ),
+    Slide(
+        eyebrow="Proof 3: Universal Coding",
+        title="Local Words Become Accepted Healthcare Codes",
+        visual="trace",
+        bullets=[
+            "Conditions use SNOMED CT and ICD-10.",
+            "Lab observations use LOINC.",
+            "Medications use RxNorm.",
+            "Coded facts are placed into the correct FHIR resources.",
+        ],
+        narration=(
+            "Universal coding is the bridge from local language to computable healthcare data. "
+            "Conditions use SNOMED CT and ICD-10, lab results use LOINC, medications use RxNorm, "
+            "and those coded facts are placed into the correct FHIR resources."
+        ),
+    ),
+    Slide(
+        eyebrow="Proof 4: IPS Builder",
+        title="FHIR IPS Packages The Coded Patient Summary",
         visual="screenshot",
         screenshot="usa-to-india-fhir-bundle.png",
         route="USA -> India",
         bullets=[
             "Bundle.type = document.",
             "Composition is the first entry.",
-            "Facts become Patient, Condition, Observation, MedicationStatement, and Organization resources.",
+            "Resources include Patient, Condition, Observation, MedicationStatement, and Organization.",
+            "The Bundle is the machine-readable exchange artifact.",
         ],
         narration=(
-            "The FHIR IPS Bundle is the actual interoperable artifact. The Bundle type is document, "
-            "the first entry is Composition, and the clinical facts are packaged into patient, "
-            "condition, observation, medication statement, organization, and related resources."
+            "After coding, the FHIR IPS Builder packages the patient summary into an IPS-style "
+            "FHIR R4 document Bundle. The Bundle has type document, Composition as the first "
+            "entry, and coded resources such as Patient, Condition, Observation, MedicationStatement, "
+            "and Organization."
         ),
     ),
     Slide(
-        eyebrow="Step 6",
-        title="Target-country readiness, not certification",
+        eyebrow="Proof 5: Cross-Border Sharing",
+        title="The Same FHIR IPS Supports Different Receivers",
         visual="screenshot",
         screenshot="australia-to-europe-fhir-bundle.png",
         route="Australia -> Europe",
         bullets=[
-            "Receiver-specific gaps are shown for US Core, ABDM, AU Core, and European Patient Summary.",
-            "The app says readiness checks, not national profile certification.",
-            "Same IPS artifact can be rendered into a target-country PDF for human review.",
+            "FHIR IPS is the shared machine-readable source of truth.",
+            "Country PDFs are receiver-friendly renderings, not the interoperability layer.",
+            "Readiness checks are shown for US Core, ABDM, AU Core, and European Patient Summary.",
+            "No national profile certification is claimed.",
         ],
         narration=(
-            "When the target country changes, the receiver view and readiness checks change. "
-            "The demo labels these as readiness checks, not national certification. The same FHIR "
-            "IPS artifact can also be rendered into a target-country PDF for human review."
+            "The cross-border part comes from FHIR IPS. The same machine-readable Bundle can be "
+            "sent to another ecosystem, while the target PDF is only a human-readable rendering. "
+            "The app also shows receiver readiness gaps for US Core, ABDM, AU Core, and the "
+            "European Patient Summary, without claiming national certification."
         ),
     ),
     Slide(
         eyebrow="Evidence",
-        title="Validated prototype evidence",
+        title="Evidence Shown In The Demo",
         visual="screenshot",
         screenshot="europe-to-usa-evidence.png",
         route="Europe -> USA",
         bullets=[
-            "20 synthetic reports and 4 country sites.",
-            "768 terminology training examples and 192 globally unseen examples.",
-            "48/48 cross-site transfer mappings correct.",
-            "Representative Bundles show official validator evidence: 0 errors.",
+            "20 synthetic reports across 4 country sites.",
+            "768 terminology training mentions plus 192 globally unseen examples.",
+            "48/48 cross-site transfer mappings correct in the synthetic validation set.",
+            "Representative IPS-style Bundles show official validator evidence: 0 errors.",
         ],
         narration=(
-            "The evidence tab shows the validation story: 20 synthetic reports, four country sites, "
-            "768 terminology training examples, 192 globally unseen examples, 48 out of 48 cross-site "
-            "transfer mappings correct, and official validator evidence with zero errors for "
-            "representative Bundles."
+            "The evidence is intentionally visible. The demo has 20 synthetic reports across four "
+            "sites, 768 terminology training mentions, 192 globally unseen examples, 48 out of 48 "
+            "cross-site transfer mappings correct in the synthetic validation set, and official "
+            "validator evidence showing zero errors for representative IPS-style Bundles."
         ),
     ),
     Slide(
-        eyebrow="Limitations",
-        title="Honest scope for a competition prototype",
+        eyebrow="Benefit",
+        title="What Changes For Patient, Hospital, And Auditor",
+        visual="closing",
+        bullets=[
+            "Patient journey: summary can be understood across borders.",
+            "Hospital journey: receiver gets codes and FHIR resources, not ambiguous text.",
+            "Privacy posture: local data stays local during terminology learning.",
+            "Audit journey: source phrase -> concept -> code -> FHIR resource remains traceable.",
+        ],
+        narration=(
+            "The benefit is practical. A patient summary can be understood across borders. A "
+            "hospital receives coded FHIR resources instead of ambiguous text. Local data stays "
+            "local during terminology learning. And an auditor can follow the trace from source "
+            "phrase, to concept, to standard code, to FHIR resource."
+        ),
+    ),
+    Slide(
+        eyebrow="Closing / Limitations",
+        title="Honest prototype, clear production path",
         visual="limits",
         bullets=[
             "Synthetic data only; no real patient data.",
             "Rule-backed extraction; pretrained clinical NER is future work.",
-            "Simulated terminology operations; live servers are future work.",
-            "No formal privacy guarantee without DP-SGD and secure aggregation.",
+            "Simulated terminology operations; live terminology servers are future work.",
+            "Production privacy needs DP-SGD, secure aggregation, sample thresholds, and auditing.",
         ],
         narration=(
-            "The scope is honest. This is synthetic data only. Extraction is rule-backed. "
-            "Terminology operations are simulated for the prototype. And federated learning alone "
-            "does not provide a formal privacy guarantee; production deployment needs secure "
-            "aggregation, differential privacy, sample thresholds, and privacy auditing."
-        ),
-    ),
-    Slide(
-        eyebrow="Closing",
-        title="Semantic interoperability plus data interoperability",
-        visual="closing",
-        bullets=[
-            "Federated learning aligns local terminology without centralizing raw reports.",
-            "FHIR terminology artifacts make mappings auditable and exchangeable.",
-            "FHIR IPS packages the patient summary for cross-border exchange.",
-        ],
-        narration=(
-            "In summary, this project combines semantic interoperability and data interoperability. "
-            "Federated learning aligns local terminology without centralizing raw reports. FHIR "
-            "terminology resources make those mappings auditable. FHIR IPS packages the result into "
-            "a standards-based patient summary for cross-border exchange."
+            "The closing claim is precise. This is an honest synthetic prototype, not certified "
+            "production software. But the architecture is standards based: federated learning "
+            "aligns local terminology, FHIR terminology artifacts make mappings auditable, and "
+            "FHIR IPS packages the result for cross-border exchange."
         ),
     ),
 ]
@@ -294,6 +322,14 @@ def rounded(draw: ImageDraw.ImageDraw, xy: tuple[int, int, int, int], fill: str,
 def text_size(draw: ImageDraw.ImageDraw, text: str, fnt: ImageFont.FreeTypeFont) -> tuple[int, int]:
     box = draw.textbbox((0, 0), text, font=fnt)
     return box[2] - box[0], box[3] - box[1]
+
+
+def fitted_font(draw: ImageDraw.ImageDraw, text: str, max_width: int, start: int = 58, minimum: int = 40) -> ImageFont.FreeTypeFont:
+    for size in range(start, minimum - 1, -2):
+        candidate = font(size, bold=True)
+        if text_size(draw, text, candidate)[0] <= max_width:
+            return candidate
+    return font(minimum, bold=True)
 
 
 def wrap_text(text: str, fnt: ImageFont.FreeTypeFont, max_width: int, draw: ImageDraw.ImageDraw) -> list[str]:
@@ -361,7 +397,8 @@ def paste_screenshot(canvas: Image.Image, screenshot: str, box: tuple[int, int, 
 
 def draw_header(draw: ImageDraw.ImageDraw, slide: Slide, index: int) -> None:
     draw.text((82, 58), slide.eyebrow.upper(), font=FONT_EYEBROW, fill=TEAL_DARK)
-    draw.text((82, 98), slide.title, font=FONT_TITLE, fill=INK)
+    title_font = fitted_font(draw, slide.title, 1360)
+    draw.text((82, 98), slide.title, font=title_font, fill=INK)
     draw_pill(draw, f"{index + 1:02d}/{len(SLIDES):02d}", 1660, 68, "#e6f4f1", TEAL_DARK, "#cce6df")
     draw_pill(draw, "Synthetic demo data", 1510, 125, "#eaf2ff", BLUE, "#d5e4ff")
     draw.line((82, 178, 1838, 178), fill=BORDER, width=2)
@@ -459,6 +496,32 @@ def draw_terminology_visual(draw: ImageDraw.ImageDraw) -> None:
     draw_pill(draw, "HL7-native global linker", 805, 790, "#e6f4f1", TEAL_DARK, "#cce6df")
 
 
+def draw_mentions_visual(draw: ImageDraw.ImageDraw) -> None:
+    rounded(draw, (750, 235, 1838, 925), CARD)
+    draw.text((805, 285), "Canonical concept", font=FONT_SMALL_BOLD, fill=MUTED)
+    draw.text((805, 325), "Type 2 diabetes mellitus", font=FONT_H2, fill=INK)
+    draw_pill(draw, "SNOMED CT 44054006", 805, 380, "#e6f4f1", TEAL_DARK, "#cce6df")
+    draw_pill(draw, "ICD-10 E11", 1115, 380, "#eaf2ff", BLUE, "#d5e4ff")
+    draw_pill(draw, "FHIR Condition", 1295, 380, "#f0fdf4", GREEN, "#bbf7d0")
+
+    rows = [
+        ("USA", "T2DM, type 2 diabetes, adult-onset diabetes"),
+        ("India", "sugar disease, madhumeha type 2, known case of diabetes"),
+        ("Australia", "type 2 DM, T2 diabetes, diabetic type two"),
+        ("Europe", "diabetes mellitus type II, DM2, type II diabetes"),
+    ]
+    y = 485
+    for country, mentions in rows:
+        rounded(draw, (805, y, 1785, y + 78), "#f8fbfa", BORDER, 16)
+        draw.text((835, y + 24), country, font=FONT_SMALL_BOLD, fill=TEAL_DARK)
+        draw_wrapped(draw, mentions, (1030, y + 23), FONT_SMALL, INK, 690, 6)
+        y += 96
+
+    draw.line((1294, 430, 1294, 485), fill=TEAL, width=4)
+    draw.polygon([(1294, 485), (1282, 468), (1306, 468)], fill=TEAL)
+    draw_pill(draw, "Local phrases -> canonical concept -> universal code", 805, 835, "#e6f4f1", TEAL_DARK, "#cce6df")
+
+
 def draw_federated_visual(draw: ImageDraw.ImageDraw) -> None:
     rounded(draw, (750, 235, 1838, 925), CARD)
     center = (1294, 568)
@@ -502,7 +565,7 @@ def draw_closing_visual(draw: ImageDraw.ImageDraw) -> None:
     draw_wrapped(draw, statement, (815, 370), font(44, bold=True), "#ffffff", 910, 14)
     y = 635
     for text in ["Semantic interoperability: local phrase -> canonical concept -> standard code", "Data interoperability: standard code -> FHIR resource -> IPS Bundle", "Human readability: target-country PDF generated from the Bundle"]:
-        draw.text((835, y), "✓", font=FONT_H2, fill="#86efac")
+        draw.ellipse((842, y + 14, 860, y + 32), fill="#86efac")
         draw_wrapped(draw, text, (885, y + 2), FONT_BODY, "#e6fff8", 845, 9)
         y += 80
 
@@ -520,6 +583,8 @@ def render_slide(slide: Slide, index: int) -> Path:
         draw_trace_visual(draw)
     elif slide.visual == "terminology":
         draw_terminology_visual(draw)
+    elif slide.visual == "mentions":
+        draw_mentions_visual(draw)
     elif slide.visual == "federated":
         draw_federated_visual(draw)
     elif slide.visual == "limits":
@@ -536,7 +601,7 @@ def render_slide(slide: Slide, index: int) -> Path:
 
 
 def run(cmd: list[str]) -> None:
-    subprocess.run(cmd, check=True)
+    subprocess.run(cmd, check=True, cwd=ROOT)
 
 
 def ffprobe_duration(path: Path) -> float:
@@ -599,12 +664,129 @@ def make_clip(frame: Path, audio: Path, index: int) -> Path:
     return clip_path
 
 
-def slide_voiceover_durations(total_duration: float) -> list[float]:
+def slide_voiceover_durations(total_duration: float, narrations: list[str] | None = None) -> list[float]:
     """Allocate one continuous voiceover across slides using narration length."""
-    weights = [max(1, len(slide.narration.split())) for slide in SLIDES]
+    narration_source = narrations or [slide.narration for slide in SLIDES]
+    weights = [max(1, len(narration.split())) for narration in narration_source]
     target_duration = total_duration + 0.6
     total_weight = sum(weights)
     return [target_duration * weight / total_weight for weight in weights]
+
+
+def strip_voice_tags(text: str) -> str:
+    return re.sub(r"\[[^\]]+\]\s*", "", text).strip()
+
+
+def load_subtitle_script(path: Path) -> list[str] | None:
+    if not path.exists():
+        return None
+    blocks = [strip_voice_tags(block) for block in re.split(r"\n\s*\n", path.read_text(encoding="utf-8"))]
+    blocks = [block for block in blocks if block]
+    if len(blocks) != len(SLIDES):
+        print(f"Subtitle script ignored: expected {len(SLIDES)} blocks, found {len(blocks)}")
+        return None
+    return blocks
+
+
+def subtitle_reading_text(text: str) -> str:
+    replacements = {
+        "T two D M": "T2DM",
+        "D M 2": "DM2",
+        "H L 7 F H I R": "HL7 FHIR",
+        "F H I R I P S": "FHIR IPS",
+        "F H I R R4": "FHIR R4",
+        "F H I R": "FHIR",
+        "I P S": "IPS",
+        "SNOMED C T": "SNOMED CT",
+        "I C D 10": "ICD-10",
+        "A B D M": "ABDM",
+        "A I": "AI",
+    }
+    for source, target in replacements.items():
+        text = text.replace(source, target)
+    return text
+
+
+def split_sentences(text: str) -> list[str]:
+    text = subtitle_reading_text(text)
+    parts = re.split(r"(?<=[.!?])\s+", text)
+    return [part.strip() for part in parts if part.strip()]
+
+
+def chunk_sentence(sentence: str, max_words: int = 11) -> list[str]:
+    words = sentence.split()
+    if len(words) <= max_words:
+        return [sentence]
+    chunks = []
+    for i in range(0, len(words), max_words):
+        chunks.append(" ".join(words[i : i + max_words]))
+    return chunks
+
+
+def wrap_subtitle(text: str, max_chars: int = 56) -> str:
+    lines = textwrap.wrap(text, width=max_chars, break_long_words=False, break_on_hyphens=False)
+    if len(lines) <= 2:
+        return r"\N".join(lines)
+    # Keep subtitle blocks compact; long sentences have already been chunked.
+    return r"\N".join([" ".join(lines[:-1]), lines[-1]])
+
+
+def ass_timestamp(seconds: float) -> str:
+    seconds = max(0, seconds)
+    h = int(seconds // 3600)
+    m = int((seconds % 3600) // 60)
+    s = int(seconds % 60)
+    cs = int(round((seconds - int(seconds)) * 100))
+    if cs == 100:
+        s += 1
+        cs = 0
+    return f"{h}:{m:02d}:{s:02d}.{cs:02d}"
+
+
+def ass_escape(text: str) -> str:
+    return text.replace("{", "(").replace("}", ")")
+
+
+def write_ass_subtitles(path: Path, narrations: list[str], durations: list[float]) -> None:
+    """Create readable burned-in subtitles aligned to each visual scene."""
+    header = """[Script Info]
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default, Arial, 32, &H00FFFFFF, &H00FFFFFF, &H00202020, &HC0000000, 0, 0, 0, 0, 100, 100, 0, 0, 3, 1.5, 0, 2, 180, 180, 82, 1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+    events: list[str] = []
+    slide_start = 0.0
+    for narration, duration in zip(narrations, durations):
+        sentences = split_sentences(narration)
+        chunks = [chunk for sentence in sentences for chunk in chunk_sentence(sentence)]
+        weights = [max(1, len(chunk.split())) for chunk in chunks]
+        total_weight = sum(weights) or 1
+        cursor = slide_start + 0.15
+        usable_duration = max(0.5, duration - 0.30)
+        for i, (chunk, weight) in enumerate(zip(chunks, weights)):
+            chunk_duration = usable_duration * weight / total_weight
+            end = slide_start + duration - 0.15 if i == len(chunks) - 1 else cursor + chunk_duration
+            events.append(
+                "Dialogue: 0,"
+                f"{ass_timestamp(cursor)},{ass_timestamp(end)},Default,,0,0,0,,"
+                f"{ass_escape(wrap_subtitle(chunk))}"
+            )
+            cursor = end
+        slide_start += duration
+    path.write_text(header + "\n".join(events) + "\n", encoding="utf-8")
+
+
+def ffmpeg_filter_escape(path: Path) -> str:
+    return str(path).replace("\\", "\\\\").replace(":", "\\:").replace("'", "\\'").replace(",", "\\,").replace(" ", "\\ ")
 
 
 def make_silent_clip(frame: Path, duration: float, index: int) -> Path:
@@ -701,24 +883,29 @@ def concat_video_only(clips: list[Path], out: Path) -> None:
     )
 
 
-def mux_voiceover(video: Path, voiceover: Path, out: Path) -> None:
-    run(
+def mux_voiceover(video: Path, voiceover: Path, out: Path, subtitles: Path | None = None) -> None:
+    cmd = [
+        "ffmpeg",
+        "-y",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        str(video),
+        "-i",
+        str(voiceover),
+        "-map",
+        "0:v:0",
+        "-map",
+        "1:a:0",
+    ]
+    if subtitles:
+        rel_subtitles = subtitles.relative_to(ROOT)
+        cmd.extend(["-vf", f"ass={ffmpeg_filter_escape(rel_subtitles)}", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20"])
+    else:
+        cmd.extend(["-c:v", "copy"])
+    cmd.extend(
         [
-            "ffmpeg",
-            "-y",
-            "-hide_banner",
-            "-loglevel",
-            "error",
-            "-i",
-            str(video),
-            "-i",
-            str(voiceover),
-            "-map",
-            "0:v:0",
-            "-map",
-            "1:a:0",
-            "-c:v",
-            "copy",
             "-c:a",
             "aac",
             "-b:a",
@@ -729,6 +916,7 @@ def mux_voiceover(video: Path, voiceover: Path, out: Path) -> None:
             str(out),
         ]
     )
+    run(cmd)
 
 
 def main() -> None:
@@ -736,6 +924,8 @@ def main() -> None:
     parser.add_argument("--rate", type=int, default=170, help="macOS say speech rate")
     parser.add_argument("--output", type=Path, default=OUT)
     parser.add_argument("--voiceover", type=Path, help="External narration MP3/WAV to use instead of macOS say")
+    parser.add_argument("--subtitle-script", type=Path, default=DEFAULT_SUBTITLE_SCRIPT, help="Paragraph-aligned narration script for subtitles")
+    parser.add_argument("--no-subtitles", action="store_true", help="Do not burn subtitles into the voiceover video")
     args = parser.parse_args()
 
     require_binary("ffmpeg")
@@ -753,11 +943,16 @@ def main() -> None:
     frames = [render_slide(slide, i) for i, slide in enumerate(SLIDES)]
     if args.voiceover:
         voiceover_duration = ffprobe_duration(args.voiceover)
-        durations = slide_voiceover_durations(voiceover_duration)
+        narrations = load_subtitle_script(args.subtitle_script) or [slide.narration for slide in SLIDES]
+        durations = slide_voiceover_durations(voiceover_duration, narrations)
         clips = [make_silent_clip(frame, duration, i) for i, (frame, duration) in enumerate(zip(frames, durations))]
         temp_video = BUILD_DIR / "voiceover_video_only.mp4"
         concat_video_only(clips, temp_video)
-        mux_voiceover(temp_video, args.voiceover, args.output)
+        subtitles = None
+        if not args.no_subtitles:
+            subtitles = BUILD_DIR / "subtitles.ass"
+            write_ass_subtitles(subtitles, narrations, durations)
+        mux_voiceover(temp_video, args.voiceover, args.output, subtitles)
     else:
         audios = [say_audio(slide, i, args.rate) for i, slide in enumerate(SLIDES)]
         clips = [make_clip(frame, audio, i) for i, (frame, audio) in enumerate(zip(frames, audios))]

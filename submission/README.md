@@ -2,14 +2,43 @@
 
 Project: **Cross-Border IPS AI Agent**
 
-Final pitch:
+## Aim
 
-> Cross-Border IPS AI Agent addresses semantic and data interoperability together. Federated learning resolves local clinical terminology without centralizing raw reports, FHIR terminology artifacts make mappings exchangeable and auditable, and FHIR IPS packages the result into a machine-readable international patient summary.
+Make a local diabetes report usable across borders by converting it into a machine-readable, universally coded, HL7 FHIR IPS-style patient summary.
+
+## Problem Statement
+
+Different countries and EHR ecosystems use different clinical wording, report habits, and terminology conventions. A phrase such as `T2DM`, `sugar disease`, `madhumeha type 2`, or `DM2` may refer to the same clinical concept, but a receiver system needs standard codes and predictable FHIR resources.
+
+## Solution
+
+Cross-Border IPS AI Agent addresses semantic and data interoperability together:
+
+```text
+Doctor report or EHR-like note
+  -> clinical fact extraction
+  -> local terminology registry lookup
+  -> federated terminology linker for registry misses
+  -> FHIR CodeSystem / ValueSet / ConceptMap
+  -> simulated $translate / $lookup / $validate-code
+  -> FHIR R4 IPS-style document Bundle
+  -> target-country PDF and readiness report
+```
+
+FHIR IPS is the interoperable artifact; PDFs are human-readable renderings.
+
+## Benefit
+
+- Patient journey: a diabetes summary can be understood across borders.
+- Hospital journey: the receiver gets coded FHIR resources, not ambiguous text.
+- Standards journey: mappings are auditable through FHIR terminology artifacts.
+- Privacy posture: local terminology learning keeps raw reports and identifiers at the site.
 
 ## Primary Links
 
 - Deployed judge demo: https://crossroad-fhir-link-three.vercel.app
 - GitHub repository: https://github.com/AnantGp/crossroad-fhir-link
+- Demo video: https://crossroad-fhir-link-three.vercel.app/cross-border-ips-ai-agent-demo.mp4
 - Deadline target: July 15, 2026
 
 ## Asset Index
@@ -52,9 +81,11 @@ Use:
 - "FHIR IPS is the interoperable artifact; PDFs are human-readable renderings."
 - "Readiness checks, not national profile certification."
 - "FedAvg gives data locality only."
+- "Synthetic validation evidence."
 
 Avoid:
 
 - "Certified national conversion."
 - "Fully private federated learning."
+- "FedAvg de-identifies patient data."
 - "Production-ready clinical decision support."

@@ -1,0 +1,24 @@
+[thoughtful] This demo is about the global journey of patient information.
+
+[concerned] When a patient moves across countries, their clinical report may be readable to a human, but not automatically usable by another country's EHR system. A doctor may write T two D M, sugar disease, madhumeha type 2, or D M 2. These may refer to the same condition, but a receiving system needs standard codes and a predictable H L 7 F H I R structure.
+
+[confident] Our objective is to convert a local diabetes report into a machine-readable, universally coded, cross-border patient summary. The PDF is only the human-readable view. The real interoperable artifact is the F H I R I P S style document Bundle.
+
+[clear] Our solution follows a clear pipeline. We take a doctor report or EHR-like note. If the input is already structured, we can use it directly. If it is free text, the prototype extracts clinical facts first. Then we map local clinical phrases to standard medical concepts. Known phrases are resolved through a local terminology registry. Unknown local phrases go to a federated terminology linker.
+
+[serious] Federated learning is used for data locality and scale. Each country trains locally on its own terminology examples, such as local abbreviations, aliases, lab names, and medicine phrases. The coordinator receives only model tensors and sample counts. It does not receive raw reports, patient identifiers, labels, aliases, or patient-level F H I R Bundles. This is not cryptography and not formal de-identification. It is a data-local learning approach.
+
+[confident] Once a local phrase is linked to a canonical concept, we make the mapping F H I R native. The local term is represented through a local CodeSystem, allowed targets are constrained through a ValueSet, and the mapping is published as a F H I R ConceptMap. Simulated F H I R terminology operations such as translate, lookup, and validate-code make the mapping auditable instead of being a hidden A I guess.
+
+[clear] Universal coding is the semantic bridge. Conditions are coded with SNOMED C T and I C D 10. Lab observations use LOINC. Medications use RxNorm. For example, T two D M, sugar disease, madhumeha type 2, and D M 2 all resolve to Type 2 diabetes mellitus, SNOMED C T 44054006, I C D 10 E11, and a F H I R Condition resource.
+
+[confident] After coding, the F H I R I P S Builder packages the patient summary into an I P S style F H I R R4 document Bundle. The Bundle has type document, Composition as the first entry, and coded resources such as Patient, Condition, Observation, MedicationStatement, and Organization.
+
+[thoughtful] The cross-border interoperability comes from F H I R I P S. The same machine-readable Bundle can be shared with another healthcare ecosystem, while the target-country PDF is only a human-friendly rendering. The app also shows readiness gaps for US Core, A B D M, AU Core, and the European Patient Summary, without claiming national certification.
+
+[confident] The evidence is visible in the demo: 20 synthetic reports across four sites, 768 terminology training mentions, 192 globally unseen examples, 48 out of 48 cross-site transfer mappings correct in the synthetic validation set, and representative I P S style Bundles with official validator evidence showing zero errors.
+
+[reassuring] The benefit is practical. Patients can carry a summary that is understandable across borders. Hospitals receive coded F H I R resources instead of ambiguous text. Local data stays local during terminology learning. And auditors can trace every step from source phrase, to concept, to standard code, to F H I R resource.
+
+[confident] This is an honest synthetic prototype, not certified production software. But the architecture is standards-based: federated learning aligns local terminology, F H I R terminology artifacts make mappings auditable, and F H I R I P S packages the result for cross-border exchange.
+

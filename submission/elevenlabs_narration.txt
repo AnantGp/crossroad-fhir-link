@@ -1,21 +1,23 @@
-Hello, this is Cross-Border IPS AI Agent, a Type 2 diabetes interoperability case study for the HL7 AI Challenge. The core principle is simple: FHIR IPS is the interoperable artifact, while PDFs are human-readable renderings.
+This demo is about the global journey of patient information. The objective is to turn a local diabetes report into a machine-readable, universally coded, cross-border patient summary. The PDF is only the human-readable view; the FHIR IPS Bundle is the interoperable artifact.
 
-The problem is that a doctor report written in one country may not be immediately understandable in another EHR ecosystem. Local phrases, abbreviations, and report formats differ. HL7 and FHIR give the exchange language, and AI helps align the local terminology.
+The problem is semantic and technical at the same time. A doctor may write T2DM, sugar disease, madhumeha type 2, or DM2. Humans can guess the meaning, but a receiver EHR needs standard codes and a predictable HL7 FHIR structure.
 
-The source can be an EHR-like note, a PDF-like clinical note, or free text. If the input is already structured, extraction can be skipped. In this prototype, extraction is rule-backed; in production it can be replaced with pretrained clinical NER.
+The solution is a clear pipeline. We start with a doctor report or EHR-like note, extract clinical facts, map local terminology, validate the mapping through FHIR terminology artifacts, build a FHIR IPS document Bundle, and then render a target country report for human review.
 
-The Clinical Trace tab is the audit path. It shows source phrase, normalized clinical meaning, standard code, and the FHIR resource. For example, T2DM maps to Type 2 diabetes mellitus, SNOMED CT 44054006, ICD-10 E11, and then a FHIR Condition.
+The first proof is machine readability. The output is an IPS-style FHIR R4 document Bundle. It has Bundle type document, Composition first, and coded FHIR resources. Representative Bundles show validator evidence with zero errors.
 
-Terminology lookup checks the local registry first. If the registry misses a phrase, the federated terminology linker predicts the canonical concept. Accepted mappings are then represented through FHIR CodeSystem, ValueSet, and ConceptMap artifacts, with simulated translate, lookup, and validate-code operations.
+The second proof is semantic mapping. The demo does not just say seven hundred sixty eight examples; it shows what they mean. Different country phrases, such as T2DM, sugar disease, madhumeha type 2, and DM2, all resolve to Type 2 diabetes mellitus, SNOMED CT 44054006, ICD-10 E11, and a FHIR Condition.
 
-Federated learning helps each site benefit from terminology variation without centralizing raw clinical text. USA, India, Australia, and Europe train locally. The coordinator receives model tensors and sample counts only. FedAvg gives data locality, but it is not cryptography and not a formal privacy guarantee.
+Federated learning is used for data locality and scale. Each country can train on its local phrase examples without sending raw reports, identifiers, labels, aliases, or patient Bundles to a central server. The coordinator receives model tensors and sample counts only. This is not cryptography and not formal de-identification.
 
-The FHIR IPS Bundle is the actual interoperable artifact. The Bundle type is document, the first entry is Composition, and the clinical facts are packaged into patient, condition, observation, medication statement, organization, and related resources.
+The global linker is FHIR native. A local phrase is represented in a local CodeSystem, allowed targets are constrained by a ValueSet, and the mapping is published as a FHIR ConceptMap. Translate, lookup, and validate-code operations make the mapping auditable instead of being a hidden AI guess.
 
-When the target country changes, the receiver view and readiness checks change. The demo labels these as readiness checks, not national certification. The same FHIR IPS artifact can also be rendered into a target-country PDF for human review.
+Universal coding is the bridge from local language to computable healthcare data. Conditions use SNOMED CT and ICD-10, lab results use LOINC, medications use RxNorm, and those coded facts are placed into the correct FHIR resources.
 
-The evidence tab shows the validation story: 20 synthetic reports, four country sites, 768 terminology training examples, 192 globally unseen examples, 48 out of 48 cross-site transfer mappings correct, and official validator evidence with zero errors for representative Bundles.
+The cross-border part comes from FHIR IPS. The same machine-readable Bundle can be sent to another ecosystem, while the target PDF is only a human-readable rendering. The app also shows receiver readiness gaps for US Core, ABDM, AU Core, and the European Patient Summary, without claiming national certification.
 
-The scope is honest. This is synthetic data only. Extraction is rule-backed. Terminology operations are simulated for the prototype. And federated learning alone does not provide a formal privacy guarantee; production deployment needs secure aggregation, differential privacy, sample thresholds, and privacy auditing.
+The evidence is intentionally visible. The demo has 20 synthetic reports across four sites, 768 terminology training mentions, 192 globally unseen examples, 48 out of 48 cross-site transfer mappings correct in the synthetic validation set, and official validator evidence showing zero errors for representative IPS-style Bundles.
 
-In summary, this project combines semantic interoperability and data interoperability. Federated learning aligns local terminology without centralizing raw reports. FHIR terminology resources make those mappings auditable. FHIR IPS packages the result into a standards-based patient summary for cross-border exchange.
+The benefit is practical. A patient summary can be understood across borders. A hospital receives coded FHIR resources instead of ambiguous text. Local data stays local during terminology learning. And an auditor can follow the trace from source phrase, to concept, to standard code, to FHIR resource.
+
+The closing claim is precise. This is an honest synthetic prototype, not certified production software. But the architecture is standards based: federated learning aligns local terminology, FHIR terminology artifacts make mappings auditable, and FHIR IPS packages the result for cross-border exchange.

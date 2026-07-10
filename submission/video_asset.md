@@ -14,11 +14,19 @@ After deployment, use:
 
 `https://crossroad-fhir-link-three.vercel.app/cross-border-ips-ai-agent-demo.mp4`
 
-The video is a 1080p, approximately 3 minute 33 second, judge-facing walkthrough with an ElevenLabs voiceover and burned-in captions. It was generated locally because InVideo workspace export was unreliable.
+The video is a 1080p, approximately 4 minute 33 second, judge-facing walkthrough with an ElevenLabs voiceover and burned-in subtitles. It was generated locally because InVideo workspace export was unreliable.
 
 Voiceover source:
 
 `submission/elevenlabs_voiceover.mp3`
+
+Storyboard:
+
+`submission/video_storyboard.md`
+
+ElevenLabs v3 tagged narration script:
+
+`submission/elevenlabs_v3_tagged_script.txt`
 
 ## Rebuild
 
