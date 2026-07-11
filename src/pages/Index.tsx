@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Activity,
   AlertTriangle,
@@ -19,7 +19,6 @@ import {
   ShieldCheck,
   Sparkles,
   Stethoscope,
-  Upload,
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,8 +31,10 @@ import {
   COUNTRIES,
   CountryCode,
   EVIDENCE,
+  FED_SUMMARY,
   FED_SITES,
   METRICS,
+  OFFICIAL_VALIDATION,
   PIPELINE_STEPS,
   READINESS,
   TARGET_LABEL,
@@ -112,7 +113,7 @@ function SourcePill({ source }: { source: "local-registry" | "federated-linker-c
 function standardCodeLabel(fact: ExtractedFact) {
   if (fact.loinc) return `LOINC ${fact.loinc}`;
   if (fact.rxnorm) return `RxNorm ${fact.rxnorm}`;
-  if (fact.snomed) return `SNOMED ${fact.snomed}`;
+  if (fact.snomed) return `SNOMED CT ${fact.snomed}`;
   if (fact.icd10) return `ICD-10 ${fact.icd10}`;
   return "standard code";
 }
@@ -166,7 +167,7 @@ function ClinicalQaStrip({ activeCase }: { activeCase: DemoCase }) {
     {
       icon: BookMarked,
       label: "Fact-to-code",
-      value: "SNOMED + LOINC + RxNorm + ICD-10",
+      value: "SNOMED CT + LOINC + RxNorm + ICD-10",
       detail: "registry first, federated linker on misses",
     },
     {
@@ -235,9 +236,9 @@ const RECEIVER_REPORT_TITLE: Record<CountryCode, string> = {
 
 const SOURCE_FORMAT_LABEL: Record<CountryCode, string> = {
   USA: "US Patient Care Summary / C-CDA-style source PDF",
-  IND: "ABDM OPConsultation / HealthDocumentRecord source PDF",
+  IND: "ABDM OPConsultation-style source PDF",
   AUS: "AU Patient Summary / Clinical Note source PDF",
-  EUR: "European IPS-style patient summary source PDF",
+  EUR: "European patient-summary-style source PDF",
 };
 
 const SOURCE_REPORT_TITLE: Record<CountryCode, string> = {
@@ -249,19 +250,19 @@ const SOURCE_REPORT_TITLE: Record<CountryCode, string> = {
 
 const RECEIVER_REPORT_NOTES: Record<CountryCode, string[]> = {
   USA: [
-    "US Core readiness view; race and ethnicity are flagged because they are not present in the synthetic source note.",
+    "US Core STU9-oriented readiness view; race and ethnicity are flagged because they are not present in the synthetic source note.",
     "FHIR IPS remains the exchange artifact; this is a readable clinical handover view.",
   ],
   IND: [
-    "ABDM readiness view; ABHA identifier is flagged because no real national identifier exists for synthetic data.",
+    "ABDM FHIR R4-oriented readiness view; ABHA identifier is flagged because no real national identifier exists for synthetic data.",
     "The receiving Indian system can store accepted ConceptMap mappings in its local learned cache for reuse.",
   ],
   AUS: [
-    "AU Base readiness view; IHI is flagged because the synthetic patient has no real Australian identifier.",
+    "AU Core 2.0.0-oriented readiness view; IHI is flagged because the synthetic patient has no real Australian identifier.",
     "Medication and lab concepts remain coded through standard terminologies for downstream EHR import.",
   ],
   EUR: [
-    "European IPS readiness view; member-state-specific extensions are intentionally out of scope for the demo.",
+    "European Patient Summary CI-build-oriented readiness view; member-state-specific extensions are intentionally out of scope for the demo.",
     "The report is a readable rendering of the IPS Bundle, not a claim of national certification.",
   ],
 };
@@ -316,8 +317,8 @@ function Hl7InteroperabilitySpine({ activeCase, targetCountry }: { activeCase: D
                     <Icon className="h-3.5 w-3.5" />
                   </span>
                   <div className="min-w-0">
-                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold truncate">{stage.label}</div>
-                    <div className="text-sm font-semibold leading-snug truncate">{stage.title}</div>
+                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold break-words">{stage.label}</div>
+                    <div className="text-sm font-semibold leading-snug break-words">{stage.title}</div>
                   </div>
                 </div>
                 <div className="mt-1.5 text-[11px] text-muted-foreground leading-snug">{stage.detail}</div>
@@ -369,7 +370,7 @@ function resourceDetail(resource: DemoFhirResource) {
     return resource.dosage?.map((dose) => dose.text).filter(Boolean).join("; ") || "active";
   }
 
-  return "active problem";
+  return "reported condition";
 }
 
 function sanitizePdfText(value: string) {
@@ -675,51 +676,39 @@ function buildReceiverReportPdfBlob(activeCase: DemoCase, targetCountry: Country
   );
 
   pdf.addKeyValueGrid([
-    { label: "Route", value: `${activeCase.source} -> ${targetCountry}` },
+    { label: "Patient", value: `Synthetic patient | ${patient?.gender ?? "unknown"} | DOB ${patient?.birthDate ?? "not available"}` },
     { label: "Receiver view", value: TARGET_LABEL[targetCountry] },
     { label: "Source FHIR document", value: activeCase.ipsBundle.identifier.value },
-    { label: "Validator evidence", value: "0 errors in representative Bundle validation" },
-    { label: "Patient", value: `Synthetic patient | ${patient?.gender ?? "unknown"} | DOB ${patient?.birthDate ?? "not available"}` },
-    { label: "Document status", value: "FHIR Bundle.type=document | Composition first" },
+    { label: "Official IPS validation", value: "4/4 Bundles | 0 errors | 0 warnings" },
   ]);
   pdf.addTable(
-    "Problems",
+    "Clinical summary from FHIR IPS",
     [
-      { label: "Problem", width: 235 },
-      { label: "Standard code(s)", width: 216 },
-      { label: "Status", width: 60 },
+      { label: "Category", width: 78 },
+      { label: "Clinical fact", width: 188 },
+      { label: "Value / dose", width: 94 },
+      { label: "Standard code(s)", width: 151 },
     ],
-    byType("Condition").map((resource) => [
-      clinicalDisplay(resource),
-      clinicalCodeLabels(resource).join(", "),
-      resourceDetail(resource),
-    ]),
-  );
-  pdf.addTable(
-    "Results",
     [
-      { label: "Result", width: 230 },
-      { label: "Value", width: 82 },
-      { label: "Standard code(s)", width: 199 },
+      ...byType("Condition").map((resource) => [
+        "Problem",
+        clinicalDisplay(resource),
+        resourceDetail(resource),
+        clinicalCodeLabels(resource).join(", "),
+      ]),
+      ...byType("Observation").map((resource) => [
+        "Result",
+        clinicalDisplay(resource),
+        resourceDetail(resource),
+        clinicalCodeLabels(resource).join(", "),
+      ]),
+      ...byType("MedicationStatement").map((resource) => [
+        "Medication",
+        clinicalDisplay(resource),
+        resourceDetail(resource),
+        clinicalCodeLabels(resource).join(", "),
+      ]),
     ],
-    byType("Observation").map((resource) => [
-      clinicalDisplay(resource),
-      resourceDetail(resource),
-      clinicalCodeLabels(resource).join(", "),
-    ]),
-  );
-  pdf.addTable(
-    "Medications",
-    [
-      { label: "Medication", width: 230 },
-      { label: "Dose", width: 96 },
-      { label: "Standard code(s)", width: 185 },
-    ],
-    byType("MedicationStatement").map((resource) => [
-      clinicalDisplay(resource),
-      resourceDetail(resource),
-      clinicalCodeLabels(resource).join(", "),
-    ]),
   );
   pdf.addTable(
     "Target readiness check",
@@ -734,11 +723,10 @@ function buildReceiverReportPdfBlob(activeCase: DemoCase, targetCountry: Country
       "note" in row ? row.note : "Ready for demo evidence",
     ]),
   );
-  pdf.addCallout("Receiver handover notes", RECEIVER_REPORT_NOTES[targetCountry], "warning");
-  pdf.addCallout("Interoperability note", [
-    "This PDF is a human-readable rendering. The interoperable source of truth is the HL7 FHIR IPS-style Bundle and its coded Condition, Observation, and MedicationStatement resources.",
-    "Readiness checks are shown for judge review only; no formal national profile certification is claimed.",
-  ]);
+  pdf.addCallout("Receiver handover and scope", [
+    ...RECEIVER_REPORT_NOTES[targetCountry],
+    "This PDF is a human-readable rendering of a FHIR Bundle.type=document with Composition first. FHIR IPS remains the interoperable source of truth; no formal national profile certification is claimed.",
+  ], "warning");
 
   return pdf.toBlob();
 }
@@ -797,6 +785,10 @@ function buildEvidencePack(activeCase: DemoCase, targetCountry: CountryCode) {
       globally_unseen_examples: EVIDENCE.globallyUnseen,
       semantic_transfer_validation: EVIDENCE.semanticTransfer,
       validator_errors: METRICS.validatorErrors,
+      validator_warnings: METRICS.validatorWarnings,
+      validated_bundles: METRICS.validatedBundles,
+      validator_profile: METRICS.validatorProfile,
+      informational_notes_per_bundle: METRICS.validatorInfoNotesPerBundle,
       fhir_bundle_type: activeCase.ipsBundle.type,
     },
     semantic_trace: activeCase.traceFacts.map((fact) => ({
@@ -834,6 +826,31 @@ function buildEvidencePack(activeCase: DemoCase, targetCountry: CountryCode) {
       "Readiness checks only; no national profile certification.",
       "Local simulated FHIR terminology operations; live terminology servers are future work.",
     ],
+    federated_benchmark: {
+      configuration: {
+        rounds: 5,
+        seed: 42,
+        hash_dimension: 1024,
+        local_epochs: 10,
+        batch_size: 16,
+        learning_rate: 0.1,
+      },
+      cross_site_transfer: {
+        local_only_correct: FED_SUMMARY.localOnlyCorrect,
+        federated_correct: FED_SUMMARY.federatedCorrect,
+        total: FED_SUMMARY.totalTransferProbes,
+        receivers_without_regression: `${FED_SUMMARY.receiversWithoutRegression}/4`,
+      },
+      globally_unseen: {
+        dictionary_accuracy: FED_SUMMARY.dictionaryGloballyUnseenAccuracy,
+        local_only_average_accuracy: FED_SUMMARY.localOnlyGloballyUnseenAccuracy,
+        federated_correct: FED_SUMMARY.globallyUnseenCorrect,
+        total: FED_SUMMARY.globallyUnseenTotal,
+        federated_macro_f1: FED_SUMMARY.globallyUnseenMacroF1,
+      },
+      limitation: "Deterministic single-seed synthetic benchmark; not clinical accuracy on real notes.",
+    },
+    official_validation: OFFICIAL_VALIDATION,
     fhir_bundle: activeCase.ipsBundle,
   };
 }
@@ -870,7 +887,7 @@ function OutputDownloadPanel({ activeCase, targetCountry }: { activeCase: DemoCa
       </div>
 
       <div className="rounded-md border border-border bg-surface-muted px-3 py-2">
-        <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Visible receiver report</div>
+        <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Human-readable receiver report</div>
         <div className="mt-0.5 text-sm font-medium">{RECEIVER_REPORT_TITLE[targetCountry]}</div>
         <div className="text-xs text-muted-foreground">{TARGET_LABEL[targetCountry]}</div>
       </div>
@@ -1014,23 +1031,18 @@ function ReceiverReport({ activeCase, targetCountry }: { activeCase: DemoCase; t
 }
 
 const Index = () => {
-  const sourcePdfInputRef = useRef<HTMLInputElement | null>(null);
   const [reportId, setReportId] = useState(CASE_LIST[0].id);
   const activeCase = CASES[reportId] ?? CASE_LIST[0];
   const [targetCountry, setTargetCountry] = useState<CountryCode>(activeCase.defaultTarget);
-  const [reportText, setReportText] = useState(activeCase.reportText);
   const [bundleResource, setBundleResource] = useState(0);
   const [lastRunLabel, setLastRunLabel] = useState<string | null>(null);
-  const [sourcePdfName, setSourcePdfName] = useState<string | null>(null);
 
   const onReportChange = (id: string) => {
     const c = CASES[id];
     setReportId(id);
-    setReportText(c.reportText);
     setTargetCountry(c.defaultTarget);
     setBundleResource(0);
     setLastRunLabel(null);
-    setSourcePdfName(null);
   };
 
   const onSourceCountryChange = (country: CountryCode) => {
@@ -1058,21 +1070,21 @@ const Index = () => {
     >
       {/* Top bar */}
       <header className="border-b border-border bg-surface">
-        <div className="px-4 md:px-6 py-3 flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3 min-w-0">
+        <div className="px-4 md:px-6 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto">
             <div className="h-9 w-9 rounded-md bg-primary text-primary-foreground flex items-center justify-center shrink-0">
               <Stethoscope className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <div className="font-display font-semibold text-[15px] leading-tight truncate">Cross-Border IPS AI Agent</div>
-              <div className="text-[11px] text-muted-foreground leading-tight truncate">
+              <div className="font-display font-semibold text-sm sm:text-[15px] leading-tight break-words">Cross-Border IPS AI Agent</div>
+              <div className="text-[11px] text-muted-foreground leading-tight break-words">
                 HL7 AI Challenge · Federated terminology + FHIR R4 IPS-style document Bundles
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
             <span className="pill pill-neutral"><Globe2 className="h-3 w-3" />4 sites</span>
-            <span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />Validator: 0 errors</span>
+            <span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />IPS 2.0.1: 0 errors</span>
             <span className="pill pill-info"><ShieldCheck className="h-3 w-3" />Synthetic data only</span>
           </div>
         </div>
@@ -1088,8 +1100,9 @@ const Index = () => {
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Source report</Label>
+              <Label htmlFor="source-report-select" className="text-xs text-muted-foreground">Source report</Label>
               <select
+                id="source-report-select"
                 data-testid="source-report-select"
                 value={reportId}
                 onChange={(e) => onReportChange(e.target.value)}
@@ -1101,10 +1114,11 @@ const Index = () => {
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Source</Label>
+                <Label htmlFor="source-country-select" className="text-xs text-muted-foreground">Source</Label>
                 <select
+                  id="source-country-select"
                   data-testid="source-country-select"
                   value={activeCase.source}
                   onChange={(e) => onSourceCountryChange(e.target.value as CountryCode)}
@@ -1116,8 +1130,9 @@ const Index = () => {
                 </select>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Target</Label>
+                <Label htmlFor="target-country-select" className="text-xs text-muted-foreground">Target</Label>
                 <select
+                  id="target-country-select"
                   data-testid="target-country-select"
                   value={targetCountry}
                   onChange={(e) => setTargetCountry(e.target.value as CountryCode)}
@@ -1131,7 +1146,7 @@ const Index = () => {
             </div>
 
             <div className="rounded-md border border-border bg-surface-muted p-3 space-y-2" data-testid="source-pdf-card">
-              <div className="flex items-start justify-between gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                 <div className="min-w-0">
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Source PDF input</div>
                   <div className="mt-0.5 text-sm font-medium leading-snug">{SOURCE_FORMAT_LABEL[activeCase.source]}</div>
@@ -1141,51 +1156,28 @@ const Index = () => {
               <p className="text-[11px] text-muted-foreground leading-snug">
                 PDF is the country-facing document. HL7 FHIR IPS below is the system-facing interoperability layer.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="h-8 text-xs"
-                  onClick={() => downloadSourceReportPdf(activeCase)}
-                >
-                  <Download className="h-3.5 w-3.5 mr-1.5" /> Download {activeCase.source} source PDF
-                </Button>
-                <input
-                  ref={sourcePdfInputRef}
-                  data-testid="source-pdf-upload"
-                  type="file"
-                  accept="application/pdf"
-                  className="hidden"
-                  onChange={(event) => setSourcePdfName(event.target.files?.[0]?.name ?? null)}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="h-8 text-xs"
-                  onClick={() => sourcePdfInputRef.current?.click()}
-                >
-                  <Upload className="h-3.5 w-3.5 mr-1.5" /> Upload PDF
-                </Button>
-              </div>
-              <p className="text-[11px] text-muted-foreground">
-                {sourcePdfName
-                  ? `Selected PDF: ${sourcePdfName}`
-                  : "Upload is a prototype placeholder; validated evidence uses the selected synthetic report."}
-              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-8 w-full text-xs"
+                onClick={() => downloadSourceReportPdf(activeCase)}
+              >
+                <Download className="h-3.5 w-3.5 mr-1.5" /> Download {activeCase.source} source PDF
+              </Button>
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Report text (editable)</Label>
+              <Label htmlFor="source-note-preview" className="text-xs text-muted-foreground">Source note preview</Label>
               <Textarea
-                value={reportText}
-                onChange={(e) => setReportText(e.target.value)}
+                id="source-note-preview"
+                value={activeCase.reportText}
+                readOnly
                 rows={8}
-                className="text-xs font-mono leading-relaxed resize-none"
+                className="text-xs font-mono leading-relaxed resize-none bg-surface-muted"
               />
               <p className="text-[11px] text-muted-foreground">
-                Synthetic note. Text edits are exploratory; evidence panels use the selected validated case.
+                Read-only synthetic input used by the validated evidence panels.
               </p>
             </div>
 
@@ -1196,7 +1188,7 @@ const Index = () => {
               <Activity className="h-4 w-4 mr-1.5" /> Run pipeline
             </Button>
             {lastRunLabel && (
-              <p className="rounded-md border border-[hsl(var(--success)/0.25)] bg-success-soft px-2.5 py-2 text-[11px] text-muted-foreground">
+              <p aria-live="polite" className="rounded-md border border-[hsl(var(--success)/0.25)] bg-success-soft px-2.5 py-2 text-[11px] text-muted-foreground">
                 Pipeline refreshed for <span className="font-medium text-foreground">{lastRunLabel}</span>. Static outputs remain tied to the validated synthetic evidence.
               </p>
             )}
@@ -1223,10 +1215,10 @@ const Index = () => {
 
           {/* Metrics */}
           <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
-            <MetricCard label="Mapping coverage" value={METRICS.mappingCoverage} sub="local + federated" tone="success" icon={BookMarked} />
+            <MetricCard label="Case mapping coverage" value={METRICS.mappingCoverage} sub="6/6 facts · registry + FL" tone="success" icon={BookMarked} />
             <MetricCard label="FHIR Bundle type" value={METRICS.fhirBundleType} sub="IPS-style FHIR R4" tone="info" icon={Package} />
-            <MetricCard label="Validator errors" value={METRICS.validatorErrors} sub="official validator" tone="success" icon={ShieldCheck} />
-            <MetricCard label="Transfer accuracy" value={METRICS.transferAccuracy} sub="cross-site semantic" tone="success" icon={Network} />
+            <MetricCard label="Official IPS validation" value={`${METRICS.validatorErrors} errors`} sub={`${METRICS.validatorWarnings} warnings · ${METRICS.validatedBundles}/${METRICS.validatedBundles} Bundles`} tone="success" icon={ShieldCheck} />
+            <MetricCard label="Synthetic transfer" value={METRICS.transferAccuracy} sub="48 receiver probes" tone="success" icon={Network} />
           </div>
 
           {/* Pipeline */}
@@ -1263,7 +1255,7 @@ const Index = () => {
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     <span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />{activeCase.traceFacts.length} facts</span>
-                    <span className="pill pill-info">SNOMED · LOINC · RxNorm · ICD-10</span>
+                    <span className="pill pill-info">SNOMED CT · LOINC · RxNorm · ICD-10</span>
                   </div>
                 </div>
                 <div className="overflow-x-auto">
@@ -1284,7 +1276,7 @@ const Index = () => {
                           <td>{f.normalized}</td>
                           <td className="text-xs">
                             <div className="flex flex-wrap gap-1">
-                              {f.snomed && <span className="pill pill-neutral">SNOMED {f.snomed}</span>}
+                              {f.snomed && <span className="pill pill-neutral">SNOMED CT {f.snomed}</span>}
                               {f.loinc && <span className="pill pill-neutral">LOINC {f.loinc}</span>}
                               {f.rxnorm && <span className="pill pill-neutral">RxNorm {f.rxnorm}</span>}
                               {f.icd10 && <span className="pill pill-neutral">ICD-10 {f.icd10}</span>}
@@ -1424,22 +1416,38 @@ const Index = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
                 <div className="card-surface p-4">
-                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Transfer non-regression</div>
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Federated transfer</div>
                   <div className="text-2xl font-display font-semibold mt-1">48 / 48</div>
-                  <div className="text-xs text-muted-foreground mt-1">no receiver regressed vs local-only baseline.</div>
+                  <div className="text-xs text-muted-foreground mt-1">correct on the synthetic cross-site transfer set.</div>
                 </div>
                 <div className="card-surface p-4">
-                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Aggregate transfer Δ</div>
-                  <div className="text-2xl font-display font-semibold mt-1 text-success">+12.5%</div>
-                  <div className="text-xs text-muted-foreground mt-1">cross-site mean improvement over local-only.</div>
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Aggregate transfer gain</div>
+                  <div className="text-2xl font-display font-semibold mt-1 text-success">
+                    +{FED_SUMMARY.federatedCorrect - FED_SUMMARY.localOnlyCorrect} correct
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {FED_SUMMARY.localOnlyCorrect} local-only → {FED_SUMMARY.federatedCorrect} federated across {FED_SUMMARY.totalTransferProbes} probes.
+                  </div>
                 </div>
                 <div className="card-surface p-4">
-                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Globally unseen (reported separately)</div>
-                  <div className="text-2xl font-display font-semibold mt-1">{EVIDENCE.globallyUnseen}</div>
-                  <div className="text-xs text-muted-foreground mt-1">held-out phrases unseen by any site.</div>
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Receiver non-regression</div>
+                  <div className="text-2xl font-display font-semibold mt-1">{FED_SUMMARY.receiversWithoutRegression} / 4</div>
+                  <div className="text-xs text-muted-foreground mt-1">every site's federated result matched or beat local-only.</div>
                 </div>
+                <div className="card-surface p-4">
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Globally unseen</div>
+                  <div className="text-2xl font-display font-semibold mt-1">{FED_SUMMARY.globallyUnseenCorrect} / {FED_SUMMARY.globallyUnseenTotal}</div>
+                  <div className="text-xs text-muted-foreground mt-1">macro-F1 {FED_SUMMARY.globallyUnseenMacroF1.toFixed(3)}; separate seeded synthetic set.</div>
+                </div>
+              </div>
+
+              <div className="card-surface p-4">
+                <h3 className="text-sm font-semibold">Benchmark interpretation</h3>
+                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                  On globally unseen mentions, the exact dictionary scored 0%, the average local-only model scored {(FED_SUMMARY.localOnlyGloballyUnseenAccuracy * 100).toFixed(1)}%, and FedAvg scored 100% (macro-F1 1.000). These are deterministic, synthetic, single-seed results and do not establish clinical accuracy on real notes.
+                </p>
               </div>
 
               <div className="card-surface p-4 border-l-4 border-l-warning">
@@ -1461,7 +1469,7 @@ const Index = () => {
                 <div>
                   <h3 className="text-sm font-semibold">{activeCase.bundleTitle}</h3>
                   <p className="text-xs text-muted-foreground">
-                    Composition-first IPS-style FHIR R4 document Bundle · {activeCase.source} → {targetCountry} ({TARGET_LABEL[targetCountry]}). Representative cross-border Bundles pass the official validator with <span className="text-success font-medium">0 errors</span>.
+                    Composition-first FHIR R4 document Bundle · {activeCase.source} → {targetCountry} ({TARGET_LABEL[targetCountry]}). All four current Bundles pass the official HL7 validator against <span className="text-success font-medium">IPS 2.0.1 with 0 errors and 0 warnings</span>.
                   </p>
                 </div>
                 <div className="flex gap-2 flex-wrap">
@@ -1555,8 +1563,9 @@ const Index = () => {
                     <CheckCircle2 className="h-4 w-4 text-success" /> What this demo evidences
                   </h3>
                   <ul className="mt-2 text-sm space-y-2">
-                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Semantic mapping validation:</span> 48/48 cross-site terminology examples mapped correctly.</span></li>
-                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Official validator:</span> 0 errors for USA→India, USA→Australia, and USA→Europe representative IPS-style Bundles.</span></li>
+                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Semantic mapping validation:</span> 48/48 cross-site examples mapped correctly; local-only scored 47/48, so the measured FedAvg gain is +1.</span></li>
+                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Globally unseen benchmark:</span> 192/192 correct with macro-F1 1.000 on the separate seeded synthetic set.</span></li>
+                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Official HL7 validator:</span> 4/4 current Bundles pass IPS 2.0.1 with 0 errors and 0 warnings.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">FHIR-native terminology layer:</span> CodeSystem, ValueSet, ConceptMap + simulated $translate / $lookup / $validate-code.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Medical placement check:</span> conditions, observations, and medications land in the expected FHIR resource types.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Privacy boundary:</span> coordinator receives only model tensors and sample counts.</span></li>
@@ -1573,9 +1582,43 @@ const Index = () => {
                     <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">FedAvg gives data locality only;</span> model updates can leak information without DP-SGD or secure aggregation.</span></li>
                     <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">Readiness checks only;</span> no national profile certification.</span></li>
                     <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">Local simulated FHIR terminology operations;</span> live terminology servers are future work.</span></li>
-                    <li className="flex gap-2"><span className="text-warning">•</span><span>No formal privacy guarantee. No clinical decision support claim.</span></li>
+                    <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">Two validator information notes per Bundle:</span> RxNorm ingredients are outside the IPS guide's recommended medication value set; IPS-preferred product coding is future work.</span></li>
                   </ul>
                 </div>
+              </div>
+
+              <div className="card-surface overflow-hidden">
+                <div className="p-3 border-b border-border flex items-start justify-between gap-2 flex-wrap">
+                  <div>
+                    <h3 className="text-sm font-semibold flex items-center gap-2">
+                      <FileCheck2 className="h-4 w-4 text-success" /> Official IPS validation
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {OFFICIAL_VALIDATION.validator} · {OFFICIAL_VALIDATION.profile}
+                    </p>
+                  </div>
+                  <span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />4/4 passed</span>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="data-table">
+                    <thead>
+                      <tr><th>Route</th><th>Errors</th><th>Warnings</th><th>Information notes</th></tr>
+                    </thead>
+                    <tbody>
+                      {OFFICIAL_VALIDATION.routes.map((result) => (
+                        <tr key={result.route}>
+                          <td className="font-medium">{result.route}</td>
+                          <td><span className="pill pill-success">{result.errors}</span></td>
+                          <td><span className="pill pill-success">{result.warnings}</span></td>
+                          <td><span className="pill pill-neutral">{result.notes}</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="px-3 py-2 text-[11px] text-muted-foreground border-t border-border">
+                  Information note: {OFFICIAL_VALIDATION.note} Full unedited log is included in the GitHub submission evidence.
+                </p>
               </div>
 
               <div className="card-surface overflow-hidden">
@@ -1612,19 +1655,6 @@ const Index = () => {
                 </div>
               </div>
 
-              <div className="card-surface p-4">
-                <h3 className="text-sm font-semibold">Wording the demo commits to</h3>
-                <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                  {[
-                    "IPS-style FHIR R4 document Bundle with official validator evidence (not certified production IPS).",
-                    "Readiness checks (not national profile certification).",
-                    "FedAvg gives data locality only; model updates can leak information without DP-SGD or secure aggregation.",
-                    "Rule-backed extraction in prototype; pretrained clinical NER is future work.",
-                  ].map((t) => (
-                    <div key={t} className="rounded-md border border-border bg-surface-muted px-3 py-2">{t}</div>
-                  ))}
-                </div>
-              </div>
             </TabsContent>
           </Tabs>
 

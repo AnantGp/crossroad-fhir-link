@@ -1,0 +1,6 @@
+Synthetic primary care diabetes report.
+
+A 49 year old male with T2DM, dyslipidemia, and high blood pressure.
+A1c 7.8%. LDL cholesterol 128 mg/dL. Serum creatinine 1.1 mg/dL.
+Medications include metformin 1000 mg, atorvastatin 20 mg, and empagliflozin 10 mg.
+Allergy to penicillin.

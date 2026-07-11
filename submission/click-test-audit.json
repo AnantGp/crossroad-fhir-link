@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-07T14:53:55.920Z",
+  "generatedAt": "2026-07-11T14:06:11+05:30",
   "url": "https://crossroad-fhir-link-three.vercel.app",
   "routesTested": 4,
   "routes": [
@@ -21,17 +21,17 @@
         },
         "finalPdf": {
           "path": "submission/downloads/usa-to-india-final-IND.pdf",
-          "bytes": 9903,
+          "bytes": 7585,
           "head": "%PDF-"
         },
         "bundleJson": {
           "path": "submission/downloads/usa-to-india-fhir-bundle.json",
-          "bytes": 6077,
+          "bytes": 13276,
           "head": "{\n  \""
         },
         "evidenceJson": {
           "path": "submission/downloads/usa-to-india-evidence-pack.json",
-          "bytes": 17198,
+          "bytes": 26381,
           "head": "{\n  \""
         }
       }
@@ -49,22 +49,22 @@
       "downloads": {
         "sourcePdf": {
           "path": "submission/downloads/india-to-usa-source.pdf",
-          "bytes": 6970,
+          "bytes": 6963,
           "head": "%PDF-"
         },
         "finalPdf": {
           "path": "submission/downloads/india-to-usa-final-USA.pdf",
-          "bytes": 9810,
+          "bytes": 7501,
           "head": "%PDF-"
         },
         "bundleJson": {
           "path": "submission/downloads/india-to-usa-fhir-bundle.json",
-          "bytes": 6086,
+          "bytes": 13298,
           "head": "{\n  \""
         },
         "evidenceJson": {
           "path": "submission/downloads/india-to-usa-evidence-pack.json",
-          "bytes": 17746,
+          "bytes": 26958,
           "head": "{\n  \""
         }
       }
@@ -87,17 +87,17 @@
         },
         "finalPdf": {
           "path": "submission/downloads/australia-to-europe-final-EUR.pdf",
-          "bytes": 9843,
+          "bytes": 7607,
           "head": "%PDF-"
         },
         "bundleJson": {
           "path": "submission/downloads/australia-to-europe-fhir-bundle.json",
-          "bytes": 6155,
+          "bytes": 13508,
           "head": "{\n  \""
         },
         "evidenceJson": {
           "path": "submission/downloads/australia-to-europe-evidence-pack.json",
-          "bytes": 17909,
+          "bytes": 27429,
           "head": "{\n  \""
         }
       }
@@ -115,22 +115,22 @@
       "downloads": {
         "sourcePdf": {
           "path": "submission/downloads/europe-to-usa-source.pdf",
-          "bytes": 7102,
+          "bytes": 7098,
           "head": "%PDF-"
         },
         "finalPdf": {
           "path": "submission/downloads/europe-to-usa-final-USA.pdf",
-          "bytes": 9816,
+          "bytes": 7499,
           "head": "%PDF-"
         },
         "bundleJson": {
           "path": "submission/downloads/europe-to-usa-fhir-bundle.json",
-          "bytes": 6064,
+          "bytes": 13265,
           "head": "{\n  \""
         },
         "evidenceJson": {
           "path": "submission/downloads/europe-to-usa-evidence-pack.json",
-          "bytes": 18237,
+          "bytes": 27420,
           "head": "{\n  \""
         }
       }
@@ -154,7 +154,35 @@
     "bundleShapeVerified": "Bundle.type=document and first entry Composition",
     "limitationsVisible": true,
     "metricsMatchedEvidence": true,
-    "mobileScreenshotCaptured": "submission/screenshots/mobile-dashboard-smoke.png",
-    "consoleErrors": []
+    "mobileScreenshotCaptured": "submission/screenshots/final-audit-04-mobile.png",
+    "consoleErrors": [],
+    "officialIpsValidation": {
+      "validator": "HL7 FHIR Validator 6.9.11",
+      "implementationGuide": "hl7.fhir.uv.ips#2.0.1",
+      "bundlesPassed": "4/4",
+      "errors": 0,
+      "warnings": 0,
+      "informationNotesPerBundle": 2,
+      "log": "submission/official_validation/ips-2.0.1-all-routes.txt"
+    },
+    "federatedBenchmark": {
+      "transfer": "48/48 federated vs 47/48 local-only",
+      "aggregateGain": 1,
+      "globallyUnseen": "192/192, macro-F1 1.000",
+      "limitation": "Deterministic single-seed synthetic benchmark; not clinical accuracy."
+    },
+    "frontendTests": "15/15 passed",
+    "pythonTests": "11/11 passed",
+    "productionBuild": "passed",
+    "desktopScreenshotCaptured": "submission/screenshots/final-audit-01-dashboard.png",
+    "mobileHorizontalOverflow": false,
+    "readinessBaselines": {
+      "checked": "2026-07-11",
+      "US": "US Core 9.0.0 (STU9)",
+      "India": "ABDM FHIR R4 7.0.0 draft build",
+      "Australia": "AU Core 2.0.0 trial-use",
+      "Europe": "HL7 Europe Patient Summary continuous build",
+      "claim": "Readiness comparison only; no national profile conformance or certification."
+    }
   }
 }

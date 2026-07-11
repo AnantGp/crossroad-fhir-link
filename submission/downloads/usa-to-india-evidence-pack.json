@@ -3,7 +3,7 @@
   "route": {
     "source_country": "USA",
     "target_country": "IND",
-    "receiver_profile_readiness": "ABDM HealthRecordBundle receiver"
+    "receiver_profile_readiness": "ABDM FHIR R4 readiness view"
   },
   "summary": {
     "synthetic_reports": 20,
@@ -13,6 +13,10 @@
     "globally_unseen_examples": 192,
     "semantic_transfer_validation": "48/48 correct",
     "validator_errors": 0,
+    "validator_warnings": 0,
+    "validated_bundles": 4,
+    "validator_profile": "IPS 2.0.1",
+    "informational_notes_per_bundle": 2,
     "fhir_bundle_type": "document"
   },
   "semantic_trace": [
@@ -164,7 +168,7 @@
               },
               {
                 "code": "98979-8",
-                "display": "Glomerular filtration rate predicted by CKD-EPI 2021"
+                "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI 2021)/1.73 sq M"
               }
             ]
           },
@@ -354,7 +358,7 @@
   },
   "readiness": [
     {
-      "item": "ABDM HealthRecordBundle alignment",
+      "item": "ABDM FHIR R4-oriented document/resource shape",
       "status": "ready"
     },
     {
@@ -376,6 +380,61 @@
     "Readiness checks only; no national profile certification.",
     "Local simulated FHIR terminology operations; live terminology servers are future work."
   ],
+  "federated_benchmark": {
+    "configuration": {
+      "rounds": 5,
+      "seed": 42,
+      "hash_dimension": 1024,
+      "local_epochs": 10,
+      "batch_size": 16,
+      "learning_rate": 0.1
+    },
+    "cross_site_transfer": {
+      "local_only_correct": 47,
+      "federated_correct": 48,
+      "total": 48,
+      "receivers_without_regression": "4/4"
+    },
+    "globally_unseen": {
+      "dictionary_accuracy": 0,
+      "local_only_average_accuracy": 0.94401,
+      "federated_correct": 192,
+      "total": 192,
+      "federated_macro_f1": 1
+    },
+    "limitation": "Deterministic single-seed synthetic benchmark; not clinical accuracy on real notes."
+  },
+  "official_validation": {
+    "validator": "HL7 FHIR Validator 6.9.11",
+    "profile": "IPS 2.0.1 Bundle profile",
+    "routes": [
+      {
+        "route": "USA → India",
+        "errors": 0,
+        "warnings": 0,
+        "notes": 2
+      },
+      {
+        "route": "India → USA",
+        "errors": 0,
+        "warnings": 0,
+        "notes": 2
+      },
+      {
+        "route": "Australia → Europe",
+        "errors": 0,
+        "warnings": 0,
+        "notes": 2
+      },
+      {
+        "route": "Europe → USA",
+        "errors": 0,
+        "warnings": 0,
+        "notes": 2
+      }
+    ],
+    "note": "RxNorm ingredient codes are outside the IPS guide's recommended medication value set."
+  },
   "fhir_bundle": {
     "resourceType": "Bundle",
     "id": "ips-bundle-demo-usa-001",
@@ -387,7 +446,7 @@
     "timestamp": "2026-06-29T14:22:11Z",
     "entry": [
       {
-        "fullUrl": "urn:uuid:composition-1",
+        "fullUrl": "urn:uuid:00000000-0000-4000-8000-100000000001",
         "resource": {
           "resourceType": "Composition",
           "id": "composition-1",
@@ -402,72 +461,153 @@
             ]
           },
           "subject": {
-            "reference": "urn:uuid:patient-1"
+            "reference": "urn:uuid:00000000-0000-4000-8000-100000000002"
           },
           "date": "2026-06-29",
           "author": [
             {
-              "reference": "urn:uuid:org-1"
+              "reference": "urn:uuid:00000000-0000-4000-8000-100000000009"
             }
           ],
           "title": "International Patient Summary — Synthetic USA T2DM",
           "section": [
             {
-              "title": "Active Problems",
+              "title": "Problems",
               "entry": [
                 {
-                  "reference": "urn:uuid:cond-t2dm"
+                  "reference": "urn:uuid:00000000-0000-4000-8000-100000000003"
                 },
                 {
-                  "reference": "urn:uuid:cond-htn"
+                  "reference": "urn:uuid:00000000-0000-4000-8000-100000000004"
                 }
-              ]
+              ],
+              "code": {
+                "coding": [
+                  {
+                    "system": "http://loinc.org",
+                    "code": "11450-4",
+                    "display": "Problem list - Reported"
+                  }
+                ]
+              },
+              "text": {
+                "status": "generated",
+                "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Problems section generated from the synthetic source report.</div>"
+              }
             },
             {
-              "title": "Results",
-              "entry": [
-                {
-                  "reference": "urn:uuid:obs-a1c"
-                },
-                {
-                  "reference": "urn:uuid:obs-creat"
-                }
-              ]
+              "title": "Allergies",
+              "code": {
+                "coding": [
+                  {
+                    "system": "http://loinc.org",
+                    "code": "48765-2",
+                    "display": "Allergies and adverse reactions Document"
+                  }
+                ]
+              },
+              "text": {
+                "status": "generated",
+                "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No allergy information was available in the synthetic source report.</div>"
+              },
+              "emptyReason": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+                    "code": "unavailable",
+                    "display": "Unavailable"
+                  }
+                ],
+                "text": "No source information was available for this section."
+              }
             },
             {
               "title": "Medications",
               "entry": [
                 {
-                  "reference": "urn:uuid:med-metformin"
+                  "reference": "urn:uuid:00000000-0000-4000-8000-100000000007"
                 },
                 {
-                  "reference": "urn:uuid:med-lisinopril"
+                  "reference": "urn:uuid:00000000-0000-4000-8000-100000000008"
                 }
-              ]
+              ],
+              "code": {
+                "coding": [
+                  {
+                    "system": "http://loinc.org",
+                    "code": "10160-0",
+                    "display": "History of Medication use Narrative"
+                  }
+                ]
+              },
+              "text": {
+                "status": "generated",
+                "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Medications section generated from the synthetic source report.</div>"
+              }
+            },
+            {
+              "title": "Results",
+              "entry": [
+                {
+                  "reference": "urn:uuid:00000000-0000-4000-8000-100000000005"
+                },
+                {
+                  "reference": "urn:uuid:00000000-0000-4000-8000-100000000006"
+                }
+              ],
+              "code": {
+                "coding": [
+                  {
+                    "system": "http://loinc.org",
+                    "code": "30954-2",
+                    "display": "Relevant diagnostic tests/laboratory data note"
+                  }
+                ]
+              },
+              "text": {
+                "status": "generated",
+                "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Results section generated from the synthetic source report.</div>"
+              }
+            }
+          ],
+          "meta": {
+            "profile": [
+              "http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips"
+            ]
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">International Patient Summary — Synthetic USA T2DM</div>"
+          }
+        }
+      },
+      {
+        "fullUrl": "urn:uuid:00000000-0000-4000-8000-100000000002",
+        "resource": {
+          "resourceType": "Patient",
+          "id": "patient-1",
+          "gender": "male",
+          "birthDate": "1977-04-12",
+          "meta": {
+            "profile": [
+              "http://hl7.org/fhir/uv/ips/StructureDefinition/Patient-uv-ips"
+            ]
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Patient patient-1</div>"
+          },
+          "active": true,
+          "name": [
+            {
+              "use": "anonymous",
+              "text": "Synthetic Demo Patient"
             }
           ]
         }
       },
       {
-        "fullUrl": "urn:uuid:patient-1",
-        "resource": {
-          "resourceType": "Patient",
-          "id": "patient-1",
-          "gender": "male",
-          "birthDate": "1976-04-12",
-          "meta": {
-            "tag": [
-              {
-                "system": "https://ips-agent.demo/tags",
-                "code": "SYNTHETIC",
-                "display": "Synthetic patient"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "fullUrl": "urn:uuid:cond-t2dm",
+        "fullUrl": "urn:uuid:00000000-0000-4000-8000-100000000003",
         "resource": {
           "resourceType": "Condition",
           "id": "cond-t2dm",
@@ -486,12 +626,21 @@
             ]
           },
           "subject": {
-            "reference": "urn:uuid:patient-1"
+            "reference": "urn:uuid:00000000-0000-4000-8000-100000000002"
+          },
+          "meta": {
+            "profile": [
+              "http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips"
+            ]
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Diabetes mellitus type 2</div>"
           }
         }
       },
       {
-        "fullUrl": "urn:uuid:cond-htn",
+        "fullUrl": "urn:uuid:00000000-0000-4000-8000-100000000004",
         "resource": {
           "resourceType": "Condition",
           "id": "cond-htn",
@@ -505,17 +654,26 @@
               {
                 "system": "http://hl7.org/fhir/sid/icd-10",
                 "code": "I10",
-                "display": "Essential hypertension"
+                "display": "Essential (primary) hypertension"
               }
             ]
           },
           "subject": {
-            "reference": "urn:uuid:patient-1"
+            "reference": "urn:uuid:00000000-0000-4000-8000-100000000002"
+          },
+          "meta": {
+            "profile": [
+              "http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips"
+            ]
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hypertensive disorder</div>"
           }
         }
       },
       {
-        "fullUrl": "urn:uuid:obs-a1c",
+        "fullUrl": "urn:uuid:00000000-0000-4000-8000-100000000005",
         "resource": {
           "resourceType": "Observation",
           "id": "obs-a1c",
@@ -536,12 +694,38 @@
             "code": "%"
           },
           "subject": {
-            "reference": "urn:uuid:patient-1"
-          }
+            "reference": "urn:uuid:00000000-0000-4000-8000-100000000002"
+          },
+          "meta": {
+            "profile": [
+              "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+            ]
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hemoglobin A1c/Hemoglobin.total in Blood</div>"
+          },
+          "effectiveDateTime": "2026-06-29T14:22:11Z",
+          "performer": [
+            {
+              "reference": "urn:uuid:00000000-0000-4000-8000-100000000009"
+            }
+          ],
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                  "code": "laboratory",
+                  "display": "Laboratory"
+                }
+              ]
+            }
+          ]
         }
       },
       {
-        "fullUrl": "urn:uuid:obs-creat",
+        "fullUrl": "urn:uuid:00000000-0000-4000-8000-100000000006",
         "resource": {
           "resourceType": "Observation",
           "id": "obs-creat",
@@ -562,12 +746,38 @@
             "code": "mg/dL"
           },
           "subject": {
-            "reference": "urn:uuid:patient-1"
-          }
+            "reference": "urn:uuid:00000000-0000-4000-8000-100000000002"
+          },
+          "meta": {
+            "profile": [
+              "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+            ]
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Creatinine [Mass/volume] in Serum or Plasma</div>"
+          },
+          "effectiveDateTime": "2026-06-29T14:22:11Z",
+          "performer": [
+            {
+              "reference": "urn:uuid:00000000-0000-4000-8000-100000000009"
+            }
+          ],
+          "category": [
+            {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                  "code": "laboratory",
+                  "display": "Laboratory"
+                }
+              ]
+            }
+          ]
         }
       },
       {
-        "fullUrl": "urn:uuid:med-metformin",
+        "fullUrl": "urn:uuid:00000000-0000-4000-8000-100000000007",
         "resource": {
           "resourceType": "MedicationStatement",
           "id": "med-metformin",
@@ -582,17 +792,34 @@
             ]
           },
           "subject": {
-            "reference": "urn:uuid:patient-1"
+            "reference": "urn:uuid:00000000-0000-4000-8000-100000000002"
           },
           "dosage": [
             {
               "text": "1000 mg"
             }
-          ]
+          ],
+          "meta": {
+            "profile": [
+              "http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationStatement-uv-ips"
+            ]
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">metformin</div>"
+          },
+          "_effectiveDateTime": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
         }
       },
       {
-        "fullUrl": "urn:uuid:med-lisinopril",
+        "fullUrl": "urn:uuid:00000000-0000-4000-8000-100000000008",
         "resource": {
           "resourceType": "MedicationStatement",
           "id": "med-lisinopril",
@@ -607,23 +834,54 @@
             ]
           },
           "subject": {
-            "reference": "urn:uuid:patient-1"
+            "reference": "urn:uuid:00000000-0000-4000-8000-100000000002"
           },
           "dosage": [
             {
               "text": "10 mg"
             }
-          ]
+          ],
+          "meta": {
+            "profile": [
+              "http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationStatement-uv-ips"
+            ]
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">lisinopril</div>"
+          },
+          "_effectiveDateTime": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+                "valueCode": "unknown"
+              }
+            ]
+          }
         }
       },
       {
-        "fullUrl": "urn:uuid:org-1",
+        "fullUrl": "urn:uuid:00000000-0000-4000-8000-100000000009",
         "resource": {
           "resourceType": "Organization",
           "id": "org-1",
-          "name": "Synthetic Clinic (USA)"
+          "name": "Synthetic Clinic (USA)",
+          "meta": {
+            "profile": [
+              "http://hl7.org/fhir/uv/ips/StructureDefinition/Organization-uv-ips"
+            ]
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Synthetic Clinic (USA)</div>"
+          }
         }
       }
-    ]
+    ],
+    "meta": {
+      "profile": [
+        "http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips"
+      ]
+    }
   }
 }

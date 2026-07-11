@@ -1,0 +1,1145 @@
+{
+  "generated_at": "2026-07-10",
+  "implementation": "prototype/src/ips_agent/federated",
+  "configuration": {
+    "rounds": 5,
+    "seed": 42,
+    "hash_dim": 1024,
+    "local_epochs": 10,
+    "batch_size": 16,
+    "learning_rate": 0.1
+  },
+  "data_summary": {
+    "sites": 4,
+    "canonical_concepts": 12,
+    "training_examples": 768,
+    "globally_unseen_examples": 192,
+    "cross_site_transfer_examples": 48
+  },
+  "quality_metrics": {
+    "initial_model_weights_changed": true,
+    "transfer_non_regression_by_receiver": {
+      "India": true,
+      "USA": true,
+      "Australia": true,
+      "Europe": true
+    },
+    "aggregate_transfer_correct_local_only": 47,
+    "aggregate_transfer_correct_federated": 48,
+    "aggregate_transfer_improved": true,
+    "raw_reports_shared_with_coordinator": 0,
+    "patient_level_fhir_bundles_shared_with_coordinator": 0
+  },
+  "benchmarks": {
+    "globally_unseen": {
+      "dictionary": {
+        "correct": 0,
+        "total": 192,
+        "accuracy": 0.0,
+        "macro_f1": 0.0
+      },
+      "centralized_reference": {
+        "correct": 192,
+        "total": 192,
+        "accuracy": 1.0,
+        "macro_f1": 1.0
+      },
+      "federated": {
+        "correct": 192,
+        "total": 192,
+        "accuracy": 1.0,
+        "macro_f1": 1.0
+      },
+      "local_only_average": {
+        "accuracy": 0.94401
+      }
+    },
+    "cross_site_transfer_by_receiver": {
+      "India": {
+        "local_only": {
+          "correct": 12,
+          "total": 12,
+          "accuracy": 1.0,
+          "macro_f1": 1.0
+        },
+        "federated": {
+          "correct": 12,
+          "total": 12,
+          "accuracy": 1.0,
+          "macro_f1": 1.0
+        },
+        "non_regression": true
+      },
+      "USA": {
+        "local_only": {
+          "correct": 12,
+          "total": 12,
+          "accuracy": 1.0,
+          "macro_f1": 1.0
+        },
+        "federated": {
+          "correct": 12,
+          "total": 12,
+          "accuracy": 1.0,
+          "macro_f1": 1.0
+        },
+        "non_regression": true
+      },
+      "Australia": {
+        "local_only": {
+          "correct": 12,
+          "total": 12,
+          "accuracy": 1.0,
+          "macro_f1": 1.0
+        },
+        "federated": {
+          "correct": 12,
+          "total": 12,
+          "accuracy": 1.0,
+          "macro_f1": 1.0
+        },
+        "non_regression": true
+      },
+      "Europe": {
+        "local_only": {
+          "correct": 11,
+          "total": 12,
+          "accuracy": 0.916667,
+          "macro_f1": 0.888889
+        },
+        "federated": {
+          "correct": 12,
+          "total": 12,
+          "accuracy": 1.0,
+          "macro_f1": 1.0
+        },
+        "non_regression": true
+      }
+    },
+    "centralized_reference_notice": "Offline benchmark only; it is not the deployed privacy-preserving approach."
+  },
+  "privacy_report": {
+    "raw_reports_shared_with_coordinator": false,
+    "patient_identifiers_shared_with_coordinator": false,
+    "patient_level_fhir_bundles_shared_with_coordinator": false,
+    "coordinator_receives": "model tensors and site sample counts only",
+    "formal_privacy_guarantee": false,
+    "limitation": "FedAvg provides data locality only. Model updates can leak training information without DP-SGD or secure aggregation.",
+    "simulation_limitation": "Clients and coordinator are simulated in one Python process; production deployment needs process and network isolation."
+  },
+  "round_metrics": [
+    {
+      "round_index": 0,
+      "aggregate_global_unseen_metrics": {
+        "correct": 191,
+        "total": 192,
+        "accuracy": 0.994792,
+        "macro_f1": 0.994787
+      },
+      "client_updates": [
+        {
+          "site": "India",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.120457
+        },
+        {
+          "site": "USA",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.132034
+        },
+        {
+          "site": "Australia",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.116772
+        },
+        {
+          "site": "Europe",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.111961
+        }
+      ]
+    },
+    {
+      "round_index": 1,
+      "aggregate_global_unseen_metrics": {
+        "correct": 192,
+        "total": 192,
+        "accuracy": 1.0,
+        "macro_f1": 1.0
+      },
+      "client_updates": [
+        {
+          "site": "India",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.080124
+        },
+        {
+          "site": "USA",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.086568
+        },
+        {
+          "site": "Australia",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.081179
+        },
+        {
+          "site": "Europe",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.077326
+        }
+      ]
+    },
+    {
+      "round_index": 2,
+      "aggregate_global_unseen_metrics": {
+        "correct": 192,
+        "total": 192,
+        "accuracy": 1.0,
+        "macro_f1": 1.0
+      },
+      "client_updates": [
+        {
+          "site": "India",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.051578
+        },
+        {
+          "site": "USA",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.068349
+        },
+        {
+          "site": "Australia",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.057275
+        },
+        {
+          "site": "Europe",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.050613
+        }
+      ]
+    },
+    {
+      "round_index": 3,
+      "aggregate_global_unseen_metrics": {
+        "correct": 192,
+        "total": 192,
+        "accuracy": 1.0,
+        "macro_f1": 1.0
+      },
+      "client_updates": [
+        {
+          "site": "India",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.046602
+        },
+        {
+          "site": "USA",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.046935
+        },
+        {
+          "site": "Australia",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.042802
+        },
+        {
+          "site": "Europe",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.048194
+        }
+      ]
+    },
+    {
+      "round_index": 4,
+      "aggregate_global_unseen_metrics": {
+        "correct": 192,
+        "total": 192,
+        "accuracy": 1.0,
+        "macro_f1": 1.0
+      },
+      "client_updates": [
+        {
+          "site": "India",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.038702
+        },
+        {
+          "site": "USA",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.032541
+        },
+        {
+          "site": "Australia",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.03374
+        },
+        {
+          "site": "Europe",
+          "sample_count": 192,
+          "shared_payload": {
+            "contains": [
+              "model_tensors",
+              "sample_count"
+            ],
+            "excludes": [
+              "reports",
+              "mentions",
+              "labels",
+              "aliases",
+              "patient_identifiers",
+              "fhir_bundles"
+            ]
+          },
+          "final_local_loss": 0.034584
+        }
+      ]
+    }
+  ],
+  "semantic_mapping_validation": [
+    {
+      "id": "transfer-australia-to-europe-0",
+      "owner_site": "Australia",
+      "receiver_site": "Europe",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "type 2 DM condition",
+      "expected_canonical_concept": "type 2 diabetes mellitus",
+      "predicted_canonical_concept": "type 2 diabetes mellitus",
+      "confidence": 0.899108,
+      "correct": true
+    },
+    {
+      "id": "transfer-australia-to-europe-1",
+      "owner_site": "Australia",
+      "receiver_site": "Europe",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "elevated BP hypertension",
+      "expected_canonical_concept": "hypertension",
+      "predicted_canonical_concept": "hypertension",
+      "confidence": 0.986607,
+      "correct": true
+    },
+    {
+      "id": "transfer-australia-to-europe-10",
+      "owner_site": "Australia",
+      "receiver_site": "Europe",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "lisinopril BP medicine",
+      "expected_canonical_concept": "lisinopril",
+      "predicted_canonical_concept": "lisinopril",
+      "confidence": 0.980597,
+      "correct": true
+    },
+    {
+      "id": "transfer-australia-to-europe-11",
+      "owner_site": "Australia",
+      "receiver_site": "Europe",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "atorvastatin lipid medicine",
+      "expected_canonical_concept": "atorvastatin",
+      "predicted_canonical_concept": "atorvastatin",
+      "confidence": 0.980055,
+      "correct": true
+    },
+    {
+      "id": "transfer-australia-to-europe-2",
+      "owner_site": "Australia",
+      "receiver_site": "Europe",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "renal CKD condition",
+      "expected_canonical_concept": "chronic kidney disease",
+      "predicted_canonical_concept": "chronic kidney disease",
+      "confidence": 0.960131,
+      "correct": true
+    },
+    {
+      "id": "transfer-australia-to-europe-3",
+      "owner_site": "Australia",
+      "receiver_site": "Europe",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "lipid disorder hyperlipidemia",
+      "expected_canonical_concept": "dyslipidemia",
+      "predicted_canonical_concept": "dyslipidemia",
+      "confidence": 0.961877,
+      "correct": true
+    },
+    {
+      "id": "transfer-australia-to-europe-4",
+      "owner_site": "Australia",
+      "receiver_site": "Europe",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "HbA1c glycaemic",
+      "expected_canonical_concept": "hba1c",
+      "predicted_canonical_concept": "hba1c",
+      "confidence": 0.974192,
+      "correct": true
+    },
+    {
+      "id": "transfer-australia-to-europe-5",
+      "owner_site": "Australia",
+      "receiver_site": "Europe",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "fasting BGL glucose",
+      "expected_canonical_concept": "fasting plasma glucose",
+      "predicted_canonical_concept": "fasting plasma glucose",
+      "confidence": 0.982352,
+      "correct": true
+    },
+    {
+      "id": "transfer-australia-to-europe-6",
+      "owner_site": "Australia",
+      "receiver_site": "Europe",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "eGFR renal rate",
+      "expected_canonical_concept": "estimated glomerular filtration rate",
+      "predicted_canonical_concept": "estimated glomerular filtration rate",
+      "confidence": 0.976602,
+      "correct": true
+    },
+    {
+      "id": "transfer-australia-to-europe-7",
+      "owner_site": "Australia",
+      "receiver_site": "Europe",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "LDL cholesterol lipids",
+      "expected_canonical_concept": "ldl cholesterol",
+      "predicted_canonical_concept": "ldl cholesterol",
+      "confidence": 0.987812,
+      "correct": true
+    },
+    {
+      "id": "transfer-australia-to-europe-8",
+      "owner_site": "Australia",
+      "receiver_site": "Europe",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "metformin medication",
+      "expected_canonical_concept": "metformin",
+      "predicted_canonical_concept": "metformin",
+      "confidence": 0.970136,
+      "correct": true
+    },
+    {
+      "id": "transfer-australia-to-europe-9",
+      "owner_site": "Australia",
+      "receiver_site": "Europe",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "insulin medication",
+      "expected_canonical_concept": "insulin",
+      "predicted_canonical_concept": "insulin",
+      "confidence": 0.972563,
+      "correct": true
+    },
+    {
+      "id": "transfer-europe-to-india-0",
+      "owner_site": "Europe",
+      "receiver_site": "India",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "diabetes type II",
+      "expected_canonical_concept": "type 2 diabetes mellitus",
+      "predicted_canonical_concept": "type 2 diabetes mellitus",
+      "confidence": 0.970018,
+      "correct": true
+    },
+    {
+      "id": "transfer-europe-to-india-1",
+      "owner_site": "Europe",
+      "receiver_site": "India",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "arterial hypertension",
+      "expected_canonical_concept": "hypertension",
+      "predicted_canonical_concept": "hypertension",
+      "confidence": 0.981088,
+      "correct": true
+    },
+    {
+      "id": "transfer-europe-to-india-10",
+      "owner_site": "Europe",
+      "receiver_site": "India",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "lisinopril antihypertensive",
+      "expected_canonical_concept": "lisinopril",
+      "predicted_canonical_concept": "lisinopril",
+      "confidence": 0.980661,
+      "correct": true
+    },
+    {
+      "id": "transfer-europe-to-india-11",
+      "owner_site": "Europe",
+      "receiver_site": "India",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "atorvastatin cholesterol medicament",
+      "expected_canonical_concept": "atorvastatin",
+      "predicted_canonical_concept": "atorvastatin",
+      "confidence": 0.959411,
+      "correct": true
+    },
+    {
+      "id": "transfer-europe-to-india-2",
+      "owner_site": "Europe",
+      "receiver_site": "India",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "chronic renal disease",
+      "expected_canonical_concept": "chronic kidney disease",
+      "predicted_canonical_concept": "chronic kidney disease",
+      "confidence": 0.939666,
+      "correct": true
+    },
+    {
+      "id": "transfer-europe-to-india-3",
+      "owner_site": "Europe",
+      "receiver_site": "India",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "lipid metabolism dyslipidemia",
+      "expected_canonical_concept": "dyslipidemia",
+      "predicted_canonical_concept": "dyslipidemia",
+      "confidence": 0.983085,
+      "correct": true
+    },
+    {
+      "id": "transfer-europe-to-india-4",
+      "owner_site": "Europe",
+      "receiver_site": "India",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "glycated haemoglobin",
+      "expected_canonical_concept": "hba1c",
+      "predicted_canonical_concept": "hba1c",
+      "confidence": 0.947414,
+      "correct": true
+    },
+    {
+      "id": "transfer-europe-to-india-5",
+      "owner_site": "Europe",
+      "receiver_site": "India",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "fasting glycaemia glucose",
+      "expected_canonical_concept": "fasting plasma glucose",
+      "predicted_canonical_concept": "fasting plasma glucose",
+      "confidence": 0.948662,
+      "correct": true
+    },
+    {
+      "id": "transfer-europe-to-india-6",
+      "owner_site": "Europe",
+      "receiver_site": "India",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "renal filtration eGFR",
+      "expected_canonical_concept": "estimated glomerular filtration rate",
+      "predicted_canonical_concept": "estimated glomerular filtration rate",
+      "confidence": 0.972985,
+      "correct": true
+    },
+    {
+      "id": "transfer-europe-to-india-7",
+      "owner_site": "Europe",
+      "receiver_site": "India",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "LDL cholesterol serum",
+      "expected_canonical_concept": "ldl cholesterol",
+      "predicted_canonical_concept": "ldl cholesterol",
+      "confidence": 0.987462,
+      "correct": true
+    },
+    {
+      "id": "transfer-europe-to-india-8",
+      "owner_site": "Europe",
+      "receiver_site": "India",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "metformin medicament",
+      "expected_canonical_concept": "metformin",
+      "predicted_canonical_concept": "metformin",
+      "confidence": 0.971235,
+      "correct": true
+    },
+    {
+      "id": "transfer-europe-to-india-9",
+      "owner_site": "Europe",
+      "receiver_site": "India",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "insulin medicament",
+      "expected_canonical_concept": "insulin",
+      "predicted_canonical_concept": "insulin",
+      "confidence": 0.973161,
+      "correct": true
+    },
+    {
+      "id": "transfer-india-to-usa-0",
+      "owner_site": "India",
+      "receiver_site": "USA",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "madhumeha type 2",
+      "expected_canonical_concept": "type 2 diabetes mellitus",
+      "predicted_canonical_concept": "type 2 diabetes mellitus",
+      "confidence": 0.97639,
+      "correct": true
+    },
+    {
+      "id": "transfer-india-to-usa-1",
+      "owner_site": "India",
+      "receiver_site": "USA",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "uccha BP hypertension",
+      "expected_canonical_concept": "hypertension",
+      "predicted_canonical_concept": "hypertension",
+      "confidence": 0.990828,
+      "correct": true
+    },
+    {
+      "id": "transfer-india-to-usa-10",
+      "owner_site": "India",
+      "receiver_site": "USA",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "lisinopril BP dava",
+      "expected_canonical_concept": "lisinopril",
+      "predicted_canonical_concept": "lisinopril",
+      "confidence": 0.985539,
+      "correct": true
+    },
+    {
+      "id": "transfer-india-to-usa-11",
+      "owner_site": "India",
+      "receiver_site": "USA",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "atorvastatin lipid dava",
+      "expected_canonical_concept": "atorvastatin",
+      "predicted_canonical_concept": "atorvastatin",
+      "confidence": 0.986132,
+      "correct": true
+    },
+    {
+      "id": "transfer-india-to-usa-2",
+      "owner_site": "India",
+      "receiver_site": "USA",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "chronic kidney rog",
+      "expected_canonical_concept": "chronic kidney disease",
+      "predicted_canonical_concept": "chronic kidney disease",
+      "confidence": 0.949784,
+      "correct": true
+    },
+    {
+      "id": "transfer-india-to-usa-3",
+      "owner_site": "India",
+      "receiver_site": "USA",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "lipid asantulan dyslipidemia",
+      "expected_canonical_concept": "dyslipidemia",
+      "predicted_canonical_concept": "dyslipidemia",
+      "confidence": 0.984226,
+      "correct": true
+    },
+    {
+      "id": "transfer-india-to-usa-4",
+      "owner_site": "India",
+      "receiver_site": "USA",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "glyco HbA1c",
+      "expected_canonical_concept": "hba1c",
+      "predicted_canonical_concept": "hba1c",
+      "confidence": 0.955011,
+      "correct": true
+    },
+    {
+      "id": "transfer-india-to-usa-5",
+      "owner_site": "India",
+      "receiver_site": "USA",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "fasting sugar glucose",
+      "expected_canonical_concept": "fasting plasma glucose",
+      "predicted_canonical_concept": "fasting plasma glucose",
+      "confidence": 0.981854,
+      "correct": true
+    },
+    {
+      "id": "transfer-india-to-usa-6",
+      "owner_site": "India",
+      "receiver_site": "USA",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "renal function eGFR",
+      "expected_canonical_concept": "estimated glomerular filtration rate",
+      "predicted_canonical_concept": "estimated glomerular filtration rate",
+      "confidence": 0.974128,
+      "correct": true
+    },
+    {
+      "id": "transfer-india-to-usa-7",
+      "owner_site": "India",
+      "receiver_site": "USA",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "cholesterol LDL",
+      "expected_canonical_concept": "ldl cholesterol",
+      "predicted_canonical_concept": "ldl cholesterol",
+      "confidence": 0.990523,
+      "correct": true
+    },
+    {
+      "id": "transfer-india-to-usa-8",
+      "owner_site": "India",
+      "receiver_site": "USA",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "metformin dava",
+      "expected_canonical_concept": "metformin",
+      "predicted_canonical_concept": "metformin",
+      "confidence": 0.981249,
+      "correct": true
+    },
+    {
+      "id": "transfer-india-to-usa-9",
+      "owner_site": "India",
+      "receiver_site": "USA",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "insulin dava",
+      "expected_canonical_concept": "insulin",
+      "predicted_canonical_concept": "insulin",
+      "confidence": 0.982555,
+      "correct": true
+    },
+    {
+      "id": "transfer-usa-to-australia-0",
+      "owner_site": "USA",
+      "receiver_site": "Australia",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "adult type 2 diabetes",
+      "expected_canonical_concept": "type 2 diabetes mellitus",
+      "predicted_canonical_concept": "type 2 diabetes mellitus",
+      "confidence": 0.983858,
+      "correct": true
+    },
+    {
+      "id": "transfer-usa-to-australia-1",
+      "owner_site": "USA",
+      "receiver_site": "Australia",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "high BP hypertension",
+      "expected_canonical_concept": "hypertension",
+      "predicted_canonical_concept": "hypertension",
+      "confidence": 0.988198,
+      "correct": true
+    },
+    {
+      "id": "transfer-usa-to-australia-10",
+      "owner_site": "USA",
+      "receiver_site": "Australia",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "lisinopril therapy",
+      "expected_canonical_concept": "lisinopril",
+      "predicted_canonical_concept": "lisinopril",
+      "confidence": 0.975263,
+      "correct": true
+    },
+    {
+      "id": "transfer-usa-to-australia-11",
+      "owner_site": "USA",
+      "receiver_site": "Australia",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "atorvastatin therapy",
+      "expected_canonical_concept": "atorvastatin",
+      "predicted_canonical_concept": "atorvastatin",
+      "confidence": 0.964486,
+      "correct": true
+    },
+    {
+      "id": "transfer-usa-to-australia-2",
+      "owner_site": "USA",
+      "receiver_site": "Australia",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "CKD kidney condition",
+      "expected_canonical_concept": "chronic kidney disease",
+      "predicted_canonical_concept": "chronic kidney disease",
+      "confidence": 0.940871,
+      "correct": true
+    },
+    {
+      "id": "transfer-usa-to-australia-3",
+      "owner_site": "USA",
+      "receiver_site": "Australia",
+      "split": "cross_site_transfer",
+      "category": "condition",
+      "mention": "high lipid dyslipidemia",
+      "expected_canonical_concept": "dyslipidemia",
+      "predicted_canonical_concept": "dyslipidemia",
+      "confidence": 0.988121,
+      "correct": true
+    },
+    {
+      "id": "transfer-usa-to-australia-4",
+      "owner_site": "USA",
+      "receiver_site": "Australia",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "A1C glycated test",
+      "expected_canonical_concept": "hba1c",
+      "predicted_canonical_concept": "hba1c",
+      "confidence": 0.977203,
+      "correct": true
+    },
+    {
+      "id": "transfer-usa-to-australia-5",
+      "owner_site": "USA",
+      "receiver_site": "Australia",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "fasting blood glucose",
+      "expected_canonical_concept": "fasting plasma glucose",
+      "predicted_canonical_concept": "fasting plasma glucose",
+      "confidence": 0.981905,
+      "correct": true
+    },
+    {
+      "id": "transfer-usa-to-australia-6",
+      "owner_site": "USA",
+      "receiver_site": "Australia",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "estimated GFR renal",
+      "expected_canonical_concept": "estimated glomerular filtration rate",
+      "predicted_canonical_concept": "estimated glomerular filtration rate",
+      "confidence": 0.953185,
+      "correct": true
+    },
+    {
+      "id": "transfer-usa-to-australia-7",
+      "owner_site": "USA",
+      "receiver_site": "Australia",
+      "split": "cross_site_transfer",
+      "category": "lab",
+      "mention": "LDL-C cholesterol",
+      "expected_canonical_concept": "ldl cholesterol",
+      "predicted_canonical_concept": "ldl cholesterol",
+      "confidence": 0.989359,
+      "correct": true
+    },
+    {
+      "id": "transfer-usa-to-australia-8",
+      "owner_site": "USA",
+      "receiver_site": "Australia",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "metformin therapy",
+      "expected_canonical_concept": "metformin",
+      "predicted_canonical_concept": "metformin",
+      "confidence": 0.965185,
+      "correct": true
+    },
+    {
+      "id": "transfer-usa-to-australia-9",
+      "owner_site": "USA",
+      "receiver_site": "Australia",
+      "split": "cross_site_transfer",
+      "category": "medication",
+      "mention": "insulin therapy",
+      "expected_canonical_concept": "insulin",
+      "predicted_canonical_concept": "insulin",
+      "confidence": 0.968198,
+      "correct": true
+    }
+  ]
+}

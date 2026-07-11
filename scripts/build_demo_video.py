@@ -227,13 +227,13 @@ SLIDES = [
             "20 synthetic reports across 4 country sites.",
             "768 terminology training mentions plus 192 globally unseen examples.",
             "48/48 cross-site transfer mappings correct in the synthetic validation set.",
-            "Representative IPS-style Bundles show official validator evidence: 0 errors.",
+            "All 4 current Bundles pass official IPS 2.0.1 validation: 0 errors, 0 warnings.",
         ],
         narration=(
             "The evidence is intentionally visible. The demo has 20 synthetic reports across four "
             "sites, 768 terminology training mentions, 192 globally unseen examples, 48 out of 48 "
             "cross-site transfer mappings correct in the synthetic validation set, and official "
-            "validator evidence showing zero errors for representative IPS-style Bundles."
+            "official IPS 2.0.1 validation showing zero errors and zero warnings for all four current Bundles."
         ),
     ),
     Slide(

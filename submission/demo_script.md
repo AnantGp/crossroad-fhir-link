@@ -43,7 +43,7 @@ The demo asserts:
 - `Bundle.type = document`
 - `Composition` is the first entry
 - clinical facts become FHIR `Condition`, `Observation`, `MedicationStatement`, and related resources
-- representative Bundles show official validator evidence with 0 errors
+- all four current Bundles pass the official HL7 validator against IPS 2.0.1 with 0 errors and 0 warnings
 
 The PDF is useful for a human reader, but the FHIR Bundle is the exchange artifact.
 
@@ -105,8 +105,12 @@ The evidence shown in the demo is synthetic validation evidence:
 - 4 country sites
 - 768 terminology training mentions
 - 192 globally unseen examples
-- 48/48 cross-site transfer mappings correct in the synthetic validation set
-- representative IPS-style Bundles show validator evidence with 0 errors
+- 48/48 cross-site transfer mappings correct versus 47/48 local-only, a measured gain of one correct mapping
+- 192/192 globally unseen mappings correct with macro-F1 1.000 in the separate seeded synthetic benchmark
+- all four current Bundles show official IPS 2.0.1 validator evidence with 0 errors and 0 warnings
+- two informational medication-terminology notes per Bundle remain visible
+
+These are deterministic single-seed synthetic results, not evidence of clinical accuracy on real notes.
 
 ## 4:30-5:00 - Benefit and Closing
 

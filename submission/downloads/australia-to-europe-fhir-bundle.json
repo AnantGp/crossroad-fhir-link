@@ -9,7 +9,7 @@
   "timestamp": "2026-06-29T14:22:11Z",
   "entry": [
     {
-      "fullUrl": "urn:uuid:composition-1",
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-300000000001",
       "resource": {
         "resourceType": "Composition",
         "id": "composition-1",
@@ -24,72 +24,153 @@
           ]
         },
         "subject": {
-          "reference": "urn:uuid:patient-1"
+          "reference": "urn:uuid:00000000-0000-4000-8000-300000000002"
         },
         "date": "2026-06-29",
         "author": [
           {
-            "reference": "urn:uuid:org-1"
+            "reference": "urn:uuid:00000000-0000-4000-8000-300000000009"
           }
         ],
         "title": "International Patient Summary — Synthetic Australia T2DM",
         "section": [
           {
-            "title": "Active Problems",
+            "title": "Problems",
             "entry": [
               {
-                "reference": "urn:uuid:cond-t2dm"
+                "reference": "urn:uuid:00000000-0000-4000-8000-300000000003"
               },
               {
-                "reference": "urn:uuid:cond-htn"
+                "reference": "urn:uuid:00000000-0000-4000-8000-300000000004"
               }
-            ]
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "11450-4",
+                  "display": "Problem list - Reported"
+                }
+              ]
+            },
+            "text": {
+              "status": "generated",
+              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Problems section generated from the synthetic source report.</div>"
+            }
           },
           {
-            "title": "Results",
-            "entry": [
-              {
-                "reference": "urn:uuid:obs-a1c"
-              },
-              {
-                "reference": "urn:uuid:obs-egfr"
-              }
-            ]
+            "title": "Allergies",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "48765-2",
+                  "display": "Allergies and adverse reactions Document"
+                }
+              ]
+            },
+            "text": {
+              "status": "generated",
+              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No allergy information was available in the synthetic source report.</div>"
+            },
+            "emptyReason": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+                  "code": "unavailable",
+                  "display": "Unavailable"
+                }
+              ],
+              "text": "No source information was available for this section."
+            }
           },
           {
             "title": "Medications",
             "entry": [
               {
-                "reference": "urn:uuid:med-metformin"
+                "reference": "urn:uuid:00000000-0000-4000-8000-300000000007"
               },
               {
-                "reference": "urn:uuid:med-perindopril"
+                "reference": "urn:uuid:00000000-0000-4000-8000-300000000008"
               }
-            ]
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "10160-0",
+                  "display": "History of Medication use Narrative"
+                }
+              ]
+            },
+            "text": {
+              "status": "generated",
+              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Medications section generated from the synthetic source report.</div>"
+            }
+          },
+          {
+            "title": "Results",
+            "entry": [
+              {
+                "reference": "urn:uuid:00000000-0000-4000-8000-300000000005"
+              },
+              {
+                "reference": "urn:uuid:00000000-0000-4000-8000-300000000006"
+              }
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "30954-2",
+                  "display": "Relevant diagnostic tests/laboratory data note"
+                }
+              ]
+            },
+            "text": {
+              "status": "generated",
+              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Results section generated from the synthetic source report.</div>"
+            }
+          }
+        ],
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips"
+          ]
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">International Patient Summary — Synthetic Australia T2DM</div>"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-300000000002",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "patient-1",
+        "gender": "male",
+        "birthDate": "1965-02-19",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/uv/ips/StructureDefinition/Patient-uv-ips"
+          ]
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Patient patient-1</div>"
+        },
+        "active": true,
+        "name": [
+          {
+            "use": "anonymous",
+            "text": "Synthetic Demo Patient"
           }
         ]
       }
     },
     {
-      "fullUrl": "urn:uuid:patient-1",
-      "resource": {
-        "resourceType": "Patient",
-        "id": "patient-1",
-        "gender": "male",
-        "birthDate": "1964-02-19",
-        "meta": {
-          "tag": [
-            {
-              "system": "https://ips-agent.demo/tags",
-              "code": "SYNTHETIC",
-              "display": "Synthetic patient"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "fullUrl": "urn:uuid:cond-t2dm",
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-300000000003",
       "resource": {
         "resourceType": "Condition",
         "id": "cond-t2dm",
@@ -108,12 +189,21 @@
           ]
         },
         "subject": {
-          "reference": "urn:uuid:patient-1"
+          "reference": "urn:uuid:00000000-0000-4000-8000-300000000002"
+        },
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips"
+          ]
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Diabetes mellitus type 2</div>"
         }
       }
     },
     {
-      "fullUrl": "urn:uuid:cond-htn",
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-300000000004",
       "resource": {
         "resourceType": "Condition",
         "id": "cond-htn",
@@ -127,17 +217,26 @@
             {
               "system": "http://hl7.org/fhir/sid/icd-10",
               "code": "I10",
-              "display": "Essential hypertension"
+              "display": "Essential (primary) hypertension"
             }
           ]
         },
         "subject": {
-          "reference": "urn:uuid:patient-1"
+          "reference": "urn:uuid:00000000-0000-4000-8000-300000000002"
+        },
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips"
+          ]
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hypertensive disorder</div>"
         }
       }
     },
     {
-      "fullUrl": "urn:uuid:obs-a1c",
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-300000000005",
       "resource": {
         "resourceType": "Observation",
         "id": "obs-a1c",
@@ -158,12 +257,38 @@
           "code": "%"
         },
         "subject": {
-          "reference": "urn:uuid:patient-1"
-        }
+          "reference": "urn:uuid:00000000-0000-4000-8000-300000000002"
+        },
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+          ]
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hemoglobin A1c/Hemoglobin.total in Blood</div>"
+        },
+        "effectiveDateTime": "2026-06-29T14:22:11Z",
+        "performer": [
+          {
+            "reference": "urn:uuid:00000000-0000-4000-8000-300000000009"
+          }
+        ],
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ]
       }
     },
     {
-      "fullUrl": "urn:uuid:obs-egfr",
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-300000000006",
       "resource": {
         "resourceType": "Observation",
         "id": "obs-egfr",
@@ -173,23 +298,49 @@
             {
               "system": "http://loinc.org",
               "code": "98979-8",
-              "display": "Glomerular filtration rate predicted by CKD-EPI 2021"
+              "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI 2021)/1.73 sq M"
             }
           ]
         },
         "valueQuantity": {
           "value": 78,
-          "unit": "mL/min/{1.73_m2}",
+          "unit": "mL/min/1.73 m2",
           "system": "http://unitsofmeasure.org",
-          "code": "mL/min/{1.73_m2}"
+          "code": "mL/min"
         },
         "subject": {
-          "reference": "urn:uuid:patient-1"
-        }
+          "reference": "urn:uuid:00000000-0000-4000-8000-300000000002"
+        },
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+          ]
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI 2021)/1.73 sq M</div>"
+        },
+        "effectiveDateTime": "2026-06-29T14:22:11Z",
+        "performer": [
+          {
+            "reference": "urn:uuid:00000000-0000-4000-8000-300000000009"
+          }
+        ],
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ]
       }
     },
     {
-      "fullUrl": "urn:uuid:med-metformin",
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-300000000007",
       "resource": {
         "resourceType": "MedicationStatement",
         "id": "med-metformin",
@@ -204,17 +355,34 @@
           ]
         },
         "subject": {
-          "reference": "urn:uuid:patient-1"
+          "reference": "urn:uuid:00000000-0000-4000-8000-300000000002"
         },
         "dosage": [
           {
             "text": "1 g mane; modified release noted in source"
           }
-        ]
+        ],
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationStatement-uv-ips"
+          ]
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">metformin</div>"
+        },
+        "_effectiveDateTime": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+              "valueCode": "unknown"
+            }
+          ]
+        }
       }
     },
     {
-      "fullUrl": "urn:uuid:med-perindopril",
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-300000000008",
       "resource": {
         "resourceType": "MedicationStatement",
         "id": "med-perindopril",
@@ -229,22 +397,53 @@
           ]
         },
         "subject": {
-          "reference": "urn:uuid:patient-1"
+          "reference": "urn:uuid:00000000-0000-4000-8000-300000000002"
         },
         "dosage": [
           {
             "text": "4 mg"
           }
-        ]
+        ],
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationStatement-uv-ips"
+          ]
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">perindopril</div>"
+        },
+        "_effectiveDateTime": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+              "valueCode": "unknown"
+            }
+          ]
+        }
       }
     },
     {
-      "fullUrl": "urn:uuid:org-1",
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-300000000009",
       "resource": {
         "resourceType": "Organization",
         "id": "org-1",
-        "name": "Synthetic Clinic (Australia)"
+        "name": "Synthetic Clinic (Australia)",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/uv/ips/StructureDefinition/Organization-uv-ips"
+          ]
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Synthetic Clinic (Australia)</div>"
+        }
       }
     }
-  ]
+  ],
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips"
+    ]
+  }
 }

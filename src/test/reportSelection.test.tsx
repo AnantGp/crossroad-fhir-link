@@ -90,21 +90,21 @@ describe("report selection pipeline state", () => {
     chooseSelectOption("target-country-select", "USA");
     await waitFor(() => {
       expect(screen.getByTestId("receiver-report")).toHaveTextContent("Final US receiver report");
-      expect(screen.getByTestId("receiver-report")).toHaveTextContent("US Core / IPS-style receiver");
+      expect(screen.getByTestId("receiver-report")).toHaveTextContent("US Core STU9 readiness view");
       expect(screen.getAllByRole("button", { name: /Download final USA PDF/i }).length).toBeGreaterThan(0);
     });
 
     chooseSelectOption("target-country-select", "AUS");
     await waitFor(() => {
       expect(screen.getByTestId("receiver-report")).toHaveTextContent("Final Australian receiver report");
-      expect(screen.getByTestId("receiver-report")).toHaveTextContent("AU Base / IPS-style receiver");
+      expect(screen.getByTestId("receiver-report")).toHaveTextContent("AU Core 2.0.0 readiness view");
       expect(screen.getAllByRole("button", { name: /Download final AUS PDF/i }).length).toBeGreaterThan(0);
     });
 
     chooseSelectOption("target-country-select", "EUR");
     await waitFor(() => {
       expect(screen.getByTestId("receiver-report")).toHaveTextContent("Final European receiver report");
-      expect(screen.getByTestId("receiver-report")).toHaveTextContent("EU IPS UV receiver");
+      expect(screen.getByTestId("receiver-report")).toHaveTextContent("European Patient Summary CI-build readiness view");
       expect(screen.getAllByRole("button", { name: /Download final EUR PDF/i }).length).toBeGreaterThan(0);
     });
   });

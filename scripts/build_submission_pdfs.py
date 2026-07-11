@@ -81,10 +81,10 @@ def build_architecture_pdf() -> None:
         (222, 445, 152, 70, "2. Extraction", "Structured EHR skips extraction; free text uses rule-backed extraction in prototype."),
         (408, 445, 152, 70, "3. Clinical Facts", "JSON fact model: condition, lab, value, medication, dose, context."),
         (594, 445, 152, 70, "4. Local Registry", "Trusted deterministic lookup for known phrases and local aliases."),
-        (36, 320, 152, 70, "5. FL Linker", "Registry misses go to federated terminology linker trained locally per site."),
-        (222, 320, 152, 70, "6. FHIR Terminology", "CodeSystem, ValueSet, ConceptMap, translate, lookup, validate-code."),
-        (408, 320, 152, 70, "7. FHIR IPS Bundle", "Bundle.type=document, Composition first, coded FHIR resources."),
-        (594, 320, 152, 70, "8. Target Output", "Readiness checks plus human-readable target-country PDF."),
+        (594, 320, 152, 70, "5. FL Linker", "Registry misses go to federated terminology linker trained locally per site."),
+        (408, 320, 152, 70, "6. FHIR Terminology", "CodeSystem, ValueSet, ConceptMap, translate, lookup, validate-code."),
+        (222, 320, 152, 70, "7. FHIR IPS Bundle", "Bundle.type=document, Composition first, coded FHIR resources."),
+        (36, 320, 152, 70, "8. Target Output", "Readiness checks plus human-readable target-country PDF."),
     ]
     for i, (x, y, bw, bh, title, body) in enumerate(boxes):
         draw_box(c, x, y, bw, bh, title, body, TEAL_SOFT if i in [5, 6] else colors.white)
@@ -131,12 +131,12 @@ SLIDES = [
     ("Aim", "Make a local diabetes report usable across borders by converting it into a machine-readable, universally coded, HL7 FHIR IPS-style patient summary. FHIR IPS is the interoperable artifact; PDFs are human-readable renderings."),
     ("Problem Statement", "Local clinical language blocks interoperability. T2DM, sugar disease, madhumeha type 2, type 2 DM, and DM2 may refer to the same concept, but receiver systems need standard codes and predictable FHIR resources."),
     ("Solution Flow", "Doctor report -> clinical fact extraction -> local registry lookup -> federated terminology linker -> FHIR ConceptMap validation -> FHIR IPS document Bundle -> target-country report and readiness gaps."),
-    ("Machine-Readable Proof", "The final exchange artifact is an IPS-style FHIR R4 document Bundle with Bundle.type=document, Composition first, coded resources, and representative validator evidence showing 0 errors."),
+    ("Machine-Readable Proof", "The final exchange artifact is a FHIR R4 document Bundle with Bundle.type=document, Composition first, coded resources, and official IPS 2.0.1 validation across all four routes: 0 errors and 0 warnings."),
     ("Universal Coding Proof", "Local clinical terms are normalized into accepted healthcare codes: SNOMED CT and ICD-10 for conditions, LOINC for labs, RxNorm for medications, and FHIR resources for exchange structure."),
     ("Federated Learning Role", "Each country/site trains a terminology linker locally. The coordinator receives model tensors and sample counts only; it does not receive raw reports, identifiers, labels, aliases, or patient-level FHIR Bundles."),
     ("FHIR-Native Global Linker", "The model predicts candidate mappings, but HL7 makes them auditable through local CodeSystem, target ValueSet, ConceptMap, simulated translate, lookup, and validate-code."),
     ("Cross-Border Sharing", "The same FHIR IPS can support USA, India, Australia, and Europe routes. Judges can download source PDF, target PDF, FHIR Bundle JSON, and evidence pack JSON. Readiness checks are not certification."),
-    ("Evidence", "20 synthetic reports, 4 country sites, 768 terminology training mentions, 192 globally unseen examples, 48/48 cross-site transfer examples correct, and 0 validator errors for representative IPS-style Bundles."),
+    ("Evidence", "20 synthetic reports, 4 country sites, 768 terminology training mentions, 48/48 federated transfer versus 47/48 local-only, 192/192 globally unseen in the seeded synthetic benchmark, and 4/4 IPS 2.0.1 Bundle-profile validations with 0 errors and 0 warnings."),
     ("Honest Limits", "Synthetic data only. Rule-backed extraction. Simulated terminology operations. Readiness checks only. FedAvg gives data locality only and is not cryptography or formal de-identification."),
     ("Final Claim", "Cross-Border IPS AI Agent combines semantic interoperability and data interoperability. Federated learning aligns local terminology, FHIR terminology artifacts make mappings auditable, and FHIR IPS packages the result for cross-border exchange."),
 ]

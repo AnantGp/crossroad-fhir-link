@@ -1,0 +1,3 @@
+Synthetic USA medication review.
+
+A 52 year old female has diabetes and hypertension. Fasting glucose 172 mg/dL. Current medicines are metformin 500 mg, atorvastatin 20 mg, and insulin.

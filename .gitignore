@@ -24,3 +24,11 @@ dist-ssr
 *.sw?
 .vercel
 submission/generated_video/
+
+# Python prototype
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+*.egg-info/
+prototype/federated-demo.json

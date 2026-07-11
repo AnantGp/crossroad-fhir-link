@@ -45,6 +45,7 @@ export interface DemoCase {
   ipsBundle: {
     resourceType: "Bundle";
     id: string;
+    meta?: { profile: string[] };
     identifier: { system: string; value: string };
     type: "document";
     timestamp: string;
@@ -161,7 +162,7 @@ const USA_CASE: DemoCase = {
           { title: "Medications", entry: [{ reference: "urn:uuid:med-metformin" }, { reference: "urn:uuid:med-lisinopril" }] },
         ],
       }},
-      { fullUrl: "urn:uuid:patient-1", resource: { resourceType: "Patient", id: "patient-1", gender: "male", birthDate: "1976-04-12",
+      { fullUrl: "urn:uuid:patient-1", resource: { resourceType: "Patient", id: "patient-1", gender: "male", birthDate: "1977-04-12",
         meta: { tag: [{ system: "https://ips-agent.demo/tags", code: "SYNTHETIC", display: "Synthetic patient" }] } } },
       { fullUrl: "urn:uuid:cond-t2dm", resource: { resourceType: "Condition", id: "cond-t2dm",
         code: { coding: [
@@ -171,7 +172,7 @@ const USA_CASE: DemoCase = {
       { fullUrl: "urn:uuid:cond-htn", resource: { resourceType: "Condition", id: "cond-htn",
         code: { coding: [
           { system: "http://snomed.info/sct", code: "38341003", display: "Hypertensive disorder" },
-          { system: "http://hl7.org/fhir/sid/icd-10", code: "I10", display: "Essential hypertension" },
+          { system: "http://hl7.org/fhir/sid/icd-10", code: "I10", display: "Essential (primary) hypertension" },
         ]}, subject: { reference: "urn:uuid:patient-1" } } },
       { fullUrl: "urn:uuid:obs-a1c", resource: { resourceType: "Observation", id: "obs-a1c", status: "final",
         code: { coding: [{ system: "http://loinc.org", code: "4548-4", display: "Hemoglobin A1c/Hemoglobin.total in Blood" }] },
@@ -197,10 +198,10 @@ const IND_CASE: DemoCase = {
   source: "IND",
   defaultTarget: "USA",
   reportText:
-    "Synthetic India clinic note. 54 year old female, known case of sugar disease and BP. HbA1c 8.4 percent. On tab metformin 500 mg BD and tab amlodipine 5 mg OD. Fasting blood sugar 162 mg/dL.",
+    "Synthetic India clinic note. 54 year old female, known case of sugar disease and high BP. HbA1c 8.4 percent. On tab metformin 500 mg BD and tab amlodipine 5 mg OD. Fasting blood sugar 162 mg/dL.",
   traceFacts: [
     { phrase: "sugar disease", category: "Condition", normalized: "Type 2 diabetes mellitus", snomed: "44054006", icd10: "E11", source: "federated-linker-cache", fhirResource: "Condition" },
-    { phrase: "BP", category: "Condition", normalized: "Hypertension", snomed: "38341003", icd10: "I10", source: "local-registry", fhirResource: "Condition" },
+    { phrase: "high BP", category: "Condition", normalized: "Hypertension", snomed: "38341003", icd10: "I10", source: "local-registry", fhirResource: "Condition" },
     { phrase: "HbA1c 8.4 percent", category: "Observation", normalized: "Hemoglobin A1c/Hemoglobin.total in Blood", loinc: "4548-4", source: "local-registry", fhirResource: "Observation" },
     { phrase: "Fasting blood sugar 162 mg/dL", category: "Observation", normalized: "Glucose [Mass/volume] in Serum or Plasma --fasting", loinc: "1558-6", source: "federated-linker-cache", fhirResource: "Observation" },
     { phrase: "tab metformin 500 mg BD", category: "MedicationStatement", normalized: "metformin", rxnorm: "6809", source: "local-registry", fhirResource: "MedicationStatement" },
@@ -216,7 +217,7 @@ const IND_CASE: DemoCase = {
     content: "complete",
     concept: [
       { code: "sugar-disease", display: "Sugar disease (local lay term, IN)" },
-      { code: "BP", display: "BP / raised BP (local abbrev., IN)" },
+      { code: "BP", display: "high BP / hypertension (local abbrev., IN)" },
       { code: "HbA1c", display: "HbA1c (local abbrev.)" },
       { code: "FBS", display: "Fasting blood sugar (local abbrev., IN)" },
       { code: "tab-metformin", display: "tab metformin (local prescription form)" },
@@ -235,7 +236,7 @@ const IND_CASE: DemoCase = {
         target: "http://snomed.info/sct",
         element: [
           { code: "sugar-disease", display: "Sugar disease (IN)", target: [{ code: "44054006", display: "Diabetes mellitus type 2", equivalence: "equivalent" }] },
-          { code: "BP", display: "BP (IN)", target: [{ code: "38341003", display: "Hypertensive disorder", equivalence: "equivalent" }] },
+          { code: "BP", display: "high BP (IN)", target: [{ code: "38341003", display: "Hypertensive disorder", equivalence: "equivalent" }] },
         ],
       },
       {
@@ -311,7 +312,7 @@ const IND_CASE: DemoCase = {
       { fullUrl: "urn:uuid:cond-htn", resource: { resourceType: "Condition", id: "cond-htn",
         code: { coding: [
           { system: "http://snomed.info/sct", code: "38341003", display: "Hypertensive disorder" },
-          { system: "http://hl7.org/fhir/sid/icd-10", code: "I10", display: "Essential hypertension" },
+          { system: "http://hl7.org/fhir/sid/icd-10", code: "I10", display: "Essential (primary) hypertension" },
         ]}, subject: { reference: "urn:uuid:patient-1" } } },
       { fullUrl: "urn:uuid:obs-a1c", resource: { resourceType: "Observation", id: "obs-a1c", status: "final",
         code: { coding: [{ system: "http://loinc.org", code: "4548-4", display: "Hemoglobin A1c/Hemoglobin.total in Blood" }] },
@@ -342,7 +343,7 @@ const AUS_CASE: DemoCase = {
     { phrase: "T2 diabetes", category: "Condition", normalized: "Type 2 diabetes mellitus", snomed: "44054006", icd10: "E11", source: "local-registry", fhirResource: "Condition" },
     { phrase: "raised BP", category: "Condition", normalized: "Hypertension", snomed: "38341003", icd10: "I10", source: "federated-linker-cache", fhirResource: "Condition" },
     { phrase: "HbA1c 7.2%", category: "Observation", normalized: "Hemoglobin A1c/Hemoglobin.total in Blood", loinc: "4548-4", source: "local-registry", fhirResource: "Observation" },
-    { phrase: "eGFR 78", category: "Observation", normalized: "Glomerular filtration rate/1.73 sq M.predicted [Vol Rate/Area] in Serum or Plasma by Creatinine-based formula (CKD-EPI 2021)", loinc: "98979-8", source: "federated-linker-cache", fhirResource: "Observation" },
+    { phrase: "eGFR 78", category: "Observation", normalized: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI 2021)/1.73 sq M", loinc: "98979-8", source: "federated-linker-cache", fhirResource: "Observation" },
     { phrase: "Metformin XR 1 g mane", category: "MedicationStatement", normalized: "metformin; extended release noted in source", rxnorm: "6809", source: "local-registry", fhirResource: "MedicationStatement" },
     { phrase: "perindopril 4 mg", category: "MedicationStatement", normalized: "perindopril", rxnorm: "54552", source: "federated-linker-new", fhirResource: "MedicationStatement" },
   ],
@@ -378,7 +379,7 @@ const AUS_CASE: DemoCase = {
       { source: "https://ips-agent.demo/CodeSystem/local-aus-diabetes-terms", target: "http://loinc.org",
         element: [
           { code: "HbA1c", display: "Glycated haemoglobin (AU)", target: [{ code: "4548-4", display: "Hemoglobin A1c/Hemoglobin.total in Blood", equivalence: "equivalent" }] },
-          { code: "eGFR", display: "eGFR (AU)", target: [{ code: "98979-8", display: "Glomerular filtration rate predicted by CKD-EPI 2021", equivalence: "equivalent" }] },
+          { code: "eGFR", display: "eGFR (AU)", target: [{ code: "98979-8", display: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI 2021)/1.73 sq M", equivalence: "equivalent" }] },
         ]},
       { source: "https://ips-agent.demo/CodeSystem/local-aus-diabetes-terms", target: "http://www.nlm.nih.gov/research/umls/rxnorm",
         element: [
@@ -393,7 +394,7 @@ const AUS_CASE: DemoCase = {
       { name: "result", valueBoolean: true },
       { name: "match", part: [
         { name: "equivalence", valueCode: "equivalent" },
-        { name: "concept", valueCoding: { system: "http://loinc.org", code: "98979-8", display: "Glomerular filtration rate predicted by CKD-EPI 2021" } },
+        { name: "concept", valueCoding: { system: "http://loinc.org", code: "98979-8", display: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI 2021)/1.73 sq M" } },
         { name: "source", valueUri: "https://ips-agent.demo/ConceptMap/local-aus-to-ips-diabetes" },
       ]},
     ],
@@ -432,7 +433,7 @@ const AUS_CASE: DemoCase = {
           { title: "Medications", entry: [{ reference: "urn:uuid:med-metformin" }, { reference: "urn:uuid:med-perindopril" }] },
         ],
       }},
-      { fullUrl: "urn:uuid:patient-1", resource: { resourceType: "Patient", id: "patient-1", gender: "male", birthDate: "1964-02-19",
+      { fullUrl: "urn:uuid:patient-1", resource: { resourceType: "Patient", id: "patient-1", gender: "male", birthDate: "1965-02-19",
         meta: { tag: [{ system: "https://ips-agent.demo/tags", code: "SYNTHETIC", display: "Synthetic patient" }] } } },
       { fullUrl: "urn:uuid:cond-t2dm", resource: { resourceType: "Condition", id: "cond-t2dm",
         code: { coding: [
@@ -442,14 +443,15 @@ const AUS_CASE: DemoCase = {
       { fullUrl: "urn:uuid:cond-htn", resource: { resourceType: "Condition", id: "cond-htn",
         code: { coding: [
           { system: "http://snomed.info/sct", code: "38341003", display: "Hypertensive disorder" },
-          { system: "http://hl7.org/fhir/sid/icd-10", code: "I10", display: "Essential hypertension" },
+          { system: "http://hl7.org/fhir/sid/icd-10", code: "I10", display: "Essential (primary) hypertension" },
         ]}, subject: { reference: "urn:uuid:patient-1" } } },
       { fullUrl: "urn:uuid:obs-a1c", resource: { resourceType: "Observation", id: "obs-a1c", status: "final",
         code: { coding: [{ system: "http://loinc.org", code: "4548-4", display: "Hemoglobin A1c/Hemoglobin.total in Blood" }] },
         valueQuantity: { value: 7.2, unit: "%", system: "http://unitsofmeasure.org", code: "%" }, subject: { reference: "urn:uuid:patient-1" } } },
       { fullUrl: "urn:uuid:obs-egfr", resource: { resourceType: "Observation", id: "obs-egfr", status: "final",
-        code: { coding: [{ system: "http://loinc.org", code: "98979-8", display: "Glomerular filtration rate predicted by CKD-EPI 2021" }] },
-        valueQuantity: { value: 78, unit: "mL/min/{1.73_m2}", system: "http://unitsofmeasure.org", code: "mL/min/{1.73_m2}" }, subject: { reference: "urn:uuid:patient-1" } } },
+        code: { coding: [{ system: "http://loinc.org", code: "98979-8", display: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI 2021)/1.73 sq M" }] },
+        // LOINC 98979-8 carries the 1.73 m2 normalization; the validator discourages annotations in the UCUM code.
+        valueQuantity: { value: 78, unit: "mL/min/1.73 m2", system: "http://unitsofmeasure.org", code: "mL/min" }, subject: { reference: "urn:uuid:patient-1" } } },
       { fullUrl: "urn:uuid:med-metformin", resource: { resourceType: "MedicationStatement", id: "med-metformin", status: "active",
         medicationCodeableConcept: { coding: [{ system: "http://www.nlm.nih.gov/research/umls/rxnorm", code: "6809", display: "metformin" }] },
         subject: { reference: "urn:uuid:patient-1" }, dosage: [{ text: "1 g mane; modified release noted in source" }] } },
@@ -565,7 +567,7 @@ const EUR_CASE: DemoCase = {
           { title: "Medications", entry: [{ reference: "urn:uuid:med-metformin" }, { reference: "urn:uuid:med-ramipril" }] },
         ],
       }},
-      { fullUrl: "urn:uuid:patient-1", resource: { resourceType: "Patient", id: "patient-1", gender: "other", birthDate: "1967-11-30",
+      { fullUrl: "urn:uuid:patient-1", resource: { resourceType: "Patient", id: "patient-1", gender: "unknown", birthDate: "1967-11-30",
         meta: { tag: [{ system: "https://ips-agent.demo/tags", code: "SYNTHETIC", display: "Synthetic patient" }] } } },
       { fullUrl: "urn:uuid:cond-t2dm", resource: { resourceType: "Condition", id: "cond-t2dm",
         code: { coding: [
@@ -575,7 +577,7 @@ const EUR_CASE: DemoCase = {
       { fullUrl: "urn:uuid:cond-htn", resource: { resourceType: "Condition", id: "cond-htn",
         code: { coding: [
           { system: "http://snomed.info/sct", code: "38341003", display: "Hypertensive disorder" },
-          { system: "http://hl7.org/fhir/sid/icd-10", code: "I10", display: "Essential hypertension" },
+          { system: "http://hl7.org/fhir/sid/icd-10", code: "I10", display: "Essential (primary) hypertension" },
         ]}, subject: { reference: "urn:uuid:patient-1" } } },
       { fullUrl: "urn:uuid:obs-a1c", resource: { resourceType: "Observation", id: "obs-a1c", status: "final",
         code: { coding: [{ system: "http://loinc.org", code: "4548-4", display: "Hemoglobin A1c/Hemoglobin.total in Blood" }] },
@@ -594,19 +596,171 @@ const EUR_CASE: DemoCase = {
   },
 };
 
-export const CASES: Record<string, DemoCase> = {
-  [USA_CASE.id]: USA_CASE,
-  [IND_CASE.id]: IND_CASE,
-  [AUS_CASE.id]: AUS_CASE,
-  [EUR_CASE.id]: EUR_CASE,
+function escapeNarrative(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function rewriteBundleReferences(value: unknown, referenceMap: Map<string, string>): unknown {
+  if (typeof value === "string") return referenceMap.get(value) ?? value;
+  if (Array.isArray(value)) return value.map((item) => rewriteBundleReferences(item, referenceMap));
+  if (!value || typeof value !== "object") return value;
+
+  return Object.fromEntries(
+    Object.entries(value).map(([key, child]) => [key, rewriteBundleReferences(child, referenceMap)]),
+  );
+}
+
+function narrativeLabel(resource: Record<string, unknown> & { resourceType: string; id?: string }) {
+  const code = resource.code as { coding?: Array<{ display?: string }> } | undefined;
+  const medication = resource.medicationCodeableConcept as { coding?: Array<{ display?: string }> } | undefined;
+  const title = typeof resource.title === "string" ? resource.title : undefined;
+  const name = typeof resource.name === "string" ? resource.name : undefined;
+  const display = code?.coding?.[0]?.display ?? medication?.coding?.[0]?.display;
+
+  return title ?? name ?? display ?? `${resource.resourceType} ${resource.id ?? "resource"}`;
+}
+
+const IPS_PROFILE_BY_RESOURCE: Record<string, string> = {
+  Composition: "http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips",
+  Patient: "http://hl7.org/fhir/uv/ips/StructureDefinition/Patient-uv-ips",
+  Condition: "http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips",
+  Observation: "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips",
+  MedicationStatement: "http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationStatement-uv-ips",
+  Organization: "http://hl7.org/fhir/uv/ips/StructureDefinition/Organization-uv-ips",
 };
 
-export const CASE_LIST: DemoCase[] = [USA_CASE, IND_CASE, AUS_CASE, EUR_CASE];
+function sectionNarrative(label: string) {
+  return {
+    status: "generated",
+    div: `<div xmlns="http://www.w3.org/1999/xhtml">${escapeNarrative(label)}</div>`,
+  };
+}
+
+function finalizeDemoCase(demoCase: DemoCase, caseIndex: number): DemoCase {
+  const referenceMap = new Map(
+    demoCase.ipsBundle.entry.map((entry, entryIndex) => {
+      const suffix = `${caseIndex + 1}${String(entryIndex + 1).padStart(11, "0")}`;
+      return [entry.fullUrl, `urn:uuid:00000000-0000-4000-8000-${suffix}`];
+    }),
+  );
+  const organizationEntry = demoCase.ipsBundle.entry.find((entry) => entry.resource.resourceType === "Organization");
+  const organizationReference = organizationEntry ? referenceMap.get(organizationEntry.fullUrl) : undefined;
+
+  const entry = demoCase.ipsBundle.entry.map((sourceEntry) => {
+    const resource = rewriteBundleReferences(sourceEntry.resource, referenceMap) as Record<string, unknown> & {
+      resourceType: string;
+      id?: string;
+    };
+
+    resource.meta = { profile: [IPS_PROFILE_BY_RESOURCE[resource.resourceType]] };
+
+    resource.text = {
+      status: "generated",
+      div: `<div xmlns="http://www.w3.org/1999/xhtml">${escapeNarrative(narrativeLabel(resource))}</div>`,
+    };
+
+    if (resource.resourceType === "Observation") {
+      resource.effectiveDateTime = demoCase.ipsBundle.timestamp;
+      if (organizationReference) resource.performer = [{ reference: organizationReference }];
+      resource.category = [{
+        coding: [{
+          system: "http://terminology.hl7.org/CodeSystem/observation-category",
+          code: "laboratory",
+          display: "Laboratory",
+        }],
+      }];
+    }
+
+    if (resource.resourceType === "Patient") {
+      resource.active = true;
+      resource.name = [{ use: "anonymous", text: "Synthetic Demo Patient" }];
+    }
+
+    if (resource.resourceType === "MedicationStatement") {
+      resource._effectiveDateTime = {
+        extension: [{
+          url: "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+          valueCode: "unknown",
+        }],
+      };
+    }
+
+    if (resource.resourceType === "Composition") {
+      const sections = resource.section as Array<Record<string, unknown>>;
+      const problems = sections.find((section) => section.title === "Active Problems") ?? {};
+      const results = sections.find((section) => section.title === "Results") ?? {};
+      const medications = sections.find((section) => section.title === "Medications") ?? {};
+
+      resource.section = [
+        {
+          ...problems,
+          title: "Problems",
+          code: { coding: [{ system: "http://loinc.org", code: "11450-4", display: "Problem list - Reported" }] },
+          text: sectionNarrative("Problems section generated from the synthetic source report."),
+        },
+        {
+          title: "Allergies",
+          code: { coding: [{ system: "http://loinc.org", code: "48765-2", display: "Allergies and adverse reactions Document" }] },
+          text: sectionNarrative("No allergy information was available in the synthetic source report."),
+          emptyReason: {
+            coding: [{
+              system: "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+              code: "unavailable",
+              display: "Unavailable",
+            }],
+            text: "No source information was available for this section.",
+          },
+        },
+        {
+          ...medications,
+          title: "Medications",
+          code: { coding: [{ system: "http://loinc.org", code: "10160-0", display: "History of Medication use Narrative" }] },
+          text: sectionNarrative("Medications section generated from the synthetic source report."),
+        },
+        {
+          ...results,
+          title: "Results",
+          code: { coding: [{ system: "http://loinc.org", code: "30954-2", display: "Relevant diagnostic tests/laboratory data note" }] },
+          text: sectionNarrative("Results section generated from the synthetic source report."),
+        },
+      ];
+    }
+
+    return {
+      fullUrl: referenceMap.get(sourceEntry.fullUrl) ?? sourceEntry.fullUrl,
+      resource,
+    };
+  });
+
+  return {
+    ...demoCase,
+    ipsBundle: {
+      ...demoCase.ipsBundle,
+      meta: { profile: ["http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips"] },
+      entry,
+    },
+  };
+}
+
+export const CASE_LIST: DemoCase[] = [USA_CASE, IND_CASE, AUS_CASE, EUR_CASE].map(finalizeDemoCase);
+
+export const CASES: Record<string, DemoCase> = Object.fromEntries(
+  CASE_LIST.map((demoCase) => [demoCase.id, demoCase]),
+);
 
 export const METRICS = {
   mappingCoverage: "100%",
   fhirBundleType: "document",
   validatorErrors: 0,
+  validatorWarnings: 0,
+  validatedBundles: 4,
+  validatorProfile: "IPS 2.0.1",
+  validatorInfoNotesPerBundle: 2,
   transferAccuracy: "48 / 48",
 };
 
@@ -617,7 +771,19 @@ export const EVIDENCE = {
   crossSiteTransfer: 48,
   globallyUnseen: 192,
   semanticTransfer: "48/48 correct",
-  validatorErrors: "0 errors across representative cross-border Bundles",
+  validatorEvidence: "4/4 current Bundles pass IPS 2.0.1 with 0 errors and 0 warnings; 2 informational RxNorm preference notes per Bundle",
+};
+
+export const OFFICIAL_VALIDATION = {
+  validator: "HL7 FHIR Validator 6.9.11",
+  profile: "IPS 2.0.1 Bundle profile",
+  routes: [
+    { route: "USA → India", errors: 0, warnings: 0, notes: 2 },
+    { route: "India → USA", errors: 0, warnings: 0, notes: 2 },
+    { route: "Australia → Europe", errors: 0, warnings: 0, notes: 2 },
+    { route: "Europe → USA", errors: 0, warnings: 0, notes: 2 },
+  ],
+  note: "RxNorm ingredient codes are outside the IPS guide's recommended medication value set.",
 };
 
 export const PIPELINE_STEPS = [
@@ -651,7 +817,7 @@ export const VALUE_SET_DIABETES = {
           { code: "4548-4", display: "Hemoglobin A1c/Hemoglobin.total in Blood" },
           { code: "2160-0", display: "Creatinine [Mass/volume] in Serum or Plasma" },
           { code: "1558-6", display: "Fasting glucose [Mass/volume] in Serum or Plasma" },
-          { code: "98979-8", display: "Glomerular filtration rate predicted by CKD-EPI 2021" },
+          { code: "98979-8", display: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI 2021)/1.73 sq M" },
         ],
       },
       {
@@ -669,34 +835,48 @@ export const VALUE_SET_DIABETES = {
 };
 
 export const FED_SITES = [
-  { code: "USA", samples: 192, transferAcc: "12/12", localOnlyAcc: "9/12" },
-  { code: "IND", samples: 192, transferAcc: "12/12", localOnlyAcc: "8/12" },
-  { code: "AUS", samples: 192, transferAcc: "12/12", localOnlyAcc: "10/12" },
-  { code: "EUR", samples: 192, transferAcc: "12/12", localOnlyAcc: "9/12" },
+  { code: "USA", samples: 192, transferAcc: "12/12", localOnlyAcc: "12/12" },
+  { code: "IND", samples: 192, transferAcc: "12/12", localOnlyAcc: "12/12" },
+  { code: "AUS", samples: 192, transferAcc: "12/12", localOnlyAcc: "12/12" },
+  { code: "EUR", samples: 192, transferAcc: "12/12", localOnlyAcc: "11/12" },
 ];
+
+const correctCount = (ratio: string) => Number(ratio.split("/")[0]);
+
+export const FED_SUMMARY = {
+  localOnlyCorrect: FED_SITES.reduce((total, site) => total + correctCount(site.localOnlyAcc), 0),
+  federatedCorrect: FED_SITES.reduce((total, site) => total + correctCount(site.transferAcc), 0),
+  totalTransferProbes: FED_SITES.reduce((total, site) => total + Number(site.transferAcc.split("/")[1]), 0),
+  receiversWithoutRegression: 4,
+  globallyUnseenCorrect: 192,
+  globallyUnseenTotal: 192,
+  globallyUnseenMacroF1: 1,
+  localOnlyGloballyUnseenAccuracy: 0.94401,
+  dictionaryGloballyUnseenAccuracy: 0,
+};
 
 export const READINESS = {
   USA: [
-    { item: "US Core Patient profile fields", status: "ready" as const },
+    { item: "US Core STU9-oriented patient fields", status: "ready" as const },
     { item: "Race/ethnicity extensions", status: "gap" as const, note: "Optional in demo; not in synthetic source" },
   ],
   IND: [
-    { item: "ABDM HealthRecordBundle alignment", status: "ready" as const },
+    { item: "ABDM FHIR R4-oriented document/resource shape", status: "ready" as const },
     { item: "ABHA identifier presence", status: "gap" as const, note: "No real identifier; synthetic only" },
   ],
   AUS: [
-    { item: "AU Base Patient alignment", status: "ready" as const },
+    { item: "AU Core 2.0.0-oriented patient fields", status: "ready" as const },
     { item: "IHI identifier", status: "gap" as const, note: "Not available for synthetic patient" },
   ],
   EUR: [
-    { item: "IPS UV profile alignment (resource shape)", status: "ready" as const },
+    { item: "European Patient Summary CI-build-oriented resource shape", status: "ready" as const },
     { item: "National extensions (per Member State)", status: "gap" as const, note: "Member-state extensions out of scope for demo" },
   ],
 } as const;
 
 export const TARGET_LABEL: Record<CountryCode, string> = {
-  USA: "US Core / IPS-style receiver",
-  IND: "ABDM HealthRecordBundle receiver",
-  AUS: "AU Base / IPS-style receiver",
-  EUR: "EU IPS UV receiver",
+  USA: "US Core STU9 readiness view",
+  IND: "ABDM FHIR R4 readiness view",
+  AUS: "AU Core 2.0.0 readiness view",
+  EUR: "European Patient Summary CI-build readiness view",
 };

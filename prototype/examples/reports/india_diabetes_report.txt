@@ -1,0 +1,6 @@
+Synthetic outpatient diabetes follow-up report.
+
+A 54 year old female from India has Type 2 Diabetes and hypertension.
+HbA1c is 8.2%. Fasting glucose 168 mg/dL. BP 146/92.
+Current medicines: Metformin 500 mg twice daily and Lisinopril 10 mg.
+No known drug allergies.

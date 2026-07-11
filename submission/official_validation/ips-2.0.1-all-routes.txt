@@ -1,0 +1,67 @@
+FHIR Validation tool Version 6.9.11 (Git# 6a8b9c0c6794). Built 2026-06-25T21:02:41.308Z (15 days old)
+  Java:   22.0.1 from /Library/Java/JavaVirtualMachines/jdk-22.jdk/Contents/Home on aarch64 (64bit). 4096MB available
+  Paths:  Current = /Users/anant/Documents/New project/crossroad-fhir-link, Package Cache = /Users/anant/.fhir/packages
+  Params: submission/downloads/usa-to-india-fhir-bundle.json submission/downloads/india-to-usa-fhir-bundle.json submission/downloads/australia-to-europe-fhir-bundle.json submission/downloads/europe-to-usa-fhir-bundle.json -version 4.0.1 -ig hl7.fhir.uv.ips#2.0.1 -profile http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips
+  Locale: India/IN
+  Jurisdiction: India
+Loading
+  Loading FHIR v4.0.1 from hl7.fhir.r4.core#4.0.1
+  Load hl7.terminology.r4#6.2.0 - 4288 resources (00:09.121)
+  Load hl7.fhir.uv.extensions.r4#5.2.0 - 759 resources (00:02.000)
+  Loaded FHIR - 8265 resources (00:00.000)
+Unable to start a terminology cache on https://tx.fhir.org/r4 via $cache-control (Error from https://tx.fhir.org/r4: Error: $cache-control requires a 'mode' of 'start' or 'end' (got 'START_CACHE')); caching disabled for this server
+  Terminology server http://tx.fhir.org - Version Connected to Terminology Server at http://tx.fhir.org (00:16.400)
+  Load hl7.fhir.uv.extensions.r5#5.2.0 - 759 resources (00:01.437)
+  Load hl7.terminology.r5#7.1.0 - 4072 resources (00:00.563)
+  Load hl7.fhir.uv.extensions.r5#5.3.0 - 856 resources (00:00.015)
+  Load hl7.terminology#7.2.0 - 4135 resources (00:00.641)
+  Load hl7.fhir.uv.extensions#5.3.0 - 856 resources (00:00.387)
+  Load hl7.terminology.r4#7.1.0 - 4072 resources (00:02.115)
+  Load hl7.fhir.uv.extensions.r4#5.3.0 - 885 resources (00:00.906)
+  Load hl7.terminology.r4#7.2.0 - 4135 resources (00:02.834)
+  Load hl7.fhir.uv.smart-app-launch#2.0.0 - 1 resources (00:00.011)
+  Load hl7.fhir.uv.ipa#1.1.0 - 16 resources (00:00.000)
+  Load hl7.fhir.uv.ips#2.0.1 - 71 resources (00:00.009)
+  Package Summary: [hl7.fhir.r4.core#4.0.1, hl7.fhir.xver-extensions#0.1.0, hl7.terminology.r4#6.2.0, hl7.fhir.uv.extensions.r4#5.2.0, hl7.fhir.uv.extensions.r5#5.2.0, hl7.terminology.r5#7.1.0, hl7.fhir.uv.extensions.r5#5.3.0, hl7.terminology#7.2.0, hl7.fhir.uv.extensions#5.3.0, hl7.terminology.r4#7.1.0, hl7.fhir.uv.extensions.r4#5.3.0, hl7.terminology.r4#7.2.0, hl7.fhir.uv.smart-app-launch#2.0.0, hl7.fhir.uv.ipa#1.1.0, hl7.fhir.uv.ips#2.0.1]
+  Terminology Cache at /var/folders/3x/7yzgysp93jbg9mz9p7zj3v7h0000gn/T/default-tx-cache
+  Get set... 
+  ...go! (00:06.959)
+Cached new session. Cache size = 1
+Sources to validate: submission/downloads/usa-to-india-fhir-bundle.jsonsubmission/downloads/india-to-usa-fhir-bundle.jsonsubmission/downloads/australia-to-europe-fhir-bundle.jsonsubmission/downloads/europe-to-usa-fhir-bundle.json
+Validating
+  Profiles: [http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips]
+  Validate submission/downloads/usa-to-india-fhir-bundle.json
+ 00:04.716
+  Validate submission/downloads/india-to-usa-fhir-bundle.json
+ 00:00.452
+  Validate submission/downloads/australia-to-europe-fhir-bundle.json
+ 00:00.157
+  Validate submission/downloads/europe-to-usa-fhir-bundle.json
+ 00:00.230
+Done. Times: Loading: 00:43.470, validation: 00:05.558 (#4). Memory = 826Mb
+
+-- submission/downloads/usa-to-india-fhir-bundle.json ----------------------------------------------------------
+Success: 0 errors, 0 warnings, 2 notes
+  Information @ Bundle.entry[6].resource.medication.ofType(CodeableConcept) (line 348, col10): None of the codings provided are in the value set 'Medications - IPS' (http://hl7.org/fhir/uv/ips/ValueSet/medication-uv-ips|2.0.1), and a coding is recommended to come from this value set (codes = http://www.nlm.nih.gov/research/umls/rxnorm#6809), validating against International Patient Summary Implementation Guide v2.0.1
+  Information @ Bundle.entry[7].resource.medication.ofType(CodeableConcept) (line 390, col10): None of the codings provided are in the value set 'Medications - IPS' (http://hl7.org/fhir/uv/ips/ValueSet/medication-uv-ips|2.0.1), and a coding is recommended to come from this value set (codes = http://www.nlm.nih.gov/research/umls/rxnorm#29046), validating against International Patient Summary Implementation Guide v2.0.1
+----------------------------------------------------------------------------------------------------------------
+
+-- submission/downloads/india-to-usa-fhir-bundle.json ----------------------------------------------------------
+Success: 0 errors, 0 warnings, 2 notes
+  Information @ Bundle.entry[6].resource.medication.ofType(CodeableConcept) (line 348, col10): None of the codings provided are in the value set 'Medications - IPS' (http://hl7.org/fhir/uv/ips/ValueSet/medication-uv-ips|2.0.1), and a coding is recommended to come from this value set (codes = http://www.nlm.nih.gov/research/umls/rxnorm#6809), validating against International Patient Summary Implementation Guide v2.0.1
+  Information @ Bundle.entry[7].resource.medication.ofType(CodeableConcept) (line 390, col10): None of the codings provided are in the value set 'Medications - IPS' (http://hl7.org/fhir/uv/ips/ValueSet/medication-uv-ips|2.0.1), and a coding is recommended to come from this value set (codes = http://www.nlm.nih.gov/research/umls/rxnorm#17767), validating against International Patient Summary Implementation Guide v2.0.1
+----------------------------------------------------------------------------------------------------------------
+
+-- submission/downloads/australia-to-europe-fhir-bundle.json -----------------------------------------------------------------
+Success: 0 errors, 0 warnings, 2 notes
+  Information @ Bundle.entry[6].resource.medication.ofType(CodeableConcept) (line 348, col10): None of the codings provided are in the value set 'Medications - IPS' (http://hl7.org/fhir/uv/ips/ValueSet/medication-uv-ips|2.0.1), and a coding is recommended to come from this value set (codes = http://www.nlm.nih.gov/research/umls/rxnorm#6809), validating against International Patient Summary Implementation Guide v2.0.1
+  Information @ Bundle.entry[7].resource.medication.ofType(CodeableConcept) (line 390, col10): None of the codings provided are in the value set 'Medications - IPS' (http://hl7.org/fhir/uv/ips/ValueSet/medication-uv-ips|2.0.1), and a coding is recommended to come from this value set (codes = http://www.nlm.nih.gov/research/umls/rxnorm#54552), validating against International Patient Summary Implementation Guide v2.0.1
+------------------------------------------------------------------------------------------------------------------------------
+
+-- submission/downloads/europe-to-usa-fhir-bundle.json -----------------------------------------------------------
+Success: 0 errors, 0 warnings, 2 notes
+  Information @ Bundle.entry[6].resource.medication.ofType(CodeableConcept) (line 348, col10): None of the codings provided are in the value set 'Medications - IPS' (http://hl7.org/fhir/uv/ips/ValueSet/medication-uv-ips|2.0.1), and a coding is recommended to come from this value set (codes = http://www.nlm.nih.gov/research/umls/rxnorm#6809), validating against International Patient Summary Implementation Guide v2.0.1
+  Information @ Bundle.entry[7].resource.medication.ofType(CodeableConcept) (line 390, col10): None of the codings provided are in the value set 'Medications - IPS' (http://hl7.org/fhir/uv/ips/ValueSet/medication-uv-ips|2.0.1), and a coding is recommended to come from this value set (codes = http://www.nlm.nih.gov/research/umls/rxnorm#35296), validating against International Patient Summary Implementation Guide v2.0.1
+------------------------------------------------------------------------------------------------------------------
+
+Done. Times: Loading: 00:43.470, validation: 00:05.558 (#4). Max Memory = 4Gb

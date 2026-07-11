@@ -47,7 +47,11 @@ FHIR IPS is the interoperable artifact; PDFs are human-readable renderings.
 - Demo script: [demo_script.md](demo_script.md)
 - Architecture one-pager: [architecture_one_page.md](architecture_one_page.md)
 - Final pitch deck source: [final_pitch_deck.md](final_pitch_deck.md)
+- Editable final pitch deck: [final_pitch_deck.pptx](final_pitch_deck.pptx)
 - Final technical audit: [final_technical_audit.md](final_technical_audit.md)
+- Reproducible Python/FL implementation: [../prototype/README.md](../prototype/README.md)
+- Federated benchmark output: [federated_benchmark.json](federated_benchmark.json)
+- Official IPS validation logs: [official_validation/](official_validation/README.md)
 - Demo video asset: [video_asset.md](video_asset.md)
 - Screenshots: [screenshots/](screenshots/)
 - Downloaded route evidence: [downloads/](downloads/)
@@ -56,6 +60,7 @@ Generated PDFs:
 
 - `architecture_one_page.pdf`
 - `final_pitch_deck.pdf`
+- `final_pitch_deck.pptx`
 - `demo_script.pdf`
 - `final_technical_audit.pdf`
 
@@ -73,6 +78,10 @@ Video:
 | India -> USA | verified | verified | verified | verified |
 | Australia -> Europe | verified | verified | verified | verified |
 | Europe -> USA | verified | verified | verified | verified |
+
+All four checked-in Bundles pass HL7 FHIR Validator 6.9.11 against the IPS 2.0.1 Bundle profile with 0 errors and 0 warnings. Each Bundle retains two informational RxNorm value-set recommendations. The synthetic seed-42 FL benchmark is 48/48 federated transfer versus 47/48 local-only, with 192/192 globally unseen predictions and macro-F1 1.000.
+
+Receiver-gap labels were checked on July 11, 2026 against US Core 9.0.0 (STU9), the ABDM FHIR R4 7.0.0 draft build, AU Core 2.0.0 trial-use, and the HL7 Europe Patient Summary continuous build. They remain readiness-only comparisons, not profile validation or certification.
 
 ## Claim Discipline
 

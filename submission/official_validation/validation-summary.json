@@ -1,0 +1,47 @@
+{
+  "validated_at": "2026-07-11",
+  "validator": {
+    "name": "HL7 FHIR Validator",
+    "version": "6.9.11",
+    "fhir_version": "4.0.1",
+    "implementation_guide": "hl7.fhir.uv.ips#2.0.1",
+    "profile": "http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips"
+  },
+  "result": "pass",
+  "routes": [
+    {
+      "route": "USA->IND",
+      "errors": 0,
+      "warnings": 0,
+      "information_notes": 2
+    },
+    {
+      "route": "IND->USA",
+      "errors": 0,
+      "warnings": 0,
+      "information_notes": 2
+    },
+    {
+      "route": "AUS->EUR",
+      "errors": 0,
+      "warnings": 0,
+      "information_notes": 2
+    },
+    {
+      "route": "EUR->USA",
+      "errors": 0,
+      "warnings": 0,
+      "information_notes": 2
+    }
+  ],
+  "information_note": "RxNorm ingredient codings are outside the IPS guide's recommended medication value set; add IPS-preferred product coding for production use.",
+  "claim_boundary": "Synthetic Bundle profile validation only; not clinical certification, national-profile certification, or a formal privacy guarantee.",
+  "prototype_pipeline": {
+    "route": "USA->IND",
+    "source": "prototype/src/ips_agent",
+    "errors": 0,
+    "warnings": 0,
+    "information_notes": 3,
+    "log": "prototype-usa-to-india.txt"
+  }
+}

@@ -36,7 +36,7 @@ stream
 0.970 0.980 0.990 rg 42.0 618.0 247.0 46.0 re f
 0.780 0.830 0.880 RG 42.0 618.0 247.0 46.0 re S
 0.380 0.450 0.540 rg BT /F2 7.5 Tf 52.0 649.0 Td (PATIENT) Tj ET
-0.120 0.160 0.220 rg BT /F2 10.5 Tf 52.0 632.0 Td (Synthetic patient | male | DOB 1964-02-19) Tj ET
+0.120 0.160 0.220 rg BT /F2 10.5 Tf 52.0 632.0 Td (Synthetic patient | male | DOB 1965-02-19) Tj ET
 0.970 0.980 0.990 rg 306.0 618.0 247.0 46.0 re f
 0.780 0.830 0.880 RG 306.0 618.0 247.0 46.0 re S
 0.380 0.450 0.540 rg BT /F2 7.5 Tf 316.0 649.0 Td (HL7 ROUTE) Tj ET
@@ -59,13 +59,13 @@ stream
 0.780 0.830 0.880 RG 42.0 442.0 511.0 31.0 re S
 0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 454.0 Td (T2 diabetes) Tj ET
 0.120 0.160 0.220 rg BT /F1 8.3 Tf 178.0 454.0 Td (Type 2 diabetes mellitus) Tj ET
-0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 454.0 Td (SNOMED 44054006) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 454.0 Td (SNOMED CT 44...) Tj ET
 0.120 0.160 0.220 rg BT /F1 8.3 Tf 469.0 454.0 Td (Condition) Tj ET
 1.000 1.000 1.000 rg 42.0 411.0 511.0 31.0 re f
 0.780 0.830 0.880 RG 42.0 411.0 511.0 31.0 re S
 0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 423.0 Td (raised BP) Tj ET
 0.120 0.160 0.220 rg BT /F1 8.3 Tf 178.0 423.0 Td (Hypertension) Tj ET
-0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 423.0 Td (SNOMED 38341003) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 423.0 Td (SNOMED CT 38...) Tj ET
 0.120 0.160 0.220 rg BT /F1 8.3 Tf 469.0 423.0 Td (Condition) Tj ET
 1.000 1.000 1.000 rg 42.0 380.0 511.0 31.0 re f
 0.780 0.830 0.880 RG 42.0 380.0 511.0 31.0 re S
@@ -76,7 +76,7 @@ stream
 1.000 1.000 1.000 rg 42.0 349.0 511.0 31.0 re f
 0.780 0.830 0.880 RG 42.0 349.0 511.0 31.0 re S
 0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 361.0 Td (eGFR 78) Tj ET
-0.120 0.160 0.220 rg BT /F1 8.3 Tf 178.0 361.0 Td (Glomerular filtration rate/1.73 sq...) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 178.0 361.0 Td (Glomerular filtration rate [Volume...) Tj ET
 0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 361.0 Td (LOINC 98979-8) Tj ET
 0.120 0.160 0.220 rg BT /F1 8.3 Tf 469.0 361.0 Td (Observation) Tj ET
 1.000 1.000 1.000 rg 42.0 318.0 511.0 31.0 re f

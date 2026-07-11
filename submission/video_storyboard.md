@@ -13,7 +13,7 @@ Core claim:
 Say:
 
 - IPS-style FHIR R4 document Bundle.
-- Official validator evidence: 0 errors for representative Bundles.
+- Official HL7 validator evidence: all four current Bundles pass IPS 2.0.1 with 0 errors and 0 warnings.
 - Readiness checks, not national profile certification.
 - FedAvg gives data locality only.
 - Synthetic validation evidence.
@@ -38,7 +38,7 @@ Do not say:
 | 07 | Local Words Become Accepted Healthcare Codes | Clinical trace table | Universal coding proof: SNOMED CT, ICD-10, LOINC, RxNorm, and FHIR resources. |
 | 08 | FHIR IPS Packages The Coded Patient Summary | USA -> India FHIR Bundle screenshot | Machine-readable proof: Bundle.type=document and Composition first. |
 | 09 | The Same FHIR IPS Supports Different Receivers | Australia -> Europe FHIR Bundle screenshot | Cross-border sharing proof: one machine-readable IPS supports different receiver views. |
-| 10 | Evidence Shown In The Demo | Evidence screenshot | Evidence: 20 reports, 768 mentions, 192 unseen examples, 48/48 transfer, 0 validator errors. |
+| 10 | Evidence Shown In The Demo | Evidence screenshot | Evidence: 20 reports, 768 mentions, 48/48 federated transfer versus 47/48 local-only, 192/192 globally unseen in the seeded synthetic benchmark, and 4/4 IPS 2.0.1 validations with 0 errors and 0 warnings. |
 | 11 | What Changes For Patient, Hospital, And Auditor | Final claim visual | Benefit: cross-border understandability, coded resources, local data, traceability. |
 | 12 | Honest prototype, clear production path | Limitations panel | Scope: synthetic data, no certification, no formal privacy guarantee. |
 

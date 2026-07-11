@@ -59,7 +59,7 @@ Condition / Observation / MedicationStatement resources
         |
         v
 Target-country readiness checks
-US Core / ABDM / AU Base / EU IPS-style readiness
+US Core STU9 / ABDM FHIR R4 / AU Core 2.0.0 / European Patient Summary CI-build readiness
         |
         v
 Human-readable target PDF

@@ -15,7 +15,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
 endobj
 6 0 obj
-<< /Length 6451 >>
+<< /Length 6447 >>
 stream
 0.040 0.420 0.360 rg 0.0 762.0 595.0 80.0 re f
 1.000 1.000 1.000 rg BT /F2 17 Tf 42.0 812.0 Td (Original European doctor report) Tj ET
@@ -23,7 +23,7 @@ stream
 0.030 0.260 0.240 rg 418.0 794.0 132.0 28.0 re f
 0.180 0.580 0.520 RG 418.0 794.0 132.0 28.0 re S
 1.000 1.000 1.000 rg BT /F2 9 Tf 439.0 804.0 Td (SYNTHETIC DEMO) Tj ET
-0.380 0.450 0.540 rg BT /F1 8.5 Tf 42.0 746.0 Td (Europe \(EU\) | European IPS-style patient summary source PDF) Tj ET
+0.380 0.450 0.540 rg BT /F1 8.5 Tf 42.0 746.0 Td (Europe \(EU\) | European patient-summary-style source PDF) Tj ET
 0.780 0.830 0.880 rg 42.0 737.0 511.0 0.7 re f
 0.970 0.980 0.990 rg 42.0 672.0 247.0 46.0 re f
 0.780 0.830 0.880 RG 42.0 672.0 247.0 46.0 re S
@@ -36,7 +36,7 @@ stream
 0.970 0.980 0.990 rg 42.0 618.0 247.0 46.0 re f
 0.780 0.830 0.880 RG 42.0 618.0 247.0 46.0 re S
 0.380 0.450 0.540 rg BT /F2 7.5 Tf 52.0 649.0 Td (PATIENT) Tj ET
-0.120 0.160 0.220 rg BT /F2 10.5 Tf 52.0 632.0 Td (Synthetic patient | other | DOB 1967-11-30) Tj ET
+0.120 0.160 0.220 rg BT /F2 10.5 Tf 52.0 632.0 Td (Synthetic patient | unknown | DOB 1967-...) Tj ET
 0.970 0.980 0.990 rg 306.0 618.0 247.0 46.0 re f
 0.780 0.830 0.880 RG 306.0 618.0 247.0 46.0 re S
 0.380 0.450 0.540 rg BT /F2 7.5 Tf 316.0 649.0 Td (HL7 ROUTE) Tj ET
@@ -60,13 +60,13 @@ stream
 0.780 0.830 0.880 RG 42.0 430.0 511.0 31.0 re S
 0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 442.0 Td (Typ-2-Diabetes / type...) Tj ET
 0.120 0.160 0.220 rg BT /F1 8.3 Tf 178.0 442.0 Td (Type 2 diabetes mellitus) Tj ET
-0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 442.0 Td (SNOMED 44054006) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 442.0 Td (SNOMED CT 44...) Tj ET
 0.120 0.160 0.220 rg BT /F1 8.3 Tf 469.0 442.0 Td (Condition) Tj ET
 1.000 1.000 1.000 rg 42.0 399.0 511.0 31.0 re f
 0.780 0.830 0.880 RG 42.0 399.0 511.0 31.0 re S
 0.120 0.160 0.220 rg BT /F2 8.3 Tf 48.0 411.0 Td (arterielle Hypertonie...) Tj ET
 0.120 0.160 0.220 rg BT /F1 8.3 Tf 178.0 411.0 Td (Hypertension) Tj ET
-0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 411.0 Td (SNOMED 38341003) Tj ET
+0.120 0.160 0.220 rg BT /F1 8.3 Tf 383.0 411.0 Td (SNOMED CT 38...) Tj ET
 0.120 0.160 0.220 rg BT /F1 8.3 Tf 469.0 411.0 Td (Condition) Tj ET
 1.000 1.000 1.000 rg 42.0 368.0 511.0 31.0 re f
 0.780 0.830 0.880 RG 42.0 368.0 511.0 31.0 re S
@@ -121,5 +121,5 @@ xref
 trailer
 << /Size 7 /Root 1 0 R >>
 startxref
-6899
+6895
 %%EOF

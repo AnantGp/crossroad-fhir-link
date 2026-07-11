@@ -46,7 +46,7 @@ The final exchange artifact is an IPS-style FHIR R4 document Bundle:
 - `Bundle.type=document`
 - `Composition` first
 - `Condition`, `Observation`, `MedicationStatement`, and related resources
-- representative validator evidence: 0 errors
+- official HL7 validation: 4/4 current Bundles pass IPS 2.0.1 with 0 errors and 0 warnings
 
 ## Slide 6 - Universal Coding Proof
 
@@ -105,8 +105,12 @@ Readiness checks are shown, but no national certification is claimed.
 - 4 country sites
 - 768 terminology training mentions
 - 192 globally unseen examples
-- 48/48 cross-site transfer examples correct in the synthetic validation set
-- 0 validator errors for representative IPS-style Bundles
+- 48/48 cross-site transfer examples correct versus 47/48 local-only, a FedAvg gain of +1
+- 192/192 globally unseen mappings correct with macro-F1 1.000 on the separate seeded synthetic set
+- 0 errors and 0 warnings across all four current IPS 2.0.1 Bundle-profile validations
+- 2 informational notes per Bundle: RxNorm ingredients are outside the IPS guide's recommended medication value set
+
+All model metrics are deterministic single-seed synthetic results, not clinical performance claims.
 
 ## Slide 11 - Honest Limits
 
