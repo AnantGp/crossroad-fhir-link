@@ -58,8 +58,9 @@ Important: FedAvg gives data locality only. It is not cryptography, not formal d
 - 20 synthetic reports across 4 country sites.
 - 768 terminology training mentions.
 - 192 globally unseen terminology examples.
-- 48/48 cross-site transfer mappings correct versus 47/48 for local-only, a measured FedAvg gain of +1.
-- 192/192 globally unseen mappings correct with macro-F1 1.000 versus 94.4% average local-only accuracy.
+- Five-seed robustness study: 48/48 federated transfer versus 47/48 local-only at every seed, a measured gain of +1 per seed.
+- 192/192 globally unseen mappings and macro-F1 1.000 at every seed; local-only averaged 94.27% with 0.26 percentage-point sample standard deviation.
+- Communication estimate: 48.05 KiB of model tensors per client update and 1.88 MiB two-way tensor traffic across five rounds.
 - All four current Bundles pass HL7 FHIR Validator 6.9.11 against IPS 2.0.1 with 0 errors and 0 warnings; each has two informational notes because RxNorm ingredients are outside the IPS guide's recommended medication value set.
 - 4/4 judge routes click-tested: USA -> India, India -> USA, Australia -> Europe, Europe -> USA.
 - 16/16 route downloads verified: source PDF, final PDF, FHIR JSON, evidence JSON.
@@ -79,9 +80,10 @@ cd prototype
 pip install -e . pytest
 PYTHONPATH=src python3 -m pytest -q
 PYTHONPATH=src python3 -m ips_agent.cli federated-demo --rounds 5 --seed 42 --hash-dim 1024
+PYTHONPATH=src python3 -m ips_agent.cli federated-study --rounds 5 --seeds 7 21 42 84 126 --hash-dim 1024
 ```
 
-The exact seed-42 result is stored in [`submission/federated_benchmark.json`](submission/federated_benchmark.json). The full official IPS validator output is stored in [`submission/official_validation/`](submission/official_validation/README.md).
+The detailed seed-42 result is stored in [`submission/federated_benchmark.json`](submission/federated_benchmark.json), and the robustness study is stored in [`submission/federated_multiseed_benchmark.json`](submission/federated_multiseed_benchmark.json). The full official IPS validator output is stored in [`submission/official_validation/`](submission/official_validation/README.md).
 
 ## Readiness Baselines
 
@@ -102,7 +104,7 @@ This is a standards-focused prototype using synthetic data only.
 - Readiness checks are not conformance certification.
 - Extraction is rule-backed; pretrained clinical NER is future work.
 - FHIR terminology operations are simulated locally; live terminology servers are future work.
-- Federated metrics are from a deterministic single-seed synthetic benchmark; they do not prove clinical accuracy on real notes.
+- Federated metrics cover five predetermined deterministic seeds, but the data remains synthetic and does not prove clinical accuracy on real notes.
 - Production privacy requires secure aggregation, DP-SGD, sample thresholds, and privacy auditing.
 
 ## Local Run

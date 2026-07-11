@@ -24,6 +24,9 @@ PYTHONPATH=src python3 -m pytest -q
 PYTHONPATH=src python3 -m ips_agent.cli federated-demo \
   --rounds 5 --seed 42 --hash-dim 1024 \
   --out federated-demo.json
+PYTHONPATH=src python3 -m ips_agent.cli federated-study \
+  --rounds 5 --seeds 7 21 42 84 126 --hash-dim 1024 \
+  --out federated-study.json
 ```
 
 Expected checked-in benchmark for seed 42:
@@ -35,6 +38,8 @@ Expected checked-in benchmark for seed 42:
 | Globally unseen macro-F1 | not aggregated | 1.000 |
 
 The curated seed-42 benchmark evidence, including per-round metrics and all transfer predictions, is recorded in [`submission/federated_benchmark.json`](../submission/federated_benchmark.json).
+
+The five-seed study is recorded in [`submission/federated_multiseed_benchmark.json`](../submission/federated_multiseed_benchmark.json). Every configured seed produced 48/48 federated transfer versus 47/48 local-only and 192/192 globally unseen predictions. It also records convergence and tensor-payload communication estimates.
 
 ## Privacy Boundary
 

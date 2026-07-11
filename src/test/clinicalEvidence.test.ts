@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CASE_LIST, FED_SUMMARY, VALUE_SET_DIABETES } from "@/lib/demoData";
+import { CASE_LIST, FED_ROBUSTNESS, FED_SUMMARY, VALUE_SET_DIABETES } from "@/lib/demoData";
 
 type ConceptMapGroup = {
   target?: string;
@@ -194,5 +194,9 @@ describe("static clinical and FHIR evidence", () => {
     expect(FED_SUMMARY.federatedCorrect - FED_SUMMARY.localOnlyCorrect).toBe(1);
     expect(FED_SUMMARY.globallyUnseenCorrect).toBe(192);
     expect(FED_SUMMARY.globallyUnseenMacroF1).toBe(1);
+    expect(FED_ROBUSTNESS.seeds).toEqual([7, 21, 42, 84, 126]);
+    expect(FED_ROBUSTNESS.seedsWithPerfectTransfer).toBe(5);
+    expect(FED_ROBUSTNESS.receiverSeedChecksWithoutRegression).toBe(20);
+    expect(FED_ROBUSTNESS.twoWayModelTrafficBytes).toBe(1968160);
   });
 });

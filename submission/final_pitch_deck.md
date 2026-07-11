@@ -105,12 +105,13 @@ Readiness checks are shown, but no national certification is claimed.
 - 4 country sites
 - 768 terminology training mentions
 - 192 globally unseen examples
-- 48/48 cross-site transfer examples correct versus 47/48 local-only, a FedAvg gain of +1
-- 192/192 globally unseen mappings correct with macro-F1 1.000 on the separate seeded synthetic set
+- five-seed study: 48/48 federated transfer versus 47/48 local-only at every seed, a FedAvg gain of +1 per seed
+- 192/192 globally unseen mappings and macro-F1 1.000 at every seed; local-only mean 94.27% ± 0.26 percentage points
+- 48.05 KiB of model tensors per client update and 1.88 MiB two-way tensor traffic across five rounds
 - 0 errors and 0 warnings across all four current IPS 2.0.1 Bundle-profile validations
 - 2 informational notes per Bundle: RxNorm ingredients are outside the IPS guide's recommended medication value set
 
-All model metrics are deterministic single-seed synthetic results, not clinical performance claims.
+All model metrics cover five predetermined deterministic seeds, but remain synthetic results rather than clinical performance claims.
 
 ## Slide 11 - Honest Limits
 

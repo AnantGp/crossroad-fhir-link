@@ -12,6 +12,7 @@ from ips_agent.federated import (
     fedavg,
     masked_logits,
     run_federated_demo,
+    run_multi_seed_benchmark,
 )
 from ips_agent.models import ClinicalFact
 from ips_agent.pipeline import run_pipeline
@@ -198,3 +199,32 @@ def test_genuine_federated_demo_has_transfer_gain_and_private_payloads() -> None
             assert payload["contains"] == ["model_tensors", "sample_count"]
             assert "mentions" not in payload["contains"]
             assert "labels" not in payload["contains"]
+
+
+def test_multi_seed_study_reports_variability_and_communication_cost() -> None:
+    output = run_multi_seed_benchmark(seeds=(42,), rounds=1, hash_dim=128)
+
+    assert output["configuration"]["seeds"] == [42]
+    assert output["configuration"]["seed_count"] == 1
+    assert len(output["per_seed"]) == 1
+    assert output["per_seed"][0]["initial_model_weights_changed"] is True
+    assert output["aggregate"]["federated_transfer_accuracy"]["sample_stddev"] == 0.0
+
+    communication = output["communication_estimate"]
+    assert communication["client_update_bytes"] == communication["model_tensor_bytes_per_update"] + 8
+    assert communication["coordinator_inbound_bytes_across_all_rounds"] == communication["client_update_bytes"] * 4
+    assert communication["global_model_broadcast_bytes_across_all_rounds"] == communication["model_tensor_bytes_per_update"] * 4
+    assert communication["two_way_model_traffic_bytes"] == (
+        communication["coordinator_inbound_bytes_across_all_rounds"]
+        + communication["global_model_broadcast_bytes_across_all_rounds"]
+    )
+
+
+def test_multi_seed_study_rejects_empty_or_duplicate_seed_sets() -> None:
+    for invalid in ((), (42, 42)):
+        try:
+            run_multi_seed_benchmark(seeds=invalid, rounds=1, hash_dim=128)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(f"Expected invalid seed set to fail: {invalid}")

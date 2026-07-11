@@ -51,6 +51,7 @@ FHIR IPS is the interoperable artifact; PDFs are human-readable renderings.
 - Final technical audit: [final_technical_audit.md](final_technical_audit.md)
 - Reproducible Python/FL implementation: [../prototype/README.md](../prototype/README.md)
 - Federated benchmark output: [federated_benchmark.json](federated_benchmark.json)
+- Five-seed robustness study: [federated_multiseed_benchmark.json](federated_multiseed_benchmark.json)
 - Official IPS validation logs: [official_validation/](official_validation/README.md)
 - Demo video asset: [video_asset.md](video_asset.md)
 - Screenshots: [screenshots/](screenshots/)
@@ -79,7 +80,7 @@ Video:
 | Australia -> Europe | verified | verified | verified | verified |
 | Europe -> USA | verified | verified | verified | verified |
 
-All four checked-in Bundles pass HL7 FHIR Validator 6.9.11 against the IPS 2.0.1 Bundle profile with 0 errors and 0 warnings. Each Bundle retains two informational RxNorm value-set recommendations. The synthetic seed-42 FL benchmark is 48/48 federated transfer versus 47/48 local-only, with 192/192 globally unseen predictions and macro-F1 1.000.
+All four checked-in Bundles pass HL7 FHIR Validator 6.9.11 against the IPS 2.0.1 Bundle profile with 0 errors and 0 warnings. Each Bundle retains two informational RxNorm value-set recommendations. Across five deterministic seeds, the synthetic FL study is 48/48 federated transfer versus 47/48 local-only and 192/192 globally unseen predictions with macro-F1 1.000 at every seed.
 
 Receiver-gap labels were checked on July 11, 2026 against US Core 9.0.0 (STU9), the ABDM FHIR R4 7.0.0 draft build, AU Core 2.0.0 trial-use, and the HL7 Europe Patient Summary continuous build. They remain readiness-only comparisons, not profile validation or certification.
 

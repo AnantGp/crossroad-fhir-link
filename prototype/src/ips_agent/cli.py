@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
-from .federated import run_federated_demo
+from .federated import run_federated_demo, run_multi_seed_benchmark
 from .pipeline import run_pipeline
 from .submission_pack import build_submission_pack
 
@@ -37,6 +37,18 @@ def main() -> None:
     fed_parser.add_argument("--seed", type=int, default=42, help="Deterministic training seed (default: 42).")
     fed_parser.add_argument("--hash-dim", type=int, default=1024, help="Signed hashing feature dimension (default: 1024).")
 
+    study_parser = subparsers.add_parser("federated-study", help="Run the deterministic multi-seed FedAvg robustness study.")
+    study_parser.add_argument("--out", help="Optional output JSON path.")
+    study_parser.add_argument("--rounds", type=int, default=5, help="Federated training rounds (default: 5).")
+    study_parser.add_argument(
+        "--seeds",
+        type=int,
+        nargs="+",
+        default=[7, 21, 42, 84, 126],
+        help="Unique deterministic seeds (default: 7 21 42 84 126).",
+    )
+    study_parser.add_argument("--hash-dim", type=int, default=1024, help="Signed hashing feature dimension (default: 1024).")
+
     pack_parser = subparsers.add_parser("submission-pack", help="Build the judge-facing evidence pack.")
     pack_parser.add_argument("--out", default="outputs/submission_pack", help="Output directory for the pack.")
     pack_parser.add_argument("--rounds", type=int, default=5, help="Federated training rounds (default: 5).")
@@ -57,6 +69,13 @@ def main() -> None:
         if args.rounds < 1 or args.hash_dim < 1:
             parser.error("--rounds and --hash-dim must be positive integers.")
         payload = run_federated_demo(base_dir, rounds=args.rounds, seed=args.seed, hash_dim=args.hash_dim)
+        _write_or_print(payload, args.out)
+    elif args.command == "federated-study":
+        if args.rounds < 1 or args.hash_dim < 1:
+            parser.error("--rounds and --hash-dim must be positive integers.")
+        if len(set(args.seeds)) != len(args.seeds):
+            parser.error("--seeds must contain unique integers.")
+        payload = run_multi_seed_benchmark(seeds=args.seeds, rounds=args.rounds, hash_dim=args.hash_dim)
         _write_or_print(payload, args.out)
     elif args.command == "submission-pack":
         base_dir = Path(__file__).resolve().parents[2]

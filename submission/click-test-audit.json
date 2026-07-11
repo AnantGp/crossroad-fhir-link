@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T14:06:11+05:30",
+  "generatedAt": "2026-07-12T02:40:00+05:30",
   "url": "https://crossroad-fhir-link-three.vercel.app",
   "routesTested": 4,
   "routes": [
@@ -31,7 +31,7 @@
         },
         "evidenceJson": {
           "path": "submission/downloads/usa-to-india-evidence-pack.json",
-          "bytes": 26381,
+          "bytes": 27387,
           "head": "{\n  \""
         }
       }
@@ -64,7 +64,7 @@
         },
         "evidenceJson": {
           "path": "submission/downloads/india-to-usa-evidence-pack.json",
-          "bytes": 26958,
+          "bytes": 27964,
           "head": "{\n  \""
         }
       }
@@ -97,7 +97,7 @@
         },
         "evidenceJson": {
           "path": "submission/downloads/australia-to-europe-evidence-pack.json",
-          "bytes": 27429,
+          "bytes": 28435,
           "head": "{\n  \""
         }
       }
@@ -130,7 +130,7 @@
         },
         "evidenceJson": {
           "path": "submission/downloads/europe-to-usa-evidence-pack.json",
-          "bytes": 27420,
+          "bytes": 28426,
           "head": "{\n  \""
         }
       }
@@ -166,13 +166,16 @@
       "log": "submission/official_validation/ips-2.0.1-all-routes.txt"
     },
     "federatedBenchmark": {
-      "transfer": "48/48 federated vs 47/48 local-only",
-      "aggregateGain": 1,
-      "globallyUnseen": "192/192, macro-F1 1.000",
-      "limitation": "Deterministic single-seed synthetic benchmark; not clinical accuracy."
+      "seeds": [7, 21, 42, 84, 126],
+      "transfer": "48/48 federated vs 47/48 local-only at every seed",
+      "aggregateGainPerSeed": 1,
+      "globallyUnseen": "192/192, macro-F1 1.000 at every seed",
+      "localOnlyGloballyUnseen": "94.27% mean, 0.26 percentage-point sample standard deviation",
+      "twoWayTensorTraffic": "1.88 MiB across five rounds",
+      "limitation": "Five deterministic seeds on synthetic terminology examples; not clinical accuracy."
     },
     "frontendTests": "15/15 passed",
-    "pythonTests": "11/11 passed",
+    "pythonTests": "13/13 passed",
     "productionBuild": "passed",
     "desktopScreenshotCaptured": "submission/screenshots/final-audit-01-dashboard.png",
     "mobileHorizontalOverflow": false,

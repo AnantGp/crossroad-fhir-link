@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+import statistics
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Sequence, Tuple
@@ -290,14 +291,16 @@ def _mapping_reuse_demo(linker: FederatedTerminologyLinker) -> Dict[str, Any]:
     }
 
 
-def run_federated_demo(
-    base_dir: Path,
-    rounds: int = 5,
-    seed: int = 42,
-    hash_dim: int = 1024,
+def _state_payload_bytes(state: Mapping[str, torch.Tensor]) -> int:
+    return sum(tensor.numel() * tensor.element_size() for tensor in state.values())
+
+
+def _run_training_benchmark(
+    config: TrainingConfig,
+    pools: ExamplePools,
+    *,
+    include_centralized: bool,
 ) -> Dict[str, Any]:
-    config = TrainingConfig(rounds=rounds, seed=seed, hash_dim=hash_dim)
-    pools = build_example_pools()
     global_state = initial_state(config)
     starting_state = _clone_state(global_state)
     clients = [
@@ -317,7 +320,6 @@ def run_federated_demo(
         })
 
     local_states = _train_local_only(pools, config, starting_state)
-    centralized_state = _train_centralized(pools.all_training, config, starting_state)
     transfer_by_receiver: Dict[str, Dict[str, Any]] = {}
     aggregate_local_correct = 0
     aggregate_federated_correct = 0
@@ -333,14 +335,181 @@ def run_federated_demo(
             "non_regression": federated_metrics.correct >= local_metrics.correct,
         }
 
-    global_metrics = {
+    global_metrics: Dict[str, Any] = {
         "dictionary": _dictionary_metrics(pools.globally_unseen).to_dict(),
-        "centralized_reference": _evaluate_state(centralized_state, pools.globally_unseen, config).to_dict(),
         "federated": _evaluate_state(global_state, pools.globally_unseen, config).to_dict(),
         "local_only_average": {
-            "accuracy": round(sum(_evaluate_state(local_states[site], pools.globally_unseen, config).accuracy for site in SITES) / len(SITES), 6),
+            "accuracy": round(
+                sum(_evaluate_state(local_states[site], pools.globally_unseen, config).accuracy for site in SITES)
+                / len(SITES),
+                6,
+            ),
         },
     }
+    if include_centralized:
+        centralized_state = _train_centralized(pools.all_training, config, starting_state)
+        global_metrics["centralized_reference"] = _evaluate_state(
+            centralized_state,
+            pools.globally_unseen,
+            config,
+        ).to_dict()
+
+    initial_weight_changed = any(
+        not torch.allclose(starting_state[key], global_state[key], atol=1e-6, rtol=1e-6)
+        for key in sorted(global_state)
+    )
+    return {
+        "global_state": global_state,
+        "round_summaries": round_summaries,
+        "transfer_by_receiver": transfer_by_receiver,
+        "aggregate_local_correct": aggregate_local_correct,
+        "aggregate_federated_correct": aggregate_federated_correct,
+        "global_metrics": global_metrics,
+        "initial_weight_changed": initial_weight_changed,
+        "model_tensor_bytes": _state_payload_bytes(global_state),
+    }
+
+
+def _distribution(values: Sequence[float]) -> Dict[str, float]:
+    return {
+        "mean": round(statistics.fmean(values), 6),
+        "sample_stddev": round(statistics.stdev(values), 6) if len(values) > 1 else 0.0,
+        "minimum": round(min(values), 6),
+        "maximum": round(max(values), 6),
+    }
+
+
+def run_multi_seed_benchmark(
+    *,
+    seeds: Sequence[int] = (7, 21, 42, 84, 126),
+    rounds: int = 5,
+    hash_dim: int = 1024,
+) -> Dict[str, Any]:
+    ordered_seeds = tuple(int(seed) for seed in seeds)
+    if not ordered_seeds:
+        raise ValueError("Multi-seed benchmark requires at least one seed.")
+    if len(set(ordered_seeds)) != len(ordered_seeds):
+        raise ValueError("Multi-seed benchmark seeds must be unique.")
+
+    pools = build_example_pools()
+    seed_results: List[Dict[str, Any]] = []
+    model_tensor_bytes = 0
+    for seed in ordered_seeds:
+        config = TrainingConfig(rounds=rounds, seed=seed, hash_dim=hash_dim)
+        result = _run_training_benchmark(config, pools, include_centralized=False)
+        model_tensor_bytes = result["model_tensor_bytes"]
+        federated_global = result["global_metrics"]["federated"]
+        first_perfect_round = next(
+            (
+                round_data["round_index"] + 1
+                for round_data in result["round_summaries"]
+                if round_data["aggregate_global_unseen_metrics"]["accuracy"] == 1.0
+            ),
+            None,
+        )
+        seed_results.append({
+            "seed": seed,
+            "local_only_transfer_correct": result["aggregate_local_correct"],
+            "federated_transfer_correct": result["aggregate_federated_correct"],
+            "transfer_total": len(pools.all_transfer),
+            "transfer_gain_correct": result["aggregate_federated_correct"] - result["aggregate_local_correct"],
+            "receivers_non_regressive": sum(
+                int(values["non_regression"])
+                for values in result["transfer_by_receiver"].values()
+            ),
+            "globally_unseen_federated_accuracy": federated_global["accuracy"],
+            "globally_unseen_federated_macro_f1": federated_global["macro_f1"],
+            "globally_unseen_local_only_average_accuracy": result["global_metrics"]["local_only_average"]["accuracy"],
+            "first_round_with_perfect_globally_unseen_accuracy": first_perfect_round,
+            "initial_model_weights_changed": result["initial_weight_changed"],
+        })
+
+    transfer_total = len(pools.all_transfer)
+    sample_count_bytes = 8
+    client_update_bytes = model_tensor_bytes + sample_count_bytes
+    coordinator_inbound_bytes = client_update_bytes * len(SITES) * rounds
+    global_broadcast_bytes = model_tensor_bytes * len(SITES) * rounds
+    return {
+        "study": "deterministic multi-seed robustness study for the federated terminology linker",
+        "configuration": {
+            "seeds": list(ordered_seeds),
+            "seed_count": len(ordered_seeds),
+            "rounds": rounds,
+            "hash_dim": hash_dim,
+            "local_epochs": TrainingConfig.local_epochs,
+            "batch_size": TrainingConfig.batch_size,
+            "learning_rate": TrainingConfig.learning_rate,
+            "stddev_definition": "sample standard deviation across configured seeds",
+        },
+        "data_summary": data_summary(pools),
+        "per_seed": seed_results,
+        "aggregate": {
+            "local_only_transfer_accuracy": _distribution([
+                result["local_only_transfer_correct"] / transfer_total
+                for result in seed_results
+            ]),
+            "federated_transfer_accuracy": _distribution([
+                result["federated_transfer_correct"] / transfer_total
+                for result in seed_results
+            ]),
+            "transfer_gain_correct": _distribution([
+                float(result["transfer_gain_correct"])
+                for result in seed_results
+            ]),
+            "globally_unseen_federated_accuracy": _distribution([
+                result["globally_unseen_federated_accuracy"]
+                for result in seed_results
+            ]),
+            "globally_unseen_federated_macro_f1": _distribution([
+                result["globally_unseen_federated_macro_f1"]
+                for result in seed_results
+            ]),
+            "globally_unseen_local_only_average_accuracy": _distribution([
+                result["globally_unseen_local_only_average_accuracy"]
+                for result in seed_results
+            ]),
+            "seeds_with_federated_transfer_non_regression": sum(
+                int(result["receivers_non_regressive"] == len(SITES))
+                for result in seed_results
+            ),
+            "seeds_with_perfect_federated_transfer": sum(
+                int(result["federated_transfer_correct"] == transfer_total)
+                for result in seed_results
+            ),
+            "seeds_with_perfect_globally_unseen_accuracy": sum(
+                int(result["globally_unseen_federated_accuracy"] == 1.0)
+                for result in seed_results
+            ),
+        },
+        "communication_estimate": {
+            "model_tensor_bytes_per_update": model_tensor_bytes,
+            "sample_count_bytes_per_update": sample_count_bytes,
+            "client_update_bytes": client_update_bytes,
+            "coordinator_inbound_bytes_across_all_rounds": coordinator_inbound_bytes,
+            "global_model_broadcast_bytes_across_all_rounds": global_broadcast_bytes,
+            "two_way_model_traffic_bytes": coordinator_inbound_bytes + global_broadcast_bytes,
+            "scope": "Tensor payload estimate only; excludes transport, encryption, framing, and serialization overhead.",
+        },
+        "limitations": [
+            "Synthetic terminology examples only; this is not clinical accuracy evidence.",
+            "Clients and coordinator run in one process; this is not a deployed hospital network.",
+            "FedAvg gives data locality only; no DP-SGD or secure aggregation guarantee is claimed.",
+        ],
+    }
+
+
+def run_federated_demo(
+    base_dir: Path,
+    rounds: int = 5,
+    seed: int = 42,
+    hash_dim: int = 1024,
+) -> Dict[str, Any]:
+    config = TrainingConfig(rounds=rounds, seed=seed, hash_dim=hash_dim)
+    pools = build_example_pools()
+    training = _run_training_benchmark(config, pools, include_centralized=True)
+    global_state = training["global_state"]
+    transfer_by_receiver = training["transfer_by_receiver"]
+    global_metrics = training["global_metrics"]
     linker = FederatedTerminologyLinker(
         model=_model_from_state(global_state, config),
         input_dimension=config.hash_dim,
@@ -375,10 +544,6 @@ def run_federated_demo(
         if conversion["report"].startswith("relay_")
     ]
 
-    initial_weight_changed = any(
-        not torch.allclose(starting_state[key], global_state[key], atol=1e-6, rtol=1e-6)
-        for key in sorted(global_state)
-    )
     return {
         "demo": "genuine federated terminology linking for four-country diabetes interoperability",
         "configuration": config.to_dict(),
@@ -393,14 +558,14 @@ def run_federated_demo(
             "simulation_limitation": "Clients and coordinator are simulated in one Python process; production deployment needs process and network isolation.",
         },
         "quality_metrics": {
-            "initial_model_weights_changed": initial_weight_changed,
+            "initial_model_weights_changed": training["initial_weight_changed"],
             "transfer_non_regression_by_receiver": {
                 receiver: values["non_regression"]
                 for receiver, values in transfer_by_receiver.items()
             },
-            "aggregate_transfer_correct_local_only": aggregate_local_correct,
-            "aggregate_transfer_correct_federated": aggregate_federated_correct,
-            "aggregate_transfer_improved": aggregate_federated_correct > aggregate_local_correct,
+            "aggregate_transfer_correct_local_only": training["aggregate_local_correct"],
+            "aggregate_transfer_correct_federated": training["aggregate_federated_correct"],
+            "aggregate_transfer_improved": training["aggregate_federated_correct"] > training["aggregate_local_correct"],
             "raw_reports_shared_with_coordinator": 0,
             "patient_level_fhir_bundles_shared_with_coordinator": 0,
         },
@@ -423,7 +588,7 @@ def run_federated_demo(
             ],
         },
         "mapping_reuse_benefit": _mapping_reuse_demo(linker),
-        "rounds": round_summaries,
+        "rounds": training["round_summaries"],
         "case_study_conversions": case_study_conversions,
         "relay_conversions": relay_conversions,
     }

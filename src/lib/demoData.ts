@@ -767,6 +767,7 @@ export const METRICS = {
 export const EVIDENCE = {
   syntheticReports: 20,
   sites: 4,
+  robustnessSeeds: 5,
   trainingExamples: 768,
   crossSiteTransfer: 48,
   globallyUnseen: 192,
@@ -853,6 +854,27 @@ export const FED_SUMMARY = {
   globallyUnseenMacroF1: 1,
   localOnlyGloballyUnseenAccuracy: 0.94401,
   dictionaryGloballyUnseenAccuracy: 0,
+};
+
+export const FED_ROBUSTNESS = {
+  seeds: [7, 21, 42, 84, 126],
+  seedCount: 5,
+  localOnlyTransferAccuracyMean: 0.979167,
+  localOnlyTransferAccuracyStdDev: 0,
+  federatedTransferAccuracyMean: 1,
+  federatedTransferAccuracyStdDev: 0,
+  localOnlyGloballyUnseenAccuracyMean: 0.942708,
+  localOnlyGloballyUnseenAccuracyStdDev: 0.002604,
+  federatedGloballyUnseenAccuracyMean: 1,
+  federatedGloballyUnseenAccuracyStdDev: 0,
+  seedsWithPerfectTransfer: 5,
+  seedsWithPerfectGloballyUnseenAccuracy: 5,
+  receiverSeedChecksWithoutRegression: 20,
+  firstPerfectRoundMinimum: 1,
+  firstPerfectRoundMaximum: 2,
+  modelTensorBytesPerUpdate: 49200,
+  twoWayModelTrafficBytes: 1968160,
+  coordinatorInboundBytes: 984160,
 };
 
 export const READINESS = {

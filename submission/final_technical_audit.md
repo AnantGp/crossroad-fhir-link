@@ -65,12 +65,13 @@ Metrics shown in the UI match the downloadable evidence pack:
 - 768 terminology training examples
 - 48 cross-site transfer examples
 - 192 globally unseen examples
-- semantic transfer validation: 48/48 correct versus 47/48 local-only (+1)
-- globally unseen benchmark: 192/192 correct, macro-F1 1.000; local-only average accuracy 94.4%
+- five-seed semantic transfer validation: 48/48 federated versus 47/48 local-only at every seed (+1 per seed)
+- globally unseen robustness: 192/192 and macro-F1 1.000 at every seed; local-only mean 94.27% with 0.26 percentage-point sample standard deviation
+- communication estimate: 48.05 KiB of model tensors per client update and 1.88 MiB two-way tensor traffic across five rounds
 - official HL7 FHIR Validator 6.9.11 against IPS 2.0.1: 4/4 Bundles, 0 errors, 0 warnings
 - informational notes: 2 per Bundle because RxNorm ingredients are outside the IPS guide's recommended medication value set
 
-The model metrics are deterministic single-seed synthetic results and are not clinical performance evidence.
+The model metrics cover five predetermined deterministic seeds, but they remain synthetic results and are not clinical performance evidence.
 
 ## Remaining Submission Risks
 

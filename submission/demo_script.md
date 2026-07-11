@@ -105,12 +105,13 @@ The evidence shown in the demo is synthetic validation evidence:
 - 4 country sites
 - 768 terminology training mentions
 - 192 globally unseen examples
-- 48/48 cross-site transfer mappings correct versus 47/48 local-only, a measured gain of one correct mapping
-- 192/192 globally unseen mappings correct with macro-F1 1.000 in the separate seeded synthetic benchmark
+- across five deterministic seeds, 48/48 federated transfer mappings versus 47/48 local-only, a measured gain of one correct mapping per seed
+- 192/192 globally unseen mappings with macro-F1 1.000 at every seed; local-only mean accuracy is 94.27% with 0.26 percentage-point sample standard deviation
+- estimated model traffic is 48.05 KiB of model tensors per client update and 1.88 MiB two-way across five rounds
 - all four current Bundles show official IPS 2.0.1 validator evidence with 0 errors and 0 warnings
 - two informational medication-terminology notes per Bundle remain visible
 
-These are deterministic single-seed synthetic results, not evidence of clinical accuracy on real notes.
+These are deterministic five-seed synthetic results, not evidence of clinical accuracy on real notes.
 
 ## 4:30-5:00 - Benefit and Closing
 

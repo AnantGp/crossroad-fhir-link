@@ -17,7 +17,8 @@
     "validated_bundles": 4,
     "validator_profile": "IPS 2.0.1",
     "informational_notes_per_bundle": 2,
-    "fhir_bundle_type": "document"
+    "fhir_bundle_type": "document",
+    "robustness_seeds": 5
   },
   "semantic_trace": [
     {
@@ -432,7 +433,7 @@
       "total": 192,
       "federated_macro_f1": 1
     },
-    "limitation": "Deterministic single-seed synthetic benchmark; not clinical accuracy on real notes."
+    "limitation": "Five deterministic seeds on a synthetic benchmark; this is robustness evidence for the prototype, not clinical accuracy on real notes."
   },
   "official_validation": {
     "validator": "HL7 FHIR Validator 6.9.11",
@@ -912,6 +913,46 @@
       "profile": [
         "http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips"
       ]
+    }
+  },
+  "federated_multiseed_study": {
+    "seeds": [
+      7,
+      21,
+      42,
+      84,
+      126
+    ],
+    "seed_count": 5,
+    "local_only_transfer_accuracy": {
+      "mean": 0.979167,
+      "sample_stddev": 0
+    },
+    "federated_transfer_accuracy": {
+      "mean": 1,
+      "sample_stddev": 0
+    },
+    "globally_unseen_local_only_average_accuracy": {
+      "mean": 0.942708,
+      "sample_stddev": 0.002604
+    },
+    "globally_unseen_federated_accuracy": {
+      "mean": 1,
+      "sample_stddev": 0
+    },
+    "convergence_round_range": [
+      1,
+      2
+    ],
+    "receiver_seed_non_regression": {
+      "correct": 20,
+      "total": 20
+    },
+    "communication_estimate": {
+      "model_tensor_bytes_per_update": 49200,
+      "coordinator_inbound_bytes": 984160,
+      "two_way_model_traffic_bytes": 1968160,
+      "scope": "Tensor payload estimate only; transport and serialization overhead excluded."
     }
   }
 }

@@ -31,6 +31,7 @@ import {
   COUNTRIES,
   CountryCode,
   EVIDENCE,
+  FED_ROBUSTNESS,
   FED_SUMMARY,
   FED_SITES,
   METRICS,
@@ -62,8 +63,8 @@ function MetricCard({
       </div>
       <div className="min-w-0">
         <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">{label}</div>
-        <div className={`mt-0.5 text-xl font-display font-semibold leading-tight truncate ${toneClass}`}>{value}</div>
-        {sub && <div className="text-xs text-muted-foreground mt-0.5 truncate">{sub}</div>}
+        <div className={`mt-0.5 text-xl font-display font-semibold leading-tight break-words ${toneClass}`}>{value}</div>
+        {sub && <div className="text-xs text-muted-foreground mt-0.5 leading-snug break-words">{sub}</div>}
       </div>
     </div>
   );
@@ -848,7 +849,37 @@ function buildEvidencePack(activeCase: DemoCase, targetCountry: CountryCode) {
         total: FED_SUMMARY.globallyUnseenTotal,
         federated_macro_f1: FED_SUMMARY.globallyUnseenMacroF1,
       },
-      limitation: "Deterministic single-seed synthetic benchmark; not clinical accuracy on real notes.",
+      limitation: "Five predetermined deterministic seeds on synthetic terminology examples; not clinical accuracy on real notes.",
+    },
+    federated_multiseed_study: {
+      seeds: FED_ROBUSTNESS.seeds,
+      seed_count: FED_ROBUSTNESS.seedCount,
+      local_only_transfer_accuracy: {
+        mean: FED_ROBUSTNESS.localOnlyTransferAccuracyMean,
+        sample_stddev: FED_ROBUSTNESS.localOnlyTransferAccuracyStdDev,
+      },
+      federated_transfer_accuracy: {
+        mean: FED_ROBUSTNESS.federatedTransferAccuracyMean,
+        sample_stddev: FED_ROBUSTNESS.federatedTransferAccuracyStdDev,
+      },
+      globally_unseen_local_only_average_accuracy: {
+        mean: FED_ROBUSTNESS.localOnlyGloballyUnseenAccuracyMean,
+        sample_stddev: FED_ROBUSTNESS.localOnlyGloballyUnseenAccuracyStdDev,
+      },
+      globally_unseen_federated_accuracy: {
+        mean: FED_ROBUSTNESS.federatedGloballyUnseenAccuracyMean,
+        sample_stddev: FED_ROBUSTNESS.federatedGloballyUnseenAccuracyStdDev,
+      },
+      convergence_round_range: [
+        FED_ROBUSTNESS.firstPerfectRoundMinimum,
+        FED_ROBUSTNESS.firstPerfectRoundMaximum,
+      ],
+      communication_estimate: {
+        model_tensor_bytes_per_update: FED_ROBUSTNESS.modelTensorBytesPerUpdate,
+        coordinator_inbound_bytes: FED_ROBUSTNESS.coordinatorInboundBytes,
+        two_way_model_traffic_bytes: FED_ROBUSTNESS.twoWayModelTrafficBytes,
+        scope: "Tensor payload estimate only; transport and serialization overhead excluded.",
+      },
     },
     official_validation: OFFICIAL_VALIDATION,
     fhir_bundle: activeCase.ipsBundle,
@@ -1418,12 +1449,12 @@ const Index = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
                 <div className="card-surface p-4">
-                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Federated transfer</div>
-                  <div className="text-2xl font-display font-semibold mt-1">48 / 48</div>
-                  <div className="text-xs text-muted-foreground mt-1">correct on the synthetic cross-site transfer set.</div>
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Perfect transfer seeds</div>
+                  <div className="text-2xl font-display font-semibold mt-1">{FED_ROBUSTNESS.seedsWithPerfectTransfer} / {FED_ROBUSTNESS.seedCount}</div>
+                  <div className="text-xs text-muted-foreground mt-1">48/48 federated transfer at every configured seed.</div>
                 </div>
                 <div className="card-surface p-4">
-                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Aggregate transfer gain</div>
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Transfer gain per seed</div>
                   <div className="text-2xl font-display font-semibold mt-1 text-success">
                     +{FED_SUMMARY.federatedCorrect - FED_SUMMARY.localOnlyCorrect} correct
                   </div>
@@ -1432,22 +1463,36 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="card-surface p-4">
-                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Receiver non-regression</div>
-                  <div className="text-2xl font-display font-semibold mt-1">{FED_SUMMARY.receiversWithoutRegression} / 4</div>
-                  <div className="text-xs text-muted-foreground mt-1">every site's federated result matched or beat local-only.</div>
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Receiver-seed checks</div>
+                  <div className="text-2xl font-display font-semibold mt-1">{FED_ROBUSTNESS.receiverSeedChecksWithoutRegression} / 20</div>
+                  <div className="text-xs text-muted-foreground mt-1">all four receivers were non-regressive across five seeds.</div>
                 </div>
                 <div className="card-surface p-4">
-                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Globally unseen</div>
-                  <div className="text-2xl font-display font-semibold mt-1">{FED_SUMMARY.globallyUnseenCorrect} / {FED_SUMMARY.globallyUnseenTotal}</div>
-                  <div className="text-xs text-muted-foreground mt-1">macro-F1 {FED_SUMMARY.globallyUnseenMacroF1.toFixed(3)}; separate seeded synthetic set.</div>
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Perfect unseen seeds</div>
+                  <div className="text-2xl font-display font-semibold mt-1">{FED_ROBUSTNESS.seedsWithPerfectGloballyUnseenAccuracy} / {FED_ROBUSTNESS.seedCount}</div>
+                  <div className="text-xs text-muted-foreground mt-1">192/192 with macro-F1 1.000 at every seed.</div>
                 </div>
               </div>
 
-              <div className="card-surface p-4">
-                <h3 className="text-sm font-semibold">Benchmark interpretation</h3>
-                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                  On globally unseen mentions, the exact dictionary scored 0%, the average local-only model scored {(FED_SUMMARY.localOnlyGloballyUnseenAccuracy * 100).toFixed(1)}%, and FedAvg scored 100% (macro-F1 1.000). These are deterministic, synthetic, single-seed results and do not establish clinical accuracy on real notes.
-                </p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <div className="card-surface p-4">
+                  <h3 className="text-sm font-semibold">Five-seed robustness</h3>
+                  <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                    Across seeds {FED_ROBUSTNESS.seeds.join(", ")}, FedAvg transfer accuracy was 100.0% ± 0.0% versus {(FED_ROBUSTNESS.localOnlyTransferAccuracyMean * 100).toFixed(1)}% ± {(FED_ROBUSTNESS.localOnlyTransferAccuracyStdDev * 100).toFixed(1)}% local-only. Globally unseen FedAvg accuracy was 100.0% ± 0.0%; local-only averaged {(FED_ROBUSTNESS.localOnlyGloballyUnseenAccuracyMean * 100).toFixed(2)}% ± {(FED_ROBUSTNESS.localOnlyGloballyUnseenAccuracyStdDev * 100).toFixed(2)}%.
+                  </p>
+                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                    These deterministic synthetic results show implementation stability, not clinical accuracy on real notes.
+                  </p>
+                </div>
+                <div className="card-surface p-4">
+                  <h3 className="text-sm font-semibold">Convergence & communication</h3>
+                  <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    <div><div className="text-muted-foreground">Perfect unseen score</div><div className="font-semibold mt-0.5">Round {FED_ROBUSTNESS.firstPerfectRoundMinimum}–{FED_ROBUSTNESS.firstPerfectRoundMaximum}</div></div>
+                    <div><div className="text-muted-foreground">Model tensors/update</div><div className="font-semibold mt-0.5">{(FED_ROBUSTNESS.modelTensorBytesPerUpdate / 1024).toFixed(2)} KiB</div></div>
+                    <div><div className="text-muted-foreground">Five-round traffic</div><div className="font-semibold mt-0.5">{(FED_ROBUSTNESS.twoWayModelTrafficBytes / 1024 / 1024).toFixed(2)} MiB</div></div>
+                  </div>
+                  <p className="mt-3 text-[11px] text-muted-foreground">Tensor payload estimate only; transport, encryption, framing, and serialization overhead are excluded.</p>
+                </div>
               </div>
 
               <div className="card-surface p-4 border-l-4 border-l-warning">
@@ -1563,8 +1608,9 @@ const Index = () => {
                     <CheckCircle2 className="h-4 w-4 text-success" /> What this demo evidences
                   </h3>
                   <ul className="mt-2 text-sm space-y-2">
-                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Semantic mapping validation:</span> 48/48 cross-site examples mapped correctly; local-only scored 47/48, so the measured FedAvg gain is +1.</span></li>
-                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Globally unseen benchmark:</span> 192/192 correct with macro-F1 1.000 on the separate seeded synthetic set.</span></li>
+                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Five-seed transfer validation:</span> 48/48 federated versus 47/48 local-only at every configured seed; all 20 receiver-seed comparisons were non-regressive.</span></li>
+                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Globally unseen robustness:</span> 192/192 and macro-F1 1.000 at all five seeds; local-only averaged 94.27% ± 0.26%.</span></li>
+                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Communication estimate:</span> 48.05 KiB of model tensors per client update and 1.88 MiB total two-way tensor traffic across five rounds.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Official HL7 validator:</span> 4/4 current Bundles pass IPS 2.0.1 with 0 errors and 0 warnings.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">FHIR-native terminology layer:</span> CodeSystem, ValueSet, ConceptMap + simulated $translate / $lookup / $validate-code.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Medical placement check:</span> conditions, observations, and medications land in the expected FHIR resource types.</span></li>
@@ -1578,6 +1624,7 @@ const Index = () => {
                   </h3>
                   <ul className="mt-2 text-sm space-y-2 text-muted-foreground">
                     <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">Synthetic data only.</span> No real patients, no production EHR integration.</span></li>
+                    <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">Five deterministic seeds</span> improve robustness evidence but do not replace real-world external validation.</span></li>
                     <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">Rule-backed extractor</span> in this prototype; pretrained clinical NER is future work.</span></li>
                     <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">FedAvg gives data locality only;</span> model updates can leak information without DP-SGD or secure aggregation.</span></li>
                     <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">Readiness checks only;</span> no national profile certification.</span></li>

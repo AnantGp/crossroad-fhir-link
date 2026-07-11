@@ -1,0 +1,148 @@
+{
+  "study": "deterministic multi-seed robustness study for the federated terminology linker",
+  "configuration": {
+    "seeds": [
+      7,
+      21,
+      42,
+      84,
+      126
+    ],
+    "seed_count": 5,
+    "rounds": 5,
+    "hash_dim": 1024,
+    "local_epochs": 10,
+    "batch_size": 16,
+    "learning_rate": 0.1,
+    "stddev_definition": "sample standard deviation across configured seeds"
+  },
+  "data_summary": {
+    "sites": 4,
+    "canonical_concepts": 12,
+    "training_examples": 768,
+    "globally_unseen_examples": 192,
+    "cross_site_transfer_examples": 48
+  },
+  "per_seed": [
+    {
+      "seed": 7,
+      "local_only_transfer_correct": 47,
+      "federated_transfer_correct": 48,
+      "transfer_total": 48,
+      "transfer_gain_correct": 1,
+      "receivers_non_regressive": 4,
+      "globally_unseen_federated_accuracy": 1.0,
+      "globally_unseen_federated_macro_f1": 1.0,
+      "globally_unseen_local_only_average_accuracy": 0.941406,
+      "first_round_with_perfect_globally_unseen_accuracy": 1,
+      "initial_model_weights_changed": true
+    },
+    {
+      "seed": 21,
+      "local_only_transfer_correct": 47,
+      "federated_transfer_correct": 48,
+      "transfer_total": 48,
+      "transfer_gain_correct": 1,
+      "receivers_non_regressive": 4,
+      "globally_unseen_federated_accuracy": 1.0,
+      "globally_unseen_federated_macro_f1": 1.0,
+      "globally_unseen_local_only_average_accuracy": 0.941406,
+      "first_round_with_perfect_globally_unseen_accuracy": 2,
+      "initial_model_weights_changed": true
+    },
+    {
+      "seed": 42,
+      "local_only_transfer_correct": 47,
+      "federated_transfer_correct": 48,
+      "transfer_total": 48,
+      "transfer_gain_correct": 1,
+      "receivers_non_regressive": 4,
+      "globally_unseen_federated_accuracy": 1.0,
+      "globally_unseen_federated_macro_f1": 1.0,
+      "globally_unseen_local_only_average_accuracy": 0.94401,
+      "first_round_with_perfect_globally_unseen_accuracy": 2,
+      "initial_model_weights_changed": true
+    },
+    {
+      "seed": 84,
+      "local_only_transfer_correct": 47,
+      "federated_transfer_correct": 48,
+      "transfer_total": 48,
+      "transfer_gain_correct": 1,
+      "receivers_non_regressive": 4,
+      "globally_unseen_federated_accuracy": 1.0,
+      "globally_unseen_federated_macro_f1": 1.0,
+      "globally_unseen_local_only_average_accuracy": 0.940104,
+      "first_round_with_perfect_globally_unseen_accuracy": 1,
+      "initial_model_weights_changed": true
+    },
+    {
+      "seed": 126,
+      "local_only_transfer_correct": 47,
+      "federated_transfer_correct": 48,
+      "transfer_total": 48,
+      "transfer_gain_correct": 1,
+      "receivers_non_regressive": 4,
+      "globally_unseen_federated_accuracy": 1.0,
+      "globally_unseen_federated_macro_f1": 1.0,
+      "globally_unseen_local_only_average_accuracy": 0.946615,
+      "first_round_with_perfect_globally_unseen_accuracy": 1,
+      "initial_model_weights_changed": true
+    }
+  ],
+  "aggregate": {
+    "local_only_transfer_accuracy": {
+      "mean": 0.979167,
+      "sample_stddev": 0.0,
+      "minimum": 0.979167,
+      "maximum": 0.979167
+    },
+    "federated_transfer_accuracy": {
+      "mean": 1.0,
+      "sample_stddev": 0.0,
+      "minimum": 1.0,
+      "maximum": 1.0
+    },
+    "transfer_gain_correct": {
+      "mean": 1.0,
+      "sample_stddev": 0.0,
+      "minimum": 1.0,
+      "maximum": 1.0
+    },
+    "globally_unseen_federated_accuracy": {
+      "mean": 1.0,
+      "sample_stddev": 0.0,
+      "minimum": 1.0,
+      "maximum": 1.0
+    },
+    "globally_unseen_federated_macro_f1": {
+      "mean": 1.0,
+      "sample_stddev": 0.0,
+      "minimum": 1.0,
+      "maximum": 1.0
+    },
+    "globally_unseen_local_only_average_accuracy": {
+      "mean": 0.942708,
+      "sample_stddev": 0.002604,
+      "minimum": 0.940104,
+      "maximum": 0.946615
+    },
+    "seeds_with_federated_transfer_non_regression": 5,
+    "seeds_with_perfect_federated_transfer": 5,
+    "seeds_with_perfect_globally_unseen_accuracy": 5
+  },
+  "communication_estimate": {
+    "model_tensor_bytes_per_update": 49200,
+    "sample_count_bytes_per_update": 8,
+    "client_update_bytes": 49208,
+    "coordinator_inbound_bytes_across_all_rounds": 984160,
+    "global_model_broadcast_bytes_across_all_rounds": 984000,
+    "two_way_model_traffic_bytes": 1968160,
+    "scope": "Tensor payload estimate only; excludes transport, encryption, framing, and serialization overhead."
+  },
+  "limitations": [
+    "Synthetic terminology examples only; this is not clinical accuracy evidence.",
+    "Clients and coordinator run in one process; this is not a deployed hospital network.",
+    "FedAvg gives data locality only; no DP-SGD or secure aggregation guarantee is claimed."
+  ]
+}

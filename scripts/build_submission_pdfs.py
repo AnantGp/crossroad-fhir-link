@@ -136,7 +136,7 @@ SLIDES = [
     ("Federated Learning Role", "Each country/site trains a terminology linker locally. The coordinator receives model tensors and sample counts only; it does not receive raw reports, identifiers, labels, aliases, or patient-level FHIR Bundles."),
     ("FHIR-Native Global Linker", "The model predicts candidate mappings, but HL7 makes them auditable through local CodeSystem, target ValueSet, ConceptMap, simulated translate, lookup, and validate-code."),
     ("Cross-Border Sharing", "The same FHIR IPS can support USA, India, Australia, and Europe routes. Judges can download source PDF, target PDF, FHIR Bundle JSON, and evidence pack JSON. Readiness checks are not certification."),
-    ("Evidence", "20 synthetic reports, 4 country sites, 768 terminology training mentions, 48/48 federated transfer versus 47/48 local-only, 192/192 globally unseen in the seeded synthetic benchmark, and 4/4 IPS 2.0.1 Bundle-profile validations with 0 errors and 0 warnings."),
+    ("Evidence", "Across five deterministic seeds, the model produces 48/48 federated transfer versus 47/48 local-only and 192/192 globally unseen predictions. Estimated two-way tensor traffic is 1.88 MiB across five rounds. All 4 IPS 2.0.1 Bundle-profile validations have 0 errors and 0 warnings."),
     ("Honest Limits", "Synthetic data only. Rule-backed extraction. Simulated terminology operations. Readiness checks only. FedAvg gives data locality only and is not cryptography or formal de-identification."),
     ("Final Claim", "Cross-Border IPS AI Agent combines semantic interoperability and data interoperability. Federated learning aligns local terminology, FHIR terminology artifacts make mappings auditable, and FHIR IPS packages the result for cross-border exchange."),
 ]
