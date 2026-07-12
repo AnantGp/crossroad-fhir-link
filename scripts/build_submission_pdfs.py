@@ -134,10 +134,10 @@ SLIDES = [
     ("Machine-Readable Proof", "The final exchange artifact is a FHIR R4 document Bundle with Bundle.type=document, Composition first, coded resources, and official IPS 2.0.1 validation across all four routes: 0 errors and 0 warnings."),
     ("Universal Coding Proof", "Local clinical terms are normalized into accepted healthcare codes: SNOMED CT and ICD-10 for conditions, LOINC for labs, RxNorm for medications, and FHIR resources for exchange structure."),
     ("Federated Learning Role", "Each country/site trains a terminology linker locally. The coordinator receives model tensors and sample counts only; it does not receive raw reports, identifiers, labels, aliases, or patient-level FHIR Bundles."),
-    ("FHIR-Native Global Linker", "The model predicts candidate mappings, but HL7 makes them auditable through local CodeSystem, target ValueSet, ConceptMap, simulated translate, lookup, and validate-code."),
+    ("FHIR-Native Global Linker", "The model predicts candidate mappings, HL7 makes them auditable through CodeSystem, ValueSet, and ConceptMap, and tx.fhir.org independently checks representative target codes through lookup and validate-code."),
     ("Cross-Border Sharing", "The same FHIR IPS can support USA, India, Australia, and Europe routes. Judges can download source PDF, target PDF, FHIR Bundle JSON, and evidence pack JSON. Readiness checks are not certification."),
     ("Evidence", "Across five deterministic seeds, the model produces 48/48 federated transfer versus 47/48 local-only and 192/192 globally unseen predictions. Estimated two-way tensor traffic is 1.88 MiB across five rounds. All 4 IPS 2.0.1 Bundle-profile validations have 0 errors and 0 warnings."),
-    ("Honest Limits", "Synthetic data only. Rule-backed extraction. Simulated terminology operations. Readiness checks only. FedAvg gives data locality only and is not cryptography or formal de-identification."),
+    ("Honest Limits", "Synthetic data only. Rule-backed extraction. Local ConceptMap translation remains simulated. External code checks are representative. Independent clinical review is pending. FedAvg gives data locality only."),
     ("Final Claim", "Cross-Border IPS AI Agent combines semantic interoperability and data interoperability. Federated learning aligns local terminology, FHIR terminology artifacts make mappings auditable, and FHIR IPS packages the result for cross-border exchange."),
 ]
 

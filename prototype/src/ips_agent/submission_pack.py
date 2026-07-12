@@ -291,7 +291,7 @@ def build_submission_pack(
         "interoperability_evidence": {
             "data_interoperability": "FHIR R4 document Bundle with Composition first and IPS-style resource spine.",
             "semantic_interoperability": "SNOMED CT, ICD-10, LOINC, RxNorm, UCUM, and FHIR ConceptMap/ValueSet/CodeSystem artifacts.",
-            "terminology_operations": "Local simulated FHIR $translate, $lookup, and $validate-code operations for prototype evidence.",
+            "terminology_operations": "Local simulated FHIR terminology operations for prototype evidence; a separate tx.fhir.org snapshot validates representative target codes.",
         },
         "official_validator_results": validator_results,
         "judge_demo_order": [
@@ -308,7 +308,7 @@ def build_submission_pack(
             "Synthetic diabetes data only; no real patient data.",
             "Rule-backed extraction in the prototype; pretrained clinical NER is future work.",
             "FedAvg provides data locality only; model updates can leak information without DP-SGD or secure aggregation.",
-            "FHIR terminology operations are simulated locally; live terminology servers are future work.",
+            "Local ConceptMap translation remains simulated; the external terminology snapshot is representative, not full production integration.",
             "US Core, ABDM, AU Core, and European Patient Summary checks are readiness-only, not formal certification.",
         ],
     }

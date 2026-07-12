@@ -20,7 +20,8 @@ Doctor report or EHR-like note
   -> local terminology registry lookup
   -> federated terminology linker for registry misses
   -> FHIR CodeSystem / ValueSet / ConceptMap
-  -> simulated $translate / $lookup / $validate-code
+  -> local ConceptMap $translate
+  -> external FHIR $lookup / $validate-code snapshot
   -> FHIR R4 IPS-style document Bundle
   -> target-country PDF and readiness report
 ```
@@ -49,13 +50,18 @@ FHIR IPS is the interoperable artifact; PDFs are human-readable renderings.
 - Final pitch deck source: [final_pitch_deck.md](final_pitch_deck.md)
 - Editable final pitch deck: [final_pitch_deck.pptx](final_pitch_deck.pptx)
 - Final technical audit: [final_technical_audit.md](final_technical_audit.md)
+- Submission form answers: [submission_form_answers.md](submission_form_answers.md)
 - Reproducible Python/FL implementation: [../prototype/README.md](../prototype/README.md)
 - Federated benchmark output: [federated_benchmark.json](federated_benchmark.json)
 - Five-seed robustness study: [federated_multiseed_benchmark.json](federated_multiseed_benchmark.json)
+- External terminology validation: [external_terminology_validation.json](external_terminology_validation.json)
+- Independent review packet (pending signature): [clinical_review_packet.pdf](clinical_review_packet.pdf)
+- Editable independent review checklist: [clinical_review_checklist.csv](clinical_review_checklist.csv)
 - Official IPS validation logs: [official_validation/](official_validation/README.md)
 - Demo video asset: [video_asset.md](video_asset.md)
 - Screenshots: [screenshots/](screenshots/)
 - Downloaded route evidence: [downloads/](downloads/)
+- Compact supporting-evidence upload: [supporting_evidence.zip](supporting_evidence.zip)
 
 Generated PDFs:
 
@@ -80,7 +86,9 @@ Video:
 | Australia -> Europe | verified | verified | verified | verified |
 | Europe -> USA | verified | verified | verified | verified |
 
-All four checked-in Bundles pass HL7 FHIR Validator 6.9.11 against the IPS 2.0.1 Bundle profile with 0 errors and 0 warnings. Each Bundle retains two informational RxNorm value-set recommendations. Across five deterministic seeds, the synthetic FL study is 48/48 federated transfer versus 47/48 local-only and 192/192 globally unseen predictions with macro-F1 1.000 at every seed.
+All four checked-in Bundles pass HL7 FHIR Validator 6.9.11 against the IPS 2.0.1 Bundle profile with 0 errors and 0 warnings. Each Bundle retains two informational RxNorm value-set recommendations. Across five deterministic seeds, the synthetic FL study is 48/48 federated transfer versus 47/48 local-only and 192/192 globally unseen predictions with macro-F1 1.000 at every seed. A patient-free tx.fhir.org snapshot also records 4/4 successful `$lookup` and 4/4 successful `$validate-code` operations for representative SNOMED CT, LOINC, RxNorm, and ICD-10 codes.
+
+The clinical review packet is deliberately marked **PENDING INDEPENDENT REVIEW**. Do not claim external clinical validation unless a qualified reviewer completes and signs it.
 
 Receiver-gap labels were checked on July 11, 2026 against US Core 9.0.0 (STU9), the ABDM FHIR R4 7.0.0 draft build, AU Core 2.0.0 trial-use, and the HL7 Europe Patient Summary continuous build. They remain readiness-only comparisons, not profile validation or certification.
 

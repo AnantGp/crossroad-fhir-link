@@ -18,7 +18,8 @@
     "validator_profile": "IPS 2.0.1",
     "informational_notes_per_bundle": 2,
     "fhir_bundle_type": "document",
-    "robustness_seeds": 5
+    "robustness_seeds": 5,
+    "external_terminology_codes_checked": 4
   },
   "semantic_trace": [
     {
@@ -409,7 +410,8 @@
     "Synthetic data only.",
     "Rule-backed extraction in prototype; pretrained clinical NER is future work.",
     "Readiness checks only; no national profile certification.",
-    "Local simulated FHIR terminology operations; live terminology servers are future work."
+    "Local ConceptMap translation remains simulated; external terminology validation covers representative target codes only.",
+    "Independent clinical review is pending until the supplied review packet is completed and signed."
   ],
   "federated_benchmark": {
     "configuration": {
@@ -954,5 +956,97 @@
       "two_way_model_traffic_bytes": 1968160,
       "scope": "Tensor payload estimate only; transport and serialization overhead excluded."
     }
+  },
+  "external_terminology_validation": {
+    "evidence_type": "external FHIR terminology-service snapshot",
+    "checked_at": "2026-07-12T03:49:58+00:00",
+    "endpoint": "https://tx.fhir.org/r4",
+    "fhir_version": "R4",
+    "summary": {
+      "representative_codes_checked": 4,
+      "lookup_passed": 4,
+      "validate_code_passed": 4
+    },
+    "checks": [
+      {
+        "terminology": "SNOMED CT",
+        "system": "http://snomed.info/sct",
+        "code": "44054006",
+        "expected_display": "Diabetes mellitus type II",
+        "use": "Type 2 diabetes condition",
+        "lookup": {
+          "operation": "$lookup",
+          "result": true,
+          "display": "Diabetes mellitus type II",
+          "version": "http://snomed.info/sct/900000000000207008/version/20250201"
+        },
+        "validate_code": {
+          "operation": "$validate-code",
+          "result": true,
+          "display": "Diabetes mellitus type II",
+          "version": "http://snomed.info/sct/900000000000207008/version/20250201"
+        }
+      },
+      {
+        "terminology": "LOINC",
+        "system": "http://loinc.org",
+        "code": "4548-4",
+        "expected_display": "Hemoglobin A1c/Hemoglobin.total in Blood",
+        "use": "HbA1c observation",
+        "lookup": {
+          "operation": "$lookup",
+          "result": true,
+          "display": "Hemoglobin A1c/Hemoglobin.total in Blood",
+          "version": "2.82"
+        },
+        "validate_code": {
+          "operation": "$validate-code",
+          "result": true,
+          "display": "Hemoglobin A1c/Hemoglobin.total in Blood",
+          "version": "2.82"
+        }
+      },
+      {
+        "terminology": "RxNorm",
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6809",
+        "expected_display": "metformin",
+        "use": "Metformin medication ingredient",
+        "lookup": {
+          "operation": "$lookup",
+          "result": true,
+          "display": "metformin",
+          "version": "03022026"
+        },
+        "validate_code": {
+          "operation": "$validate-code",
+          "result": true,
+          "display": "metformin",
+          "version": "03022026"
+        }
+      },
+      {
+        "terminology": "ICD-10",
+        "system": "http://hl7.org/fhir/sid/icd-10",
+        "code": "E11",
+        "expected_display": "Type 2 diabetes mellitus",
+        "use": "Type 2 diabetes classification",
+        "lookup": {
+          "operation": "$lookup",
+          "result": true,
+          "display": "Type 2 diabetes mellitus",
+          "version": "2019-covid-expanded"
+        },
+        "validate_code": {
+          "operation": "$validate-code",
+          "result": true,
+          "display": "Type 2 diabetes mellitus",
+          "version": "2019-covid-expanded"
+        }
+      }
+    ],
+    "privacy": "Only terminology system/code pairs were sent; no report text, patient identifiers, or FHIR patient Bundles were transmitted.",
+    "scope": "This independently verifies that the representative target codes are recognized by the external FHIR terminology server. It does not validate source-phrase extraction, prove that every semantic mapping is clinically correct, or provide certification.",
+    "translation_note": "The prototype's local-phrase translation uses its own FHIR ConceptMap. The public server evidence covers $lookup and $validate-code only; no claim is made that tx.fhir.org executed the local ConceptMap $translate."
   }
 }

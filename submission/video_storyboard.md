@@ -17,6 +17,7 @@ Say:
 - Readiness checks, not national profile certification.
 - FedAvg gives data locality only.
 - Synthetic validation evidence.
+- External FHIR terminology snapshot: representative code validation only.
 
 Do not say:
 
@@ -24,6 +25,7 @@ Do not say:
 - Fully private federated learning.
 - FedAvg de-identifies patient data.
 - Production clinical decision support.
+- Independent clinical validation while the review packet is unsigned.
 
 ## Scene Plan
 
@@ -34,13 +36,13 @@ Do not say:
 | 03 | One Local Report To One Cross-Border Summary | USA -> India dashboard | Objective: PDF is the readable view; FHIR IPS is the interoperable artifact. |
 | 04 | Report To FHIR IPS In One Pipeline | Pipeline diagram | Solution flow: report, facts, terminology, ConceptMap, FHIR IPS, readiness. |
 | 05 | FedAvg Learns Local Terms Without Centralizing Reports | Federated learning diagram | Data-local learning proof: coordinator receives model tensors and sample counts only. |
-| 06 | FHIR Terminology Makes AI Mappings Auditable | CodeSystem / ValueSet / ConceptMap graphic | HL7-native linker proof: mapping is auditable, not a hidden AI guess. |
+| 06 | FHIR Terminology Makes AI Mappings Auditable | CodeSystem / ValueSet / ConceptMap graphic | HL7-native linker proof plus external `$lookup` / `$validate-code` evidence for representative targets. |
 | 07 | Local Words Become Accepted Healthcare Codes | Clinical trace table | Universal coding proof: SNOMED CT, ICD-10, LOINC, RxNorm, and FHIR resources. |
 | 08 | FHIR IPS Packages The Coded Patient Summary | USA -> India FHIR Bundle screenshot | Machine-readable proof: Bundle.type=document and Composition first. |
 | 09 | The Same FHIR IPS Supports Different Receivers | Australia -> Europe FHIR Bundle screenshot | Cross-border sharing proof: one machine-readable IPS supports different receiver views. |
-| 10 | Evidence Shown In The Demo | Evidence screenshot | Evidence: five seeds each produce 48/48 federated transfer versus 47/48 local-only and 192/192 globally unseen; model traffic is measured; 4/4 IPS 2.0.1 validations have 0 errors and 0 warnings. |
+| 10 | Evidence Shown In The Demo | External FHIR terminology validation table | Evidence: five seeds produce 48/48 federated transfer versus 47/48 local-only; 4/4 IPS validations have 0 errors and 0 warnings; external terminology snapshot is 4/4. |
 | 11 | What Changes For Patient, Hospital, And Auditor | Final claim visual | Benefit: cross-border understandability, coded resources, local data, traceability. |
-| 12 | Honest prototype, clear production path | Limitations panel | Scope: synthetic data, no certification, no formal privacy guarantee. |
+| 12 | Honest prototype, clear production path | Limitations panel | Scope: synthetic data, independent clinical review pending, no certification, no formal privacy guarantee. |
 
 ## Exact Visual Evidence To Use
 
@@ -48,6 +50,7 @@ Do not say:
 - `submission/screenshots/usa-to-india-fhir-bundle.png`
 - `submission/screenshots/australia-to-europe-fhir-bundle.png`
 - `submission/screenshots/europe-to-usa-evidence.png`
+- `submission/screenshots/external-terminology-validation.png`
 - Generated internal diagrams from `scripts/build_demo_video.py`:
   - pipeline
   - local phrase mapping

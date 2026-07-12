@@ -44,11 +44,13 @@ The video should say:
 - "FHIR IPS is the interoperable artifact; PDFs are human-readable renderings."
 - "Readiness checks only, not national certification."
 - "FedAvg gives data locality only, not a formal privacy guarantee."
+- "External terminology checks verify representative code recognition; they do not prove semantic mapping correctness."
 
 The video should not say:
 
 - "certified national conversion"
 - "fully private federated learning"
 - "production clinical decision support"
+- "clinically validated" unless the independent review packet has actually been completed and signed
 
 If any wording is changed later, preserve these claim boundaries.

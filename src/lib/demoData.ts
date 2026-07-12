@@ -787,6 +787,52 @@ export const OFFICIAL_VALIDATION = {
   note: "RxNorm ingredient codes are outside the IPS guide's recommended medication value set.",
 };
 
+export const EXTERNAL_TERMINOLOGY_VALIDATION = {
+  checkedAt: "2026-07-12T03:49:58Z",
+  endpoint: "https://tx.fhir.org/r4",
+  fhirVersion: "R4",
+  checks: [
+    {
+      terminology: "SNOMED CT",
+      system: "http://snomed.info/sct",
+      code: "44054006",
+      display: "Diabetes mellitus type II",
+      version: "2025-02-01 International Edition",
+      lookupPassed: true,
+      validateCodePassed: true,
+    },
+    {
+      terminology: "LOINC",
+      system: "http://loinc.org",
+      code: "4548-4",
+      display: "Hemoglobin A1c/Hemoglobin.total in Blood",
+      version: "2.82",
+      lookupPassed: true,
+      validateCodePassed: true,
+    },
+    {
+      terminology: "RxNorm",
+      system: "http://www.nlm.nih.gov/research/umls/rxnorm",
+      code: "6809",
+      display: "metformin",
+      version: "2026-03-02",
+      lookupPassed: true,
+      validateCodePassed: true,
+    },
+    {
+      terminology: "ICD-10",
+      system: "http://hl7.org/fhir/sid/icd-10",
+      code: "E11",
+      display: "Type 2 diabetes mellitus",
+      version: "2019-covid-expanded",
+      lookupPassed: true,
+      validateCodePassed: true,
+    },
+  ],
+  scope: "External evidence verifies that representative target codes are recognized. It does not prove source-phrase extraction or clinical mapping correctness.",
+  translationNote: "Local phrase translation still uses the prototype's own FHIR ConceptMap; tx.fhir.org executed $lookup and $validate-code only, not the local $translate.",
+};
+
 export const PIPELINE_STEPS = [
   { key: "report", label: "Report", icon: "FileText" },
   { key: "facts", label: "Facts", icon: "Sparkles" },

@@ -153,8 +153,8 @@ SLIDES = [
         bullets=[
             "Local term is represented in a local CodeSystem.",
             "Allowed targets are constrained through a ValueSet.",
-            "Accepted mapping is published as a FHIR ConceptMap.",
-            "$translate, $lookup, and $validate-code make the decision auditable.",
+            "Accepted local mapping is published as a FHIR ConceptMap.",
+            "tx.fhir.org checks representative targets with $lookup and $validate-code.",
         ],
         narration=(
             "The global linker is FHIR native. A local phrase is represented in a local CodeSystem, "
@@ -221,13 +221,13 @@ SLIDES = [
         eyebrow="Evidence",
         title="Evidence Shown In The Demo",
         visual="screenshot",
-        screenshot="europe-to-usa-evidence.png",
-        route="Europe -> USA",
+        screenshot="external-terminology-validation.png",
+        route="External FHIR terminology snapshot",
         bullets=[
-            "20 synthetic reports across 4 country sites.",
-            "768 terminology training mentions plus 192 globally unseen examples.",
-            "48/48 cross-site transfer mappings correct in the synthetic validation set.",
-            "All 4 current Bundles pass official IPS 2.0.1 validation: 0 errors, 0 warnings.",
+            "Five seeds: 48/48 federated versus 47/48 local-only transfer.",
+            "192/192 globally unseen synthetic examples at every seed.",
+            "All 4 Bundles pass IPS 2.0.1: 0 errors, 0 warnings.",
+            "External FHIR terminology snapshot: 4/4 lookup + validate-code.",
         ],
         narration=(
             "The evidence is intentionally visible. The demo has 20 synthetic reports across four "
@@ -258,9 +258,9 @@ SLIDES = [
         title="Honest prototype, clear production path",
         visual="limits",
         bullets=[
-            "Synthetic data only; no real patient data.",
+            "Synthetic data only; independent clinical review is pending.",
             "Rule-backed extraction; pretrained clinical NER is future work.",
-            "Simulated terminology operations; live terminology servers are future work.",
+            "Local ConceptMap translation is simulated; external code checks are representative only.",
             "Production privacy needs DP-SGD, secure aggregation, sample thresholds, and auditing.",
         ],
         narration=(

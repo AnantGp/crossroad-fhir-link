@@ -40,7 +40,8 @@ Doctor report or EHR-like note
   -> local terminology registry lookup
   -> federated terminology linker for registry misses
   -> FHIR CodeSystem / ValueSet / ConceptMap
-  -> simulated $translate / $lookup / $validate-code
+  -> local ConceptMap $translate
+  -> external FHIR $lookup / $validate-code snapshot
   -> FHIR R4 IPS-style document Bundle
   -> target-country PDF and readiness report
 ```
@@ -61,6 +62,7 @@ Important: FedAvg gives data locality only. It is not cryptography, not formal d
 - Five-seed robustness study: 48/48 federated transfer versus 47/48 local-only at every seed, a measured gain of +1 per seed.
 - 192/192 globally unseen mappings and macro-F1 1.000 at every seed; local-only averaged 94.27% with 0.26 percentage-point sample standard deviation.
 - Communication estimate: 48.05 KiB of model tensors per client update and 1.88 MiB two-way tensor traffic across five rounds.
+- External FHIR terminology snapshot: tx.fhir.org accepted representative SNOMED CT, LOINC, RxNorm, and ICD-10 codes through both `$lookup` and `$validate-code` (4/4 on each operation).
 - All four current Bundles pass HL7 FHIR Validator 6.9.11 against IPS 2.0.1 with 0 errors and 0 warnings; each has two informational notes because RxNorm ingredients are outside the IPS guide's recommended medication value set.
 - 4/4 judge routes click-tested: USA -> India, India -> USA, Australia -> Europe, Europe -> USA.
 - 16/16 route downloads verified: source PDF, final PDF, FHIR JSON, evidence JSON.
@@ -83,7 +85,7 @@ PYTHONPATH=src python3 -m ips_agent.cli federated-demo --rounds 5 --seed 42 --ha
 PYTHONPATH=src python3 -m ips_agent.cli federated-study --rounds 5 --seeds 7 21 42 84 126 --hash-dim 1024
 ```
 
-The detailed seed-42 result is stored in [`submission/federated_benchmark.json`](submission/federated_benchmark.json), and the robustness study is stored in [`submission/federated_multiseed_benchmark.json`](submission/federated_multiseed_benchmark.json). The full official IPS validator output is stored in [`submission/official_validation/`](submission/official_validation/README.md).
+The detailed seed-42 result is stored in [`submission/federated_benchmark.json`](submission/federated_benchmark.json), the robustness study is stored in [`submission/federated_multiseed_benchmark.json`](submission/federated_multiseed_benchmark.json), and the external terminology snapshot is stored in [`submission/external_terminology_validation.json`](submission/external_terminology_validation.json). The full official IPS validator output is stored in [`submission/official_validation/`](submission/official_validation/README.md).
 
 ## Readiness Baselines
 
@@ -103,7 +105,8 @@ This is a standards-focused prototype using synthetic data only.
 - No national profile certification is claimed.
 - Readiness checks are not conformance certification.
 - Extraction is rule-backed; pretrained clinical NER is future work.
-- FHIR terminology operations are simulated locally; live terminology servers are future work.
+- Local ConceptMap translation is prototype-simulated. Representative target codes were independently checked through the external HL7 terminology server, but full production terminology integration remains future work.
+- The independent clinical review packet is unsigned until a qualified reviewer completes it; no clinician endorsement is claimed yet.
 - Federated metrics cover five predetermined deterministic seeds, but the data remains synthetic and does not prove clinical accuracy on real notes.
 - Production privacy requires secure aggregation, DP-SGD, sample thresholds, and privacy auditing.
 

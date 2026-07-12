@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { CASE_LIST, FED_ROBUSTNESS, FED_SUMMARY, VALUE_SET_DIABETES } from "@/lib/demoData";
+import {
+  CASE_LIST,
+  EXTERNAL_TERMINOLOGY_VALIDATION,
+  FED_ROBUSTNESS,
+  FED_SUMMARY,
+  VALUE_SET_DIABETES,
+} from "@/lib/demoData";
 
 type ConceptMapGroup = {
   target?: string;
@@ -198,5 +204,14 @@ describe("static clinical and FHIR evidence", () => {
     expect(FED_ROBUSTNESS.seedsWithPerfectTransfer).toBe(5);
     expect(FED_ROBUSTNESS.receiverSeedChecksWithoutRegression).toBe(20);
     expect(FED_ROBUSTNESS.twoWayModelTrafficBytes).toBe(1968160);
+  });
+
+  it("keeps external terminology evidence scoped and traceable", () => {
+    expect(EXTERNAL_TERMINOLOGY_VALIDATION.endpoint).toBe("https://tx.fhir.org/r4");
+    expect(EXTERNAL_TERMINOLOGY_VALIDATION.checks).toHaveLength(4);
+    expect(EXTERNAL_TERMINOLOGY_VALIDATION.checks.every((check) => check.lookupPassed)).toBe(true);
+    expect(EXTERNAL_TERMINOLOGY_VALIDATION.checks.every((check) => check.validateCodePassed)).toBe(true);
+    expect(EXTERNAL_TERMINOLOGY_VALIDATION.translationNote).toContain("$translate");
+    expect(EXTERNAL_TERMINOLOGY_VALIDATION.translationNote).toContain("tx.fhir.org executed $lookup and $validate-code only");
   });
 });

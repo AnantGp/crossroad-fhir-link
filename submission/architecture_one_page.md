@@ -50,7 +50,7 @@ trusted deterministic lookup for known phrases
                v
 FHIR terminology layer
 CodeSystem + ValueSet + ConceptMap
-simulated $translate + $lookup + $validate-code
+local ConceptMap $translate + external $lookup / $validate-code snapshot
         |
         v
 FHIR R4 IPS-style document Bundle

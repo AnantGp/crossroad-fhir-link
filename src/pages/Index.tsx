@@ -31,6 +31,7 @@ import {
   COUNTRIES,
   CountryCode,
   EVIDENCE,
+  EXTERNAL_TERMINOLOGY_VALIDATION,
   FED_ROBUSTNESS,
   FED_SUMMARY,
   FED_SITES,
@@ -790,6 +791,7 @@ function buildEvidencePack(activeCase: DemoCase, targetCountry: CountryCode) {
       validated_bundles: METRICS.validatedBundles,
       validator_profile: METRICS.validatorProfile,
       informational_notes_per_bundle: METRICS.validatorInfoNotesPerBundle,
+      external_terminology_codes_checked: EXTERNAL_TERMINOLOGY_VALIDATION.checks.length,
       fhir_bundle_type: activeCase.ipsBundle.type,
     },
     semantic_trace: activeCase.traceFacts.map((fact) => ({
@@ -825,7 +827,7 @@ function buildEvidencePack(activeCase: DemoCase, targetCountry: CountryCode) {
       "Synthetic data only.",
       "Rule-backed extraction in prototype; pretrained clinical NER is future work.",
       "Readiness checks only; no national profile certification.",
-      "Local simulated FHIR terminology operations; live terminology servers are future work.",
+      "Representative target codes were externally checked through tx.fhir.org; local ConceptMap translation remains simulated.",
     ],
     federated_benchmark: {
       configuration: {
@@ -881,6 +883,7 @@ function buildEvidencePack(activeCase: DemoCase, targetCountry: CountryCode) {
         scope: "Tensor payload estimate only; transport and serialization overhead excluded.",
       },
     },
+    external_terminology_validation: EXTERNAL_TERMINOLOGY_VALIDATION,
     official_validation: OFFICIAL_VALIDATION,
     fhir_bundle: activeCase.ipsBundle,
   };
@@ -1612,7 +1615,8 @@ const Index = () => {
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Globally unseen robustness:</span> 192/192 and macro-F1 1.000 at all five seeds; local-only averaged 94.27% ± 0.26%.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Communication estimate:</span> 48.05 KiB of model tensors per client update and 1.88 MiB total two-way tensor traffic across five rounds.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Official HL7 validator:</span> 4/4 current Bundles pass IPS 2.0.1 with 0 errors and 0 warnings.</span></li>
-                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">FHIR-native terminology layer:</span> CodeSystem, ValueSet, ConceptMap + simulated $translate / $lookup / $validate-code.</span></li>
+                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">External terminology check:</span> tx.fhir.org accepted representative SNOMED CT, LOINC, RxNorm, and ICD-10 codes through FHIR $lookup and $validate-code.</span></li>
+                    <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">FHIR-native mapping:</span> local CodeSystem, constrained ValueSet, and auditable ConceptMap; local $translate remains prototype-simulated.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Medical placement check:</span> conditions, observations, and medications land in the expected FHIR resource types.</span></li>
                     <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /><span><span className="font-medium">Privacy boundary:</span> coordinator receives only model tensors and sample counts.</span></li>
                   </ul>
@@ -1628,9 +1632,46 @@ const Index = () => {
                     <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">Rule-backed extractor</span> in this prototype; pretrained clinical NER is future work.</span></li>
                     <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">FedAvg gives data locality only;</span> model updates can leak information without DP-SGD or secure aggregation.</span></li>
                     <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">Readiness checks only;</span> no national profile certification.</span></li>
-                    <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">Local simulated FHIR terminology operations;</span> live terminology servers are future work.</span></li>
+                    <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">External terminology evidence is representative only;</span> full production terminology integration and external ConceptMap execution remain future work.</span></li>
                     <li className="flex gap-2"><span className="text-warning">•</span><span><span className="text-foreground font-medium">Two validator information notes per Bundle:</span> RxNorm ingredients are outside the IPS guide's recommended medication value set; IPS-preferred product coding is future work.</span></li>
                   </ul>
+                </div>
+              </div>
+
+              <div className="card-surface overflow-hidden" data-testid="external-terminology-validation">
+                <div className="p-3 border-b border-border flex items-start justify-between gap-2 flex-wrap">
+                  <div>
+                    <h3 className="text-sm font-semibold flex items-center gap-2">
+                      <Globe2 className="h-4 w-4 text-info" /> External FHIR terminology validation
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Patient-free snapshot · {EXTERNAL_TERMINOLOGY_VALIDATION.endpoint} · checked 12 July 2026
+                    </p>
+                  </div>
+                  <span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />4/4 lookup + validate-code</span>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="data-table">
+                    <thead>
+                      <tr><th>Terminology</th><th>Code</th><th>Server display</th><th>Version</th><th>$lookup</th><th>$validate-code</th></tr>
+                    </thead>
+                    <tbody>
+                      {EXTERNAL_TERMINOLOGY_VALIDATION.checks.map((check) => (
+                        <tr key={`${check.terminology}-${check.code}`}>
+                          <td className="font-medium">{check.terminology}</td>
+                          <td><span className="pill pill-neutral mono">{check.code}</span></td>
+                          <td>{check.display}</td>
+                          <td className="text-xs text-muted-foreground">{check.version}</td>
+                          <td><span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />pass</span></td>
+                          <td><span className="pill pill-success"><CheckCircle2 className="h-3 w-3" />pass</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="px-3 py-2 border-t border-border text-[11px] text-muted-foreground space-y-1">
+                  <p>{EXTERNAL_TERMINOLOGY_VALIDATION.scope}</p>
+                  <p>{EXTERNAL_TERMINOLOGY_VALIDATION.translationNote}</p>
                 </div>
               </div>
 

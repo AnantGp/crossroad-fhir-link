@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T02:40:00+05:30",
+  "generatedAt": "2026-07-12T10:16:00+05:30",
   "url": "https://crossroad-fhir-link-three.vercel.app",
   "routesTested": 4,
   "routes": [
@@ -31,7 +31,7 @@
         },
         "evidenceJson": {
           "path": "submission/downloads/usa-to-india-evidence-pack.json",
-          "bytes": 27387,
+          "bytes": 31044,
           "head": "{\n  \""
         }
       }
@@ -64,7 +64,7 @@
         },
         "evidenceJson": {
           "path": "submission/downloads/india-to-usa-evidence-pack.json",
-          "bytes": 27964,
+          "bytes": 31621,
           "head": "{\n  \""
         }
       }
@@ -97,7 +97,7 @@
         },
         "evidenceJson": {
           "path": "submission/downloads/australia-to-europe-evidence-pack.json",
-          "bytes": 28435,
+          "bytes": 32092,
           "head": "{\n  \""
         }
       }
@@ -130,7 +130,7 @@
         },
         "evidenceJson": {
           "path": "submission/downloads/europe-to-usa-evidence-pack.json",
-          "bytes": 28426,
+          "bytes": 32083,
           "head": "{\n  \""
         }
       }
@@ -174,7 +174,21 @@
       "twoWayTensorTraffic": "1.88 MiB across five rounds",
       "limitation": "Five deterministic seeds on synthetic terminology examples; not clinical accuracy."
     },
-    "frontendTests": "15/15 passed",
+    "externalTerminologyValidation": {
+      "endpoint": "https://tx.fhir.org/r4",
+      "checkedAt": "2026-07-12T03:49:58Z",
+      "lookupPassed": "4/4",
+      "validateCodePassed": "4/4",
+      "patientDataSent": false,
+      "scope": "Representative code recognition only; source-phrase semantic correctness is not proven by this check."
+    },
+    "independentClinicalReview": {
+      "status": "pending",
+      "packet": "submission/clinical_review_packet.pdf",
+      "checklist": "submission/clinical_review_checklist.csv",
+      "claim": "No external clinical endorsement is claimed until the packet is completed and signed."
+    },
+    "frontendTests": "16/16 passed",
     "pythonTests": "13/13 passed",
     "productionBuild": "passed",
     "desktopScreenshotCaptured": "submission/screenshots/final-audit-01-dashboard.png",

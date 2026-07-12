@@ -68,6 +68,7 @@ Metrics shown in the UI match the downloadable evidence pack:
 - five-seed semantic transfer validation: 48/48 federated versus 47/48 local-only at every seed (+1 per seed)
 - globally unseen robustness: 192/192 and macro-F1 1.000 at every seed; local-only mean 94.27% with 0.26 percentage-point sample standard deviation
 - communication estimate: 48.05 KiB of model tensors per client update and 1.88 MiB two-way tensor traffic across five rounds
+- external terminology snapshot: 4/4 `$lookup` and 4/4 `$validate-code` operations passed at `https://tx.fhir.org/r4`
 - official HL7 FHIR Validator 6.9.11 against IPS 2.0.1: 4/4 Bundles, 0 errors, 0 warnings
 - informational notes: 2 per Bundle because RxNorm ingredients are outside the IPS guide's recommended medication value set
 
@@ -79,7 +80,8 @@ These should be stated openly to judges:
 
 - data is synthetic
 - extraction is rule-backed
-- terminology operations are simulated
+- local ConceptMap translation is simulated; representative target codes are externally checked through FHIR `$lookup` and `$validate-code`
+- independent clinical review remains pending until the supplied review packet is completed and signed
 - national checks are readiness-only
 - FL does not provide formal privacy without additional safeguards
 

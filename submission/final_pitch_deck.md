@@ -1,128 +1,99 @@
 # Final Pitch Deck
 
+This outline matches the 10-slide PPTX and PDF deliverables.
+
 ## Slide 1 - Title
 
 **Cross-Border IPS AI Agent**
 
-Federated FHIR terminology alignment for cross-border Type 2 diabetes summaries.
+Federated, FHIR-native terminology alignment for cross-border Type 2 diabetes summaries.
 
-## Slide 2 - Aim
+## Slide 2 - Problem
 
-Make a local diabetes report usable across borders by converting it into a machine-readable, universally coded, HL7 FHIR IPS-style patient summary.
+Local clinical meaning gets lost before the document crosses a border.
+
+- `T2DM`, `sugar disease`, `madhumeha type 2`, and `DM2` may refer to the same condition.
+- A readable PDF does not provide machine-readable semantic interoperability.
+- Receiver systems need standard terminology plus a predictable exchange structure.
+
+## Slide 3 - Solution
+
+One local report becomes two synchronized outputs:
+
+- a FHIR IPS-style R4 document Bundle for machine-to-machine exchange;
+- a target-country PDF rendered from that Bundle for human review.
 
 Core claim:
 
 > FHIR IPS is the interoperable artifact; PDFs are human-readable renderings.
 
-## Slide 3 - Problem Statement
-
-Local clinical language blocks interoperability.
-
-Examples for the same concept:
-
-- USA: `T2DM`, `adult-onset diabetes`
-- India: `sugar disease`, `madhumeha type 2`
-- Australia: `type 2 DM`, `T2 diabetes`
-- Europe: `DM2`, `diabetes mellitus type II`
-
-The problem is not only document format. It is semantic meaning plus machine-readable exchange.
-
-## Slide 4 - Solution Flow
+## Slide 4 - Architecture
 
 ```text
-doctor report
+doctor report or EHR-like note
   -> clinical fact extraction
-  -> local registry lookup
-  -> federated terminology linker
-  -> FHIR ConceptMap validation
+  -> deterministic local registry
+  -> federated linker on registry misses
+  -> FHIR CodeSystem / ValueSet / ConceptMap
   -> FHIR IPS document Bundle
-  -> target-country report and readiness gaps
+  -> receiver readiness check and human rendering
 ```
 
-## Slide 5 - Machine-Readable Proof
+Every transformation retains an audit path from source phrase to meaning, code, and FHIR resource.
 
-The final exchange artifact is an IPS-style FHIR R4 document Bundle:
+## Slide 5 - Federated Learning
 
-- `Bundle.type=document`
-- `Composition` first
-- `Condition`, `Observation`, `MedicationStatement`, and related resources
-- official HL7 validation: 4/4 current Bundles pass IPS 2.0.1 with 0 errors and 0 warnings
+- 4 simulated sites, 768 training mentions, 48 cross-site transfer probes, and 192 globally unseen examples.
+- Across five seeds: 48/48 federated transfer versus 47/48 local-only.
+- All 20 receiver-by-seed comparisons are non-regressive.
+- Tensor payload estimate: 48.05 KiB per client update and 1.88 MiB over five rounds.
+- The coordinator receives model tensors and sample counts only.
 
-## Slide 6 - Universal Coding Proof
+FedAvg provides data locality, not cryptography, formal de-identification, differential privacy, or secure aggregation.
 
-Local clinical terms are normalized into accepted healthcare codes:
+## Slide 6 - FHIR-Native Linker
 
-- conditions: SNOMED CT and ICD-10
-- labs: LOINC
-- medications: RxNorm
-- exchange structure: FHIR resources
+- local `CodeSystem` represents site-specific terms;
+- target `ValueSet` constrains acceptable concepts;
+- `ConceptMap` publishes the local-to-standard relationship;
+- local `$translate` remains prototype-simulated;
+- tx.fhir.org independently accepted representative SNOMED CT, LOINC, RxNorm, and ICD-10 codes through 4/4 `$lookup` and 4/4 `$validate-code` checks.
 
-## Slide 7 - Federated Learning Role
+External code validity does not prove that the source phrase was interpreted correctly. Low-confidence mappings require human review.
 
-Each country/site trains a terminology linker locally.
+## Slide 7 - IPS Validation
 
-The coordinator receives only:
+- 4/4 current document Bundles pass HL7 FHIR Validator 6.9.11 against the IPS 2.0.1 Bundle profile.
+- 0 errors and 0 warnings.
+- Two informational notes per Bundle remain visible because RxNorm ingredient codes are outside the IPS guide's recommended medication ValueSet.
+- Structural/profile validation is not clinical validation or national certification.
 
-- model tensors
-- sample counts
+## Slide 8 - Cross-Border Evidence
 
-It does not receive:
+The same machine-readable summary supports four receiver journeys:
 
-- raw reports
-- patient identifiers
-- labels or aliases
-- patient-level FHIR Bundles
+- USA -> India
+- India -> USA
+- Australia -> Europe
+- Europe -> USA
 
-FedAvg gives data locality only; it is not cryptography or formal de-identification.
+Every route exposes a source PDF, receiver PDF, FHIR Bundle JSON, evidence JSON, and readiness gaps. Readiness comparisons do not claim national conformance.
 
-## Slide 8 - FHIR-Native Global Linker
+## Slide 9 - Reproducibility
 
-The model predicts candidate mappings, but HL7 makes them auditable:
+- 16/16 frontend behavior and evidence tests pass.
+- 13/13 Python pipeline and FedAvg tests pass.
+- 16/16 route downloads were click-tested.
+- Five-seed evidence reproduces exactly from the checked-in command.
+- Official IPS validator logs and external terminology responses are included without editing.
+- An independent clinical review packet is supplied but remains pending until completed and signed.
 
-- local `CodeSystem`
-- target `ValueSet`
-- `ConceptMap`
-- simulated `$translate`
-- simulated `$lookup`
-- simulated `$validate-code`
+## Slide 10 - Closing Claim
 
-## Slide 9 - Cross-Border Sharing
+Cross-Border IPS AI Agent combines semantic and data interoperability:
 
-The same FHIR IPS can support USA, India, Australia, and Europe routes.
+- federated learning aligns local terminology without centralizing raw reports;
+- FHIR terminology artifacts make mappings constrained and auditable;
+- FHIR IPS packages the coded summary for cross-border exchange.
 
-For each route, the judge can download:
-
-- source country PDF
-- final target-country PDF
-- FHIR Bundle JSON
-- evidence pack JSON
-
-Readiness checks are shown, but no national certification is claimed.
-
-## Slide 10 - Evidence
-
-- 20 synthetic reports
-- 4 country sites
-- 768 terminology training mentions
-- 192 globally unseen examples
-- five-seed study: 48/48 federated transfer versus 47/48 local-only at every seed, a FedAvg gain of +1 per seed
-- 192/192 globally unseen mappings and macro-F1 1.000 at every seed; local-only mean 94.27% ± 0.26 percentage points
-- 48.05 KiB of model tensors per client update and 1.88 MiB two-way tensor traffic across five rounds
-- 0 errors and 0 warnings across all four current IPS 2.0.1 Bundle-profile validations
-- 2 informational notes per Bundle: RxNorm ingredients are outside the IPS guide's recommended medication value set
-
-All model metrics cover five predetermined deterministic seeds, but remain synthetic results rather than clinical performance claims.
-
-## Slide 11 - Honest Limits
-
-- Synthetic data only
-- Rule-backed extraction in prototype
-- Simulated terminology operations
-- Readiness checks only, not certification
-- No formal privacy guarantee without secure aggregation, DP-SGD, thresholds, and auditing
-
-## Slide 12 - Final Claim
-
-Cross-Border IPS AI Agent combines semantic interoperability and data interoperability.
-
-Federated learning aligns local terminology without centralizing raw reports. FHIR terminology artifacts make mappings auditable. FHIR IPS packages the result into a standards-based patient summary for cross-border exchange.
+This is an honest synthetic prototype with a clear production path, not certified clinical software.

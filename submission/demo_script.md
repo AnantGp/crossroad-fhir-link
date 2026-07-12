@@ -83,9 +83,8 @@ The demo expresses accepted mappings using:
 - local `CodeSystem`
 - target `ValueSet`
 - `ConceptMap`
-- simulated `$translate`
-- simulated `$lookup`
-- simulated `$validate-code`
+- local ConceptMap `$translate`
+- external tx.fhir.org `$lookup` and `$validate-code` evidence for representative target codes
 
 This is why the solution is HL7-native instead of just an AI text converter.
 
@@ -110,8 +109,10 @@ The evidence shown in the demo is synthetic validation evidence:
 - estimated model traffic is 48.05 KiB of model tensors per client update and 1.88 MiB two-way across five rounds
 - all four current Bundles show official IPS 2.0.1 validator evidence with 0 errors and 0 warnings
 - two informational medication-terminology notes per Bundle remain visible
+- the external FHIR terminology snapshot shows 4/4 representative codes passing `$lookup` and `$validate-code`
 
 These are deterministic five-seed synthetic results, not evidence of clinical accuracy on real notes.
+The public terminology server confirms that the representative target codes exist; it does not prove that every source phrase was interpreted correctly. That semantic step remains subject to independent clinical review.
 
 ## 4:30-5:00 - Benefit and Closing
 
