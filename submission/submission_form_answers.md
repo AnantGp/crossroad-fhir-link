@@ -73,7 +73,7 @@ Do not select Pilot, Ready for Deployment, or In Production. The current evidenc
 
 ## Required PDF
 
-Upload: `submission/final_pitch_deck.pdf`
+Upload: `submission/final_pitch_deck_TAP_revised.pdf`
 
 ## Video URL
 

@@ -1,97 +1,119 @@
-# One-Page Architecture
+# Cross-Border IPS AI Agent: One-Page Architecture
 
-## Aim
+## Objective
 
-Make a local diabetes report usable across borders by converting it into a machine-readable, universally coded, HL7 FHIR IPS-style patient summary.
+Convert a country-specific Type 2 diabetes report into a machine-readable, universally coded, auditable FHIR R4 IPS-style patient summary for cross-border exchange.
 
-## Objectives Proven By The Demo
+The FHIR IPS Bundle is the interoperable artifact. Source and target PDFs are human-readable renderings.
 
-- Machine-readable: IPS-style FHIR R4 document Bundle.
-- Sensitive-data posture: raw reports and identifiers stay local during FedAvg terminology learning.
-- Universal coding: local phrases map to SNOMED CT, ICD-10, LOINC, and RxNorm.
-- Cross-border sharing: the same FHIR IPS supports USA, India, Australia, and Europe readiness views.
-- Human readability: source and target PDFs are generated as renderings from the interoperable artifact.
+## Evidence Snapshot
 
-## Chronological Flow
+- 4 simulated sites: India, USA, Australia, and Europe.
+- 768 local terminology training mentions.
+- 48/48 cross-site transfer mappings for the federated model versus 47/48 for local-only models at all five deterministic seeds.
+- 192/192 globally unseen synthetic examples, macro-F1 1.000.
+- 4/4 representative Bundles passed HL7 FHIR Validator 6.9.11 against IPS 2.0.1 with 0 errors and 0 warnings.
+
+## Architecture
+
+### 1. Local Clinical Site
 
 ```text
-Country source report or EHR-like note
+Structured EHR -----------------------------> Clinical fact model
+
+Free-text or uncontrolled note
         |
         v
-Input mode decision
-        |-- structured EHR input -> skip extraction
-        |
-        |-- free text / uncontrolled note
-        v
-Rule-backed extraction in prototype
-future: pretrained clinical NER
-        |
-        v
-Clinical fact model
-JSON facts: condition, lab, value, medication, dose, context
-        |
-        v
-Local terminology registry
-trusted deterministic lookup for known phrases
-        |
-        |-- found
-        |      v
-        |   standard code selected
-        |
-        |-- not found
-               v
-        Federated terminology linker
-        local training at USA / India / Australia / Europe
-        coordinator receives model tensors + sample counts only
-               |
-               v
-        predicted canonical concept
-               |
-               v
-FHIR terminology layer
-CodeSystem + ValueSet + ConceptMap
-local ConceptMap $translate + external $lookup / $validate-code snapshot
-        |
-        v
-FHIR R4 IPS-style document Bundle
-Bundle.type=document, Composition first
-Condition / Observation / MedicationStatement resources
-        |
-        v
-Target-country readiness checks
-US Core STU9 / ABDM FHIR R4 / AU Core 2.0.0 / European Patient Summary CI-build readiness
-        |
-        v
-Human-readable target PDF
-generated from FHIR IPS Bundle
+Rule-backed extraction in the prototype ----> Clinical fact model
+                                                |
+                                                v
+                                      Local terminology registry
+                                         |                 |
+                                      registry hit     registry miss
+                                         |                 |
+                                         v                 v
+                                    trusted mapping   federated linker
 ```
 
-## What Interoperability Comes From
+Each fact retains its source span, category, value, unit, medication dose, and context. A federated prediction below 0.70 confidence is unresolved and sent for human review; no clinical code is emitted.
 
-Semantic interoperability comes from standard terminology:
+### 2. Semantic Interoperability
 
-- SNOMED CT for clinical problems
-- ICD-10 for diagnosis classification
-- LOINC for lab observations
-- RxNorm for medications
-- FHIR ConceptMap for local phrase to standard concept mappings
+```text
+Local source term
+        |
+        v
+FHIR CodeSystem + category-constrained ValueSet
+        |
+        v
+FHIR ConceptMap + simulated $translate
+        |
+        v
+$lookup + $validate-code
+        |
+        v
+SNOMED CT / ICD-10 / LOINC / RxNorm coding
+```
 
-Data interoperability comes from FHIR:
+Code validity is not the same as semantic correctness. The prototype evaluates predicted concepts against synthetic gold labels and exposes traceability; independent clinician review is still required for a production claim.
 
-- Patient
-- Condition
-- Observation
-- MedicationStatement
-- Composition
-- Bundle
+### 3. Data Interoperability
 
-## Privacy Boundary
+```text
+Coded facts
+    |
+    v
+IPS-style FHIR R4 document Bundle
+Bundle.type = document; Composition is first
+    |
+    v
+Patient / Condition / Observation / MedicationStatement / Organization
+    |
+    v
+Receiver readiness checks
+US Core STU9 / ABDM R4 draft / AU Core CI / European Patient Summary ballot
+    |
+    v
+Human-readable target PDF generated from the Bundle
+```
 
-Raw reports, local aliases, labels, identifiers, and patient-level FHIR Bundles stay local.
+Readiness checks are not national-profile certification.
 
-The federated coordinator receives:
+## Genuine Federated Learning Loop
 
-- model tensors
-- sample counts
+```text
+India / USA / Australia / Europe
+        |
+        v
+Local SGD on each site's private terminology examples
+        |
+        v
+Weight update + sample count sent to coordinator
+        |
+        v
+Sample-count-weighted FedAvg
+        |
+        v
+Global model broadcast to all sites
+        |
+        +------------------------ next round
+```
 
-This is data locality, not a formal privacy guarantee.
+The coordinator payload contains model tensors and sample counts only. Raw reports, aliases, labels, identifiers, and patient-level FHIR Bundles are not sent to the coordinator. The measured payload is 48.05 KiB per client update and 1.88 MiB of two-way model traffic across five rounds.
+
+FedAvg provides data locality, not cryptography, de-identification, or a formal privacy guarantee. Model updates may leak information without secure aggregation, differential privacy, and privacy auditing.
+
+## Trace Example
+
+```text
+synthetic phrase: "madhumeha type 2"
+        -> canonical concept: Type 2 diabetes mellitus
+        -> SNOMED CT 44054006 / ICD-10 E11
+        -> FHIR Condition
+```
+
+## Claim Boundary
+
+Proven in this prototype: synthetic federated benchmark behavior, FHIR-native terminology artifacts, official validator evidence, and downloadable route outputs.
+
+Not claimed: clinical accuracy, national certification, formal privacy, production readiness, real-world EHR integration, or completed independent clinician sign-off.

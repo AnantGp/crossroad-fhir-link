@@ -48,7 +48,9 @@ FHIR IPS is the interoperable artifact; PDFs are human-readable renderings.
 - Demo script: [demo_script.md](demo_script.md)
 - Architecture one-pager: [architecture_one_page.md](architecture_one_page.md)
 - Final pitch deck source: [final_pitch_deck.md](final_pitch_deck.md)
-- Editable final pitch deck: [final_pitch_deck.pptx](final_pitch_deck.pptx)
+- Final judge pitch deck: [final_pitch_deck_TAP_revised.pdf](final_pitch_deck_TAP_revised.pdf)
+- Editable final judge pitch deck: [final_pitch_deck_TAP_revised.pptx](final_pitch_deck_TAP_revised.pptx)
+- Refined Tech Adaptive Pandit logo: [assets/tech-adaptive-pandit-logo-refined.png](assets/tech-adaptive-pandit-logo-refined.png)
 - Final technical audit: [final_technical_audit.md](final_technical_audit.md)
 - Submission form answers: [submission_form_answers.md](submission_form_answers.md)
 - Reproducible Python/FL implementation: [../prototype/README.md](../prototype/README.md)
@@ -62,12 +64,13 @@ FHIR IPS is the interoperable artifact; PDFs are human-readable renderings.
 - Screenshots: [screenshots/](screenshots/)
 - Downloaded route evidence: [downloads/](downloads/)
 - Compact supporting-evidence upload: [supporting_evidence.zip](supporting_evidence.zip)
+- Complete source archive for judges: `crossroad-fhir-link-source-2026-07-14.zip` (generated from the frozen release commit)
 
 Generated PDFs:
 
 - `architecture_one_page.pdf`
-- `final_pitch_deck.pdf`
-- `final_pitch_deck.pptx`
+- `final_pitch_deck_TAP_revised.pdf`
+- `final_pitch_deck_TAP_revised.pptx`
 - `demo_script.pdf`
 - `final_technical_audit.pdf`
 

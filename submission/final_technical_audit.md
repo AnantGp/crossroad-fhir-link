@@ -1,6 +1,8 @@
 # Final Technical Audit
 
-Audit date: July 7, 2026
+Audit date: July 14, 2026
+
+Release status: FROZEN FOR SUBMISSION. No feature development after 1:00 PM IST on July 14, 2026; only packaging, access, and submission verification are permitted.
 
 Deployed demo: https://crossroad-fhir-link-three.vercel.app
 

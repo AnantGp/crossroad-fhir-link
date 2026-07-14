@@ -65,65 +65,12 @@ def draw_arrow(c: canvas.Canvas, x1: float, y1: float, x2: float, y2: float) -> 
 
 
 def build_architecture_pdf() -> None:
-    path = SUBMISSION / "architecture_one_page.pdf"
-    c = canvas.Canvas(str(path), pagesize=landscape(A4))
-    w, h = landscape(A4)
-    draw_header(
-        c,
-        "Cross-Border IPS AI Agent - Architecture",
-        "FHIR IPS is the interoperable artifact; PDFs are human-readable renderings.",
-        w,
-        h,
-    )
+    try:
+        from scripts.build_architecture_one_page_rank_one import build
+    except ModuleNotFoundError:
+        from build_architecture_one_page_rank_one import build
 
-    boxes = [
-        (36, 445, 152, 70, "1. Source Report", "Country PDF, EHR-like note, or free-text doctor note."),
-        (222, 445, 152, 70, "2. Extraction", "Structured EHR skips extraction; free text uses rule-backed extraction in prototype."),
-        (408, 445, 152, 70, "3. Clinical Facts", "JSON fact model: condition, lab, value, medication, dose, context."),
-        (594, 445, 152, 70, "4. Local Registry", "Trusted deterministic lookup for known phrases and local aliases."),
-        (594, 320, 152, 70, "5. FL Linker", "Registry misses go to federated terminology linker trained locally per site."),
-        (408, 320, 152, 70, "6. FHIR Terminology", "CodeSystem, ValueSet, ConceptMap, translate, lookup, validate-code."),
-        (222, 320, 152, 70, "7. FHIR IPS Bundle", "Bundle.type=document, Composition first, coded FHIR resources."),
-        (36, 320, 152, 70, "8. Target Output", "Readiness checks plus human-readable target-country PDF."),
-    ]
-    for i, (x, y, bw, bh, title, body) in enumerate(boxes):
-        draw_box(c, x, y, bw, bh, title, body, TEAL_SOFT if i in [5, 6] else colors.white)
-
-    arrow_points = [
-        (188, 480, 222, 480),
-        (374, 480, 408, 480),
-        (560, 480, 594, 480),
-        (670, 445, 670, 390),
-        (594, 355, 560, 355),
-        (408, 355, 374, 355),
-        (222, 355, 188, 355),
-    ]
-    for p in arrow_points:
-        draw_arrow(c, *p)
-
-    c.setFillColor(BLUE_SOFT)
-    c.setStrokeColor(BORDER)
-    c.roundRect(36, 175, 710, 96, 7, fill=1, stroke=1)
-    c.setFillColor(TEAL_DARK)
-    c.setFont("Helvetica-Bold", 11)
-    c.drawString(52, 246, "Interoperability and privacy evidence")
-    c.setFillColor(INK)
-    c.setFont("Helvetica", 8.5)
-    lines = [
-        "Semantic interoperability: SNOMED CT, ICD-10, LOINC, RxNorm, and FHIR ConceptMap.",
-        "Data interoperability: Patient, Condition, Observation, MedicationStatement, Composition, and Bundle.",
-        "Federated privacy boundary: raw reports, labels, aliases, identifiers, and patient-level Bundles stay local.",
-        "Coordinator receives model tensors and sample counts only. FedAvg is data locality, not formal privacy.",
-    ]
-    y = 228
-    for line in lines:
-        c.drawString(52, y, line)
-        y -= 16
-
-    c.setFillColor(MUTED)
-    c.setFont("Helvetica", 7.5)
-    c.drawString(36, 28, "Submission scope: synthetic data, readiness checks only, no national certification, no clinical decision-support claim.")
-    c.save()
+    build()
 
 
 SLIDES = [
