@@ -36,24 +36,24 @@ Ambiguous expressions such as `sugar disease` do not, by themselves, establish a
 Training and report conversion are separate workflows. The model learns from terminology mentions; patient Bundles are downstream outputs.
 
 ```mermaid
+flowchart LR
+    T["Local training at four sites"] --> U["Tensors and sample counts"]
+    U --> A["Sample-weighted FedAvg"]
+    A --> G["Shared terminology model"]
+```
+
+The shared model supplies the learned fallback during local report conversion:
+
+```mermaid
 flowchart TD
-    subgraph learning["Terminology learning: four simulated sites"]
-        L["Local labelled terminology mentions"] --> T["Train local classifiers"]
-        T --> U["Model tensors and sample counts"]
-        U --> A["Sample-weighted FedAvg"]
-        A --> G["Shared terminology model"]
-    end
-    subgraph conversion["Report conversion at the local site"]
-        R["Synthetic clinical note"] --> F["Rule-based extraction into clinical facts"]
-        F --> K["Registry and learned-cache lookup"]
-        K -->|"Unmapped phrase"| P["Terminology prediction"]
-        G --> P
-        P -->|"Low confidence"| H["Unresolved: human review"]
-        P -->|"Accepted by local checks"| C["FHIR terminology artifacts"]
-        K -->|"Known mapping"| B["FHIR R4 IPS-style document Bundle"]
-        C --> B
-        B --> O["Readable PDF and receiver readiness gaps"]
-    end
+    R["Synthetic clinical note"] --> F["Rule-based fact extraction"]
+    F --> K["Registry and cache lookup"]
+    K -->|"Miss"| P["Shared terminology linker"]
+    K -->|"Known"| B["FHIR R4 IPS-style document Bundle"]
+    P -->|"Accepted by local checks"| C["FHIR terminology artifacts"]
+    P -->|"Low confidence"| H["Unresolved: human review"]
+    C --> B
+    B --> O["Readable PDF and readiness gaps"]
 ```
 
 1. **Extract facts.** The Python extractor identifies supported conditions, measurements, and medications using deterministic rules, retaining source text, values, and units.
@@ -150,6 +150,6 @@ Terminology services are simulated locally, alongside a dated external code-vali
 
 **Tech Adaptive Pandit:** Anant Gupta, Manish Gupta, and Gourav Gupta.
 
-This repository accompanies the team's HL7 AI Challenge 2026 prototype submission. It contains software and supporting materials; a peer-reviewed manuscript or award is not claimed. Use GitHub's **Cite this repository** control, or [CITATION.cff](CITATION.cff), and include the commit SHA when reporting experiments.
+This repository accompanies the team's HL7 AI Challenge 2026 prototype submission. Use GitHub's **Cite this repository** control, or [CITATION.cff](CITATION.cff), and include the commit SHA when reporting experiments.
 
 The submitted implementation snapshot is [`88f58bf`](https://github.com/AnantGp/crossroad-fhir-link/commit/88f58bfc2d6a1752b6bfa962cc0508f7008faea0). The reading guides were refreshed in October 2026; historical evidence retains its original dates. No software license is currently declared; contact the authors before reuse that requires permission.
