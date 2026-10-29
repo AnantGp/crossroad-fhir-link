@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this software or its synthetic experiment, cite this repository and record the commit SHA."
+type: software
+title: "Cross-Border IPS AI Agent"
+authors:
+  - family-names: Gupta
+    given-names: Anant
+    affiliation: Tech Adaptive Pandit
+  - family-names: Gupta
+    given-names: Manish
+    affiliation: Tech Adaptive Pandit
+  - family-names: Gupta
+    given-names: Gourav
+    affiliation: Tech Adaptive Pandit
+repository-code: "https://github.com/AnantGp/crossroad-fhir-link"
+url: "https://github.com/AnantGp/crossroad-fhir-link"
+abstract: >-
+  A synthetic Type 2 diabetes interoperability prototype combining federated
+  terminology classification, FHIR terminology artifacts, and FHIR R4
+  International Patient Summary document Bundles across four simulated sites.
+  Includes a reproducible PyTorch FedAvg implementation, a React demonstration,
+  and recorded evaluation and validator evidence for the HL7 AI Challenge 2026
+  submission by Tech Adaptive Pandit.
+keywords:
+  - HL7
+  - FHIR
+  - International Patient Summary
+  - federated learning
+  - FedAvg
+  - terminology mapping
+  - semantic interoperability
+  - Type 2 diabetes
+  - synthetic data

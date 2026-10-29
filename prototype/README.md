@@ -1,5 +1,7 @@
 # Reproducible Python Prototype
 
+[Project overview](../README.md) · [Method](../docs/methodology.md) · [Evaluation](../docs/evaluation.md) · [Full reproduction guide](../docs/reproduction.md)
+
 This package contains the implementation behind the standalone judge dashboard. It is a synthetic, single-process simulation of four cross-silo clients, not a deployed hospital network.
 
 ## What Is Real
